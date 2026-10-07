@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0a0a0a">
+  <title>Admin — Catálogo</title>
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+
+  <!-- LOGIN -->
+  <main class="login-screen" id="loginBox">
+    <div class="login-glow"></div>
+
+    <section class="login-card">
+      <div class="brand-mark">
+        <span class="brand-line"></span>
+        <span>CATÁLOGO</span>
+      </div>
+
+      <div class="login-heading">
+        <span class="eyebrow">ADMINISTRACIÓN</span>
+        <h1>MI<br><strong>TIENDA</strong></h1>
+        <p>Gestiona tus prendas, precios y tallas desde un solo lugar.</p>
+      </div>
+
+      <form id="loginForm" class="login-form">
+        <label for="email">Correo electrónico</label>
+        <div class="input-wrap">
+          <span class="input-icon">✉</span>
+          <input type="email" id="email" placeholder="admin@correo.com" autocomplete="email" required>
+        </div>
+
+        <label for="password">Contraseña</label>
+        <div class="input-wrap">
+          <span class="input-icon">●</span>
+          <input type="password" id="password" placeholder="••••••••" autocomplete="current-password" required>
+        </div>
+
+        <p class="login-error" id="loginError"></p>
+
+        <button type="submit" class="btn-primary">
+          <span>ENTRAR AL PANEL</span>
+          <span class="btn-arrow">→</span>
+        </button>
+      </form>
+
+      <div class="login-footer">
+        <span>Panel privado</span>
+        <span class="status-dot"></span>
+        <span>Sistema activo</span>
+      </div>
+    </section>
+  </main>
+
+
+  <!-- PANEL ADMIN -->
+  <main class="admin-shell" id="panel" style="display:none">
+
+    <header class="admin-header">
+      <div class="brand">
+        <div class="brand-icon"><img src="img/logo.jpg" alt="Logo Mi Tienda"></div>
+          <span class="brand-mini">PANEL DE</span>
+          <h1>MI TIENDA</h1>
+        </div>
+      </div>
+
+      <div class="header-right">
+        <div class="online-status">
+          <span class="status-dot"></span>
+          <span>EN LÍNEA</span>
+        </div>
+
+        <button class="logout-btn" id="logoutBtn">
+          <span>↪</span>
+          Cerrar sesión
+        </button>
+      </div>
+    </header>
+
+
+    <section class="admin-intro">
+      <div>
+        <span class="eyebrow">GESTIÓN DEL CATÁLOGO</span>
+        <h2>Mis <strong>prendas</strong></h2>
+        <p>Administra los productos que aparecen en tu catálogo.</p>
+      </div>
+
+      <a href="agregarPrenda.html" class="add-main-btn">
+        <span class="plus">+</span>
+        <span>Agregar prenda</span>
+      </a>
+      
+    </section>
+
+
+   
+
+
+    <section class="catalog-section">
+      <div class="section-heading">
+        <div>
+          <span class="section-kicker">INVENTARIO</span>
+          <h3>Productos publicados</h3>
+        </div>
+
+        <span class="catalog-badge">CATÁLOGO ACTIVO</span>
+      </div>
+
+      <div id="listaPrendas" class="admin-products">
+        <!-- admin.js carga aquí las prendas -->
+      </div>
+    </section>
+
+  </main>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabaseConfig.js"></script>
+  <script src="admin.js"></script>
+</body>
+</html>

@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#080808">
+  <title>Agregar prenda — Admin</title>
+  <link rel="stylesheet" href="agregarPrenda.css">
+</head>
+<body>
+
+  <main class="admin-shell">
+
+    <!-- HEADER -->
+    <header class="admin-header">
+      <a href="admin.html" class="brand">
+        <div class="brand-icon"><img src="img/logo.jpg" alt="Logo Mi Tienda"></div>
+          <span class="brand-mini">PANEL DE</span>
+          <h1>MI TIENDA</h1>
+        </div>
+      </a>
+
+      <div class="header-right">
+        <div class="online-status">
+          <span class="status-dot"></span>
+          <span>EN LÍNEA</span>
+        </div>
+
+        <button class="logout-btn" id="logoutBtn">
+          <span>↪</span>
+          Cerrar sesión
+        </button>
+      </div>
+    </header>
+
+
+    <!-- INTRO -->
+    <section class="page-intro">
+      <div>
+        <span class="eyebrow">GESTIÓN DEL CATÁLOGO</span>
+        <h2>Agregar <strong>prenda</strong></h2>
+        <p>Completa la información y publica un nuevo producto en tu catálogo.</p>
+        
+      </div>
+
+
+      <div class="step-indicator">
+        <span class="step-active">01</span>
+        <span class="step-line"></span>
+        <span>02</span>
+      </div>
+      <a href="admin.html" class="add-main-btn">
+        <span class="plus">+</span>
+        <span>PRINCIPAL</span>
+      </a>
+    </section>
+
+    
+    
+
+
+    <!-- NAV -->
+    
+
+
+    <!-- FORMULARIO -->
+    <section class="form-layout">
+
+      <div class="form-card">
+
+        <div class="form-card-header">
+          <div>
+            <span class="section-kicker">NUEVO PRODUCTO</span>
+            <h3>Información de la prenda</h3>
+          </div>
+          <span class="required-label">* CAMPOS REQUERIDOS</span>
+        </div>
+
+
+        <form class="admin-form" id="addForm">
+
+          <div class="form-grid">
+
+            <div class="field field-full">
+              <label for="nombre">Nombre de la prenda <span>*</span></label>
+              <div class="input-box">
+                <span class="field-icon">✦</span>
+                <input type="text" id="nombre" placeholder="Ej. Camiseta AC Milan 2007" required>
+              </div>
+            </div>
+
+
+            <div class="field">
+              <label for="categoria">Categoría <span>*</span></label>
+              <div class="input-box">
+                <span class="field-icon">◈</span>
+                <input
+                  type="text"
+                  id="categoria"
+                  placeholder="Ej. Camiseta de fútbol"
+                  required
+                  list="categoriasList"
+                >
+              </div>
+              <datalist id="categoriasList"></datalist>
+            </div>
+
+
+            <div class="field">
+              <label for="precio">Precio <span>*</span></label>
+              <div class="input-box price-input">
+                <span class="currency">$</span>
+                <input type="number" id="precio" placeholder="70000" min="0" required>
+                <span class="currency-label">COP</span>
+              </div>
+            </div>
+
+            <div class="field">
+              <label for="precioOferta">Precio de oferta</label>
+              <div class="input-box price-input">
+                <span class="currency">$</span>
+                <input type="number" id="precioOferta" placeholder="Opcional, deja vacío si no aplica" min="0">
+                <span class="currency-label">COP</span>
+              </div>
+            </div>
+
+
+            <div class="field field-full">
+              <label for="imagenArchivo">Imagen principal <span>*</span></label>
+              <div class="input-box">
+                <span class="field-icon">▣</span>
+                <input type="file" id="imagenArchivo" accept="image/*" required>
+              </div>
+              <small>Selecciona la foto principal del producto desde tu dispositivo.</small>
+            </div>
+
+
+            <div class="field field-full">
+              <label for="descripcion">Descripción</label>
+              <textarea
+                id="descripcion"
+                placeholder="Describe brevemente el producto, material, estilo, detalles..."
+              ></textarea>
+            </div>
+
+
+            <div class="field field-full">
+              <label for="tallas">Tallas disponibles</label>
+              <div class="input-box">
+                <span class="field-icon">⌁</span>
+                <input type="text" id="tallas" placeholder="S, M, L, XL">
+              </div>
+
+              <div class="size-help">
+                <span>TALLAS</span>
+                <button type="button" data-size="S">S</button>
+                <button type="button" data-size="M">M</button>
+                <button type="button" data-size="L">L</button>
+                <button type="button" data-size="XL">XL</button>
+                <em>Déjalo vacío para talla única.</em>
+              </div>
+            </div>
+
+
+            <div class="field field-full">
+              <label for="fotosExtraArchivos">Fotos adicionales</label>
+              <div class="input-box">
+                <span class="field-icon">▣</span>
+                <input type="file" id="fotosExtraArchivos" accept="image/*" multiple>
+              </div>
+              <small>Puedes seleccionar varias fotos a la vez para mostrar diferentes ángulos.</small>
+            </div>
+
+          </div>
+
+
+          <div class="form-msg" id="formMsg"></div>
+
+
+          <div class="form-actions">
+            <a href="admin.html" class="cancel-btn">Cancelar</a>
+
+            <button type="submit" class="submit-btn">
+              <span>＋</span>
+              AGREGAR PRENDA
+              <strong>→</strong>
+            </button>
+          </div>
+
+        </form>
+      </div>
+
+
+      <!-- PREVIEW / AYUDA -->
+      <aside class="side-card">
+
+        <div class="preview-head">
+          <span class="section-kicker">VISTA RÁPIDA</span>
+          <span class="preview-status">BORRADOR</span>
+        </div>
+
+        <div class="preview-image" id="imagePreview">
+          <div class="preview-placeholder">
+            <span>▣</span>
+            <p>La imagen aparecerá aquí</p>
+            <small>Selecciona una foto en el campo de imagen</small>
+          </div>
+        </div>
+
+        <div class="preview-copy">
+          <span class="preview-category" id="previewCategory">CATEGORÍA</span>
+          <h3 id="previewName">Nombre de la prenda</h3>
+          <strong id="previewPrice">$0</strong>
+        </div>
+
+        <div class="preview-divider"></div>
+
+        <div class="quick-tip">
+          <div class="tip-icon">✓</div>
+          <div>
+            <strong>Consejo</strong>
+            <p>Usa una imagen clara del producto y un nombre fácil de identificar.</p>
+          </div>
+        </div>
+
+      </aside>
+
+    </section>
+
+  </main>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabaseConfig.js"></script>
+  <script src="agregarPrenda.js"></script>
+
+  <script>
+    // Ayudas visuales que no alteran la lógica de agregarPrenda.js
+    const nombreInput = document.getElementById("nombre");
+    const categoriaInput = document.getElementById("categoria");
+    const precioInput = document.getElementById("precio");
+    const imagenInput = document.getElementById("imagenArchivo");
+
+    const previewName = document.getElementById("previewName");
+    const previewCategory = document.getElementById("previewCategory");
+    const previewPrice = document.getElementById("previewPrice");
+    const imagePreview = document.getElementById("imagePreview");
+
+    function updatePreview(){
+      previewName.textContent = nombreInput.value.trim() || "Nombre de la prenda";
+      previewCategory.textContent = categoriaInput.value.trim().toUpperCase() || "CATEGORÍA";
+
+      const price = Number(precioInput.value);
+      previewPrice.textContent = price
+        ? "$" + price.toLocaleString("es-CO")
+        : "$0";
+    }
+
+    nombreInput.addEventListener("input", updatePreview);
+    categoriaInput.addEventListener("input", updatePreview);
+    precioInput.addEventListener("input", updatePreview);
+
+    // Vista previa de la imagen: ahora lee el archivo seleccionado, no una URL
+    imagenInput.addEventListener("change", function(){
+      const file = this.files[0];
+
+      if(!file){
+        imagePreview.innerHTML = `
+          <div class="preview-placeholder">
+            <span>▣</span>
+            <p>La imagen aparecerá aquí</p>
+            <small>Selecciona una foto en el campo de imagen</small>
+          </div>
+        `;
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        imagePreview.innerHTML = `<img src="${e.target.result}" alt="Vista previa">`;
+      };
+      reader.readAsDataURL(file);
+    });
+
+
+    // Botones rápidos de tallas
+    document.querySelectorAll("[data-size]").forEach(button => {
+      button.addEventListener("click", () => {
+        const size = button.dataset.size;
+        const current = document.getElementById("tallas").value
+          .split(",")
+          .map(x => x.trim())
+          .filter(Boolean);
+
+        if(!current.includes(size)){
+          current.push(size);
+          document.getElementById("tallas").value = current.join(", ");
+        }else{
+          document.getElementById("tallas").value =
+            current.filter(x => x !== size).join(", ");
+        }
+
+        button.classList.toggle("selected");
+      });
+    });
+  </script>
+</body>
+</html>

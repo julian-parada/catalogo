@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Catálogo | 324 734 8475</title>
+  <meta name="description" content="Catálogo de gorras. Selecciona tus modelos y haz tu pedido por WhatsApp.">
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <header class="hero">
+    <div class="hero-overlay">
+      <span class="tag">STREETWEAR • CALIDAD • ACTITUD</span>
+      <h1>CATÁLOGO</h1>
+      <p>Elige tus modelos, arma tu pedido y envíalo directamente por WhatsApp.</p>
+      <a href="#catalogo" class="btn btn-primary">VER CATÁLOGO</a>
+    </div>
+  </header>
+
+  <main>
+    <section class="section" id="catalogo">
+      <div class="section-title">
+        <div>
+          <span class="eyebrow">NUEVA COLECCIÓN</span>
+          <h2>Escoge tus LOOK</h2>
+        </div>
+        <button class="cart-button" id="openCart"> Pedido <span id="cartCount">0</span></button>
+      </div>
+
+      <div class="filters">
+  <input id="searchInput" type="search" placeholder="BUSCAR EN QualityShoes">
+  <select id="categoryFilter">
+    <option value="all">Todas</option>
+  </select>
+</div>
+
+      
+
+      <div class="products" id="products"></div>
+    </section>
+
+    <section class="how">
+      <div><strong>01</strong><span>ARMA TU NUEVO OUTFIT </span></div>
+      <div><strong>02</strong><span>Añádelas al pedido</span></div>
+      <div><strong>03</strong><span>Envía por WhatsApp</span></div>
+    </section>
+  </main>
+
+  <footer>
+    <div>
+      <strong>CATÁLOGO</strong>
+      <p>Pedidos por WhatsApp: 324 734 8475</p>
+    </div>
+    <a href="https://wa.me/573247348475" target="_blank" rel="noopener">WhatsApp ↗</a>
+  </footer>
+
+  <div class="modal" id="cartModal" aria-hidden="true">
+    <div class="modal-card">
+      <button class="close" id="closeCart">×</button>
+      <span class="eyebrow">TU PEDIDO</span>
+      <h2>Prendas seleccionadas</h2>
+      <div id="cartItems"></div>
+      <div class="cart-total">
+        <span>Total estimado</span>
+        <strong id="cartTotal">$0</strong>
+      </div>
+      <button class="btn btn-whatsapp" id="sendWhatsapp">ENVIAR PEDIDO POR WHATSAPP</button>
+      <p class="note">Se abrirá WhatsApp con el listado de productos seleccionados.</p>
+    </div>
+  </div>
+  <div class="modal" id="imgModal">
+  <div class="img-modal-content">
+    <img id="imgBig" src="" alt="">
+    <div id="imgThumbs" class="img-thumbs"></div>
+  </div>
+</div>
+<div id="toast" class="toast"></div>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="script.js"></script>
+</body>
+
+</html>

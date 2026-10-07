@@ -1,0 +1,255 @@
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800&display=swap');
+
+.brand-icon{
+  overflow:hidden;
+  padding:0;
+  background:#000;
+}
+
+.brand-icon img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  display:block;
+}
+
+.admin-products > * > :last-child{
+  margin-left:auto;
+}
+
+:root{
+  --bg:#0a0a0c;
+  --bg-2:#111114;
+  --card:#131317;
+  --line:rgba(255,255,255,.09);
+  --text:#fff;
+  --muted:#9a9aa5;
+  --pink:#ff1fa0;
+  --pink-soft:rgba(255,31,160,.14);
+  --yellow:#f5b914;
+  --grad:linear-gradient(100deg,#f2058f 0%,#ff4f6d 55%,#f5b914 100%);
+  --danger:#ff5c7a;
+  --ok:#2ee59d;
+  --display:'Bebas Neue','Impact',sans-serif;
+  --body:'Inter',system-ui,sans-serif;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+
+body{
+  font-family:var(--body);
+  color:var(--text);
+  background:
+    radial-gradient(900px 500px at 100% -10%,rgba(255,31,160,.16),transparent 60%),
+    radial-gradient(700px 400px at -10% 0%,rgba(245,185,20,.07),transparent 60%),
+    var(--bg);
+  background-attachment:fixed;
+  min-height:100vh;
+  line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:inherit;text-decoration:none}
+button{font-family:inherit;cursor:pointer}
+:focus-visible{outline:2px solid var(--pink);outline-offset:2px}
+
+.eyebrow{
+  display:inline-flex;align-items:center;gap:12px;
+  font-size:12px;font-weight:800;letter-spacing:.24em;color:var(--pink);margin-bottom:10px;
+}
+.eyebrow::before{content:"";width:34px;height:2px;background:var(--pink)}
+
+.status-dot{
+  width:8px;height:8px;border-radius:50%;background:var(--ok);flex:none;
+  box-shadow:0 0 0 4px rgba(46,229,157,.15);
+}
+
+/* ================= LOGIN ================= */
+.login-screen{
+  min-height:100vh;display:grid;place-items:center;padding:24px;position:relative;overflow:hidden;
+}
+.login-glow{
+  position:absolute;width:620px;height:620px;border-radius:50%;
+  top:-180px;right:-160px;
+  background:radial-gradient(circle,rgba(255,31,160,.35),transparent 65%);
+  filter:blur(30px);pointer-events:none;
+}
+.login-card{
+  position:relative;width:min(440px,100%);padding:38px;
+  background:rgba(19,19,23,.88);backdrop-filter:blur(14px);
+  border:1px solid var(--line);border-radius:22px;
+  box-shadow:0 30px 80px rgba(0,0,0,.5);
+}
+.brand-mark{
+  display:flex;align-items:center;gap:12px;margin-bottom:30px;
+  font-size:12px;font-weight:800;letter-spacing:.24em;color:var(--pink);
+}
+.brand-line{width:34px;height:2px;background:var(--pink)}
+
+.login-heading h1{
+  font-family:var(--display);font-weight:400;font-size:84px;line-height:.9;
+  text-shadow:3px 3px 0 rgba(255,31,160,.25);
+}
+.login-heading h1 strong{
+  font-weight:400;
+  background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;
+  text-shadow:none;
+}
+.login-heading p{color:var(--muted);margin:16px 0 28px;font-size:15px}
+
+.login-form label{display:block;margin:16px 0 8px;font-size:13px;font-weight:700}
+.input-wrap{
+  display:flex;align-items:center;gap:12px;min-height:54px;padding:0 16px;
+  background:var(--bg);border:1px solid var(--line);border-radius:12px;
+  transition:border-color .2s,box-shadow .2s;
+}
+.input-wrap:focus-within{border-color:var(--pink);box-shadow:0 0 0 4px var(--pink-soft)}
+.input-icon{color:var(--pink);font-size:13px;width:16px;text-align:center}
+.input-wrap input{
+  flex:1;min-width:0;background:transparent;border:0;outline:0;
+  color:var(--text);font:inherit;font-size:16px;padding:15px 0;
+}
+.input-wrap input::placeholder{color:#5d5d68}
+
+.login-error{min-height:20px;margin-top:12px;font-size:13px;font-weight:600;color:var(--danger)}
+
+.btn-primary,.add-main-btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:12px;
+  border:0;border-radius:12px;background:var(--grad);color:#fff;
+  font-size:13px;font-weight:800;letter-spacing:.12em;
+  box-shadow:0 10px 28px rgba(255,31,160,.32);
+  transition:transform .2s,box-shadow .2s,filter .2s;
+}
+.btn-primary{width:100%;padding:17px 24px;margin-top:6px}
+.btn-primary:hover,.add-main-btn:hover{
+  transform:translateY(-2px);filter:brightness(1.08);box-shadow:0 14px 34px rgba(255,31,160,.42);
+}
+.login-footer{
+  display:flex;align-items:center;justify-content:center;gap:10px;margin-top:26px;
+  font-size:12px;color:var(--muted);
+}
+
+/* ================= PANEL ================= */
+.admin-shell{width:min(1180px,100% - 40px);margin:0 auto;padding:28px 0 90px}
+
+.admin-header{
+  display:flex;align-items:center;justify-content:space-between;gap:16px;
+  padding-bottom:22px;border-bottom:1px solid var(--line);
+}
+.brand{display:flex;align-items:center;gap:14px}
+.brand-icon{
+  width:50px;height:50px;border-radius:12px;display:grid;place-items:center;
+  font-family:var(--display);font-size:30px;line-height:1;color:#fff;
+  background:var(--grad);box-shadow:0 8px 24px rgba(255,31,160,.35);
+}
+.brand-mini{display:block;font-size:10px;font-weight:700;letter-spacing:.22em;color:var(--pink)}
+.brand h1{font-family:var(--display);font-size:32px;font-weight:400;letter-spacing:.02em;line-height:1}
+.header-right{display:flex;align-items:center;gap:14px}
+.online-status{
+  display:flex;align-items:center;gap:8px;
+  font-size:11px;font-weight:700;letter-spacing:.14em;color:var(--muted);
+}
+.logout-btn{
+  display:inline-flex;align-items:center;gap:8px;padding:12px 18px;border-radius:10px;
+  background:var(--bg-2);border:1px solid var(--line);color:var(--text);
+  font-size:14px;font-weight:600;transition:border-color .2s;
+}
+.logout-btn span{color:var(--pink)}
+.logout-btn:hover{border-color:var(--pink)}
+
+.admin-intro{
+  display:flex;align-items:flex-end;justify-content:space-between;gap:24px;padding:56px 0 34px;
+}
+.admin-intro h2{
+  font-family:var(--display);font-weight:400;
+  font-size:clamp(56px,9vw,104px);line-height:.92;letter-spacing:.01em;
+  text-shadow:3px 3px 0 rgba(255,31,160,.25);
+}
+.admin-intro h2 strong{
+  font-weight:400;
+  background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;
+  text-shadow:none;
+}
+.admin-intro p{color:var(--muted);margin-top:16px;font-size:16px}
+
+.add-main-btn{padding:17px 26px;font-size:14px;letter-spacing:.04em;font-weight:700;white-space:nowrap}
+.add-main-btn .plus{font-size:20px;line-height:1}
+
+.admin-tabs{
+  display:flex;gap:6px;border-bottom:1px solid var(--line);margin-bottom:38px;overflow-x:auto;
+}
+.admin-tab{
+  display:inline-flex;align-items:center;gap:10px;padding:16px 22px;
+  font-size:14px;font-weight:600;color:var(--muted);
+  border-bottom:2px solid transparent;margin-bottom:-1px;white-space:nowrap;transition:color .2s;
+}
+.admin-tab:hover{color:var(--text)}
+.admin-tab.active{color:var(--pink);border-bottom-color:var(--pink)}
+
+.section-heading{
+  display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:22px;
+}
+.section-kicker{display:block;font-size:11px;font-weight:800;letter-spacing:.22em;color:var(--pink);margin-bottom:6px}
+.section-heading h3{font-size:26px;font-weight:700;letter-spacing:-.01em}
+.catalog-badge{
+  padding:9px 16px;border-radius:999px;border:1px solid var(--line);
+  font-size:10px;font-weight:800;letter-spacing:.16em;color:var(--muted);
+}
+
+/* ================= LISTA DE PRODUCTOS =================
+   Estilos por estructura: funcionan aunque admin.js use otros nombres de clase */
+.admin-products{display:flex;flex-direction:column;gap:16px}
+
+.admin-products > *{
+  display:flex;align-items:center;gap:22px;padding:20px;
+  background:var(--card);border:1px solid var(--line);border-radius:18px;
+  transition:border-color .2s,transform .2s;
+}
+.admin-products > *:hover{border-color:rgba(255,31,160,.45)}
+
+.admin-products img{
+  width:96px;height:96px;flex:none;object-fit:cover;
+  border-radius:12px;background:#fff;
+}
+.admin-products h1,.admin-products h2,.admin-products h3,.admin-products h4{
+  font-size:20px;font-weight:700;line-height:1.25;
+}
+.admin-products p{color:var(--muted);font-size:13px;font-weight:600;letter-spacing:.06em;margin:4px 0 10px}
+
+/* chips de tallas */
+.admin-products label{
+  display:inline-flex;align-items:center;gap:8px;margin:0 8px 6px 0;padding:8px 14px;
+  background:var(--bg);border:1px solid var(--line);border-radius:9px;
+  font-size:13px;font-weight:700;cursor:pointer;transition:border-color .2s;
+}
+.admin-products label:hover{border-color:var(--pink)}
+.admin-products input[type="checkbox"]{width:16px;height:16px;accent-color:var(--pink);cursor:pointer}
+
+/* botones editar / eliminar */
+.admin-products button,
+.admin-products a[href*="editar"]{
+  display:inline-flex;align-items:center;justify-content:center;
+  min-width:112px;padding:12px 18px;border-radius:10px;
+  background:var(--bg);border:1px solid var(--line);color:var(--text);
+  font-size:14px;font-weight:700;transition:all .2s;
+}
+.admin-products button:hover,
+.admin-products a[href*="editar"]:hover{border-color:var(--pink);color:var(--pink)}
+.admin-products button[class*="del"],
+.admin-products button[class*="elim"],
+.admin-products button[class*="remove"]{color:var(--danger);border-color:rgba(255,92,122,.35)}
+.admin-products button[class*="del"]:hover,
+.admin-products button[class*="elim"]:hover,
+.admin-products button[class*="remove"]:hover{background:rgba(255,92,122,.12);border-color:var(--danger);color:var(--danger)}
+
+/* ================= RESPONSIVE ================= */
+@media (max-width:720px){
+  .admin-shell{width:calc(100% - 28px);padding-top:18px}
+  .online-status{display:none}
+  .admin-intro{flex-direction:column;align-items:flex-start;padding:36px 0 24px}
+  .add-main-btn{width:100%}
+  .admin-products > *{flex-wrap:wrap;gap:16px}
+  .admin-products img{width:80px;height:80px}
+  .login-card{padding:28px}
+  .login-heading h1{font-size:68px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}

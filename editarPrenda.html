@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#080808">
+
+  <title>Editar prenda — Admin</title>
+
+  <link rel="stylesheet" href="agregarPrenda.css">
+</head>
+
+<body>
+
+  <main class="admin-shell">
+
+    <!-- ================= HEADER ================= -->
+    <header class="admin-header">
+
+      <a href="admin.html" class="brand">
+        <div class="brand-icon">C</div>
+
+        <div>
+          <span class="brand-mini">PANEL DE</span>
+          <h1>MI TIENDA</h1>
+        </div>
+      </a>
+
+      <div class="header-right">
+
+        <div class="online-status">
+          <span class="status-dot"></span>
+          <span>EN LÍNEA</span>
+        </div>
+
+        <button class="logout-btn" id="logoutBtn">
+          <span>↪</span>
+          Cerrar sesión
+        </button>
+
+      </div>
+
+    </header>
+
+
+    <!-- ================= INTRO ================= -->
+    <section class="page-intro">
+
+      <div>
+
+        <span class="eyebrow">
+          GESTIÓN DEL CATÁLOGO
+        </span>
+
+        <h2>
+          Editar <strong>prenda</strong>
+        </h2>
+
+        <p>
+          Actualiza la información del producto y sus tallas disponibles.
+        </p>
+
+      </div>
+
+      <div class="step-indicator">
+
+        <span class="step-active">
+          01
+        </span>
+
+        <span class="step-line"></span>
+
+        <span>
+          02
+        </span>
+
+      </div>
+
+    </section>
+
+
+    <!-- ================= NAVEGACIÓN ================= -->
+    <nav class="admin-tabs">
+
+      <a href="admin.html" class="admin-tab">
+
+        <span class="tab-icon">⌂</span>
+
+        Principal
+
+      </a>
+
+
+      <a href="agregarPrenda.html" class="admin-tab">
+
+        <span class="tab-icon">＋</span>
+
+        Agregar prenda
+
+      </a>
+
+
+      <a href="#" class="admin-tab active">
+
+        <span class="tab-icon">✎</span>
+
+        Editar prenda
+
+      </a>
+
+    </nav>
+
+
+    <!-- ================= CONTENIDO ================= -->
+
+    <section class="form-layout">
+
+      <!-- FORMULARIO -->
+
+      <div class="form-card">
+
+        <div class="form-card-header">
+
+          <div>
+
+            <span class="section-kicker">
+              EDITAR PRODUCTO
+            </span>
+
+            <h3>
+              Información de la prenda
+            </h3>
+
+          </div>
+
+          <span class="required-label">
+            * CAMPOS REQUERIDOS
+          </span>
+
+        </div>
+
+
+        <form class="admin-form" id="editForm">
+
+          <div class="form-grid">
+
+
+            <!-- NOMBRE -->
+
+            <div class="field field-full">
+
+              <label for="nombre">
+                Nombre de la prenda <span>*</span>
+              </label>
+
+              <div class="input-box">
+
+                <span class="field-icon">
+                  ✦
+                </span>
+
+                <input
+                  type="text"
+                  id="nombre"
+                  placeholder="Ej. Camiseta AC Milan 2007"
+                  required
+                >
+
+              </div>
+
+            </div>
+
+
+            <!-- CATEGORÍA -->
+
+            <div class="field">
+
+              <label for="categoria">
+                Categoría <span>*</span>
+              </label>
+
+              <div class="input-box">
+
+                <span class="field-icon">
+                  ◈
+                </span>
+
+                <input
+                  type="text"
+                  id="categoria"
+                  placeholder="Ej. Camiseta de fútbol"
+                  required
+                  list="categoriasList"
+                >
+
+              </div>
+
+              <datalist id="categoriasList"></datalist>
+
+            </div>
+
+
+            <!-- PRECIO -->
+
+            <div class="field">
+
+              <label for="precio">
+                Precio <span>*</span>
+              </label>
+
+              <div class="input-box price-input">
+
+                <span class="currency">
+                  $
+                </span>
+
+                <input
+                  type="number"
+                  id="precio"
+                  placeholder="70000"
+                  min="0"
+                  required
+                >
+
+                <span class="currency-label">
+                  COP
+                </span>
+
+              </div>
+
+            </div>
+
+
+            <!-- PRECIO OFERTA -->
+
+            <div class="field">
+
+              <label for="precioOferta">
+                Precio de oferta
+              </label>
+
+              <div class="input-box price-input">
+
+                <span class="currency">
+                  $
+                </span>
+
+                <input
+                  type="number"
+                  id="precioOferta"
+                  placeholder="Opcional"
+                  min="0"
+                >
+
+                <span class="currency-label">
+                  COP
+                </span>
+
+              </div>
+
+            </div>
+
+
+            <!-- IMAGEN -->
+
+            <div class="field field-full">
+
+              <label for="imagen">
+                Imagen principal <span>*</span>
+              </label>
+
+              <div class="input-box">
+
+                <span class="field-icon">
+                  ▣
+                </span>
+
+                <input
+                  type="text"
+                  id="imagen"
+                  placeholder="URL de la imagen"
+                  required
+                >
+
+              </div>
+
+              <small>
+                Puedes conservar la imagen actual o reemplazar su URL.
+              </small>
+
+            </div>
+
+
+            <!-- DESCRIPCIÓN -->
+
+            <div class="field field-full">
+
+              <label for="descripcion">
+                Descripción
+              </label>
+
+              <textarea
+                id="descripcion"
+                placeholder="Describe brevemente el producto, material, estilo, detalles..."
+              ></textarea>
+
+            </div>
+
+          </div>
+
+
+          <!-- MENSAJE -->
+
+          <div
+            class="form-msg"
+            id="formMsg"
+          ></div>
+
+
+          <!-- BOTONES -->
+
+          <div class="form-actions">
+
+            <a
+              href="admin.html"
+              class="cancel-btn"
+            >
+              Cancelar
+            </a>
+
+            <button
+              type="submit"
+              class="submit-btn"
+            >
+
+              <span>
+                ✓
+              </span>
+
+              GUARDAR CAMBIOS
+
+              <strong>
+                →
+              </strong>
+
+            </button>
+
+          </div>
+
+        </form>
+
+      </div>
+
+
+      <!-- ================= PREVIEW ================= -->
+
+      <aside class="side-card">
+
+        <div class="preview-head">
+
+          <span class="section-kicker">
+            VISTA RÁPIDA
+          </span>
+
+          <span class="preview-status">
+            EDITANDO
+          </span>
+
+        </div>
+
+
+        <div
+          class="preview-image"
+          id="imagePreview"
+        >
+
+          <div class="preview-placeholder">
+
+            <span>
+              ▣
+            </span>
+
+            <p>
+              Imagen de la prenda
+            </p>
+
+            <small>
+              La imagen actual aparecerá aquí
+            </small>
+
+          </div>
+
+        </div>
+
+
+        <div class="preview-copy">
+
+          <span
+            class="preview-category"
+            id="previewCategory"
+          >
+            CATEGORÍA
+          </span>
+
+          <h3 id="previewName">
+            Nombre de la prenda
+          </h3>
+
+          <strong id="previewPrice">
+            $0
+          </strong>
+
+        </div>
+
+
+        <div class="preview-divider"></div>
+
+
+        <div class="quick-tip">
+
+          <div class="tip-icon">
+            ✓
+          </div>
+
+          <div>
+
+            <strong>
+              Consejo
+            </strong>
+
+            <p>
+              Mantén las imágenes y nombres de los productos claros para que el catálogo se vea profesional.
+            </p>
+
+          </div>
+
+        </div>
+
+      </aside>
+
+    </section>
+
+
+    <!-- ================= TALLAS ================= -->
+
+    <section class="sizes-card">
+
+      <div class="sizes-header">
+
+        <div>
+
+          <span class="section-kicker">
+            INVENTARIO
+          </span>
+
+          <h3>
+            Tallas disponibles
+          </h3>
+
+          <p>
+            Administra las tallas disponibles para esta prenda.
+          </p>
+
+        </div>
+
+        <span class="sizes-icon">
+          ＋
+        </span>
+
+      </div>
+
+
+      <div
+        id="listaTallas"
+        class="sizes-list"
+      ></div>
+
+
+      <form
+        id="addTallaForm"
+        class="add-size-form"
+      >
+
+        <div class="input-box">
+
+          <span class="field-icon">
+            ⌁
+          </span>
+
+          <input
+            type="text"
+            id="nuevaTalla"
+            placeholder="Nueva talla (ej: XL)"
+          >
+
+        </div>
+
+        <button
+          type="submit"
+          class="submit-btn size-submit"
+        >
+
+          <span>＋</span>
+
+          AGREGAR TALLA
+
+          <strong>→</strong>
+
+        </button>
+
+      </form>
+
+    </section>
+
+
+  </main>
+
+
+  <!-- ================= SCRIPTS ================= -->
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <script src="supabaseConfig.js"></script>
+
+  <script src="editarPrenda.js"></script>
+
+
+  <!-- ================= PREVIEW ================= -->
+
+  <script>
+
+    const nombreInput =
+      document.getElementById("nombre");
+
+    const categoriaInput =
+      document.getElementById("categoria");
+
+    const precioInput =
+      document.getElementById("precio");
+
+    const imagenInput =
+      document.getElementById("imagen");
+
+
+    const previewName =
+      document.getElementById("previewName");
+
+    const previewCategory =
+      document.getElementById("previewCategory");
+
+    const previewPrice =
+      document.getElementById("previewPrice");
+
+    const imagePreview =
+      document.getElementById("imagePreview");
+
+
+    function updatePreview(){
+
+      previewName.textContent =
+        nombreInput.value.trim() ||
+        "Nombre de la prenda";
+
+
+      previewCategory.textContent =
+        categoriaInput.value.trim().toUpperCase() ||
+        "CATEGORÍA";
+
+
+      const price =
+        Number(precioInput.value);
+
+
+      previewPrice.textContent =
+        price
+          ? "$" + price.toLocaleString("es-CO")
+          : "$0";
+
+
+      const url =
+        imagenInput.value.trim();
+
+
+      if(url){
+
+        imagePreview.innerHTML = `
+          <img
+            src="${url}"
+            alt="Vista previa"
+            onerror="this.style.display='none';"
+          >
+        `;
+
+      }
+
+    }
+
+
+    nombreInput.addEventListener(
+      "input",
+      updatePreview
+    );
+
+    categoriaInput.addEventListener(
+      "input",
+      updatePreview
+    );
+
+    precioInput.addEventListener(
+      "input",
+      updatePreview
+    );
+
+    imagenInput.addEventListener(
+      "input",
+      updatePreview
+    );
+
+  </script>
+
+</body>
+</html>
