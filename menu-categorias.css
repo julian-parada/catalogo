@@ -1,0 +1,90 @@
+/* =========================================================
+   MENÚ DESPLEGABLE DE CATEGORÍAS + NUEVOS + PROMOCIONES
+   Pega TODO esto al FINAL de style.css (no borres nada).
+   Las reglas de aquí ganan sobre las anteriores del menú.
+   ========================================================= */
+
+.cat-nav{
+  display:flex;
+  align-items:center;
+  gap:4px;
+  flex:1;
+  position:relative;
+  overflow:visible; /* antes era auto: recortaba el desplegable */
+}
+
+/* Botones más grandes */
+.cat-link{font-size:.9rem;letter-spacing:.06em;padding:18px 16px}
+.cat-link::after{left:16px;right:16px;bottom:10px}
+
+/* Botón "Categorías ▾" */
+.cat-dropdown{position:relative}
+.cat-trigger{display:inline-flex;align-items:center;gap:8px}
+.cat-trigger .chev{width:12px;height:12px;flex:none;transition:transform .2s}
+.cat-trigger[aria-expanded="true"]{color:#fff}
+.cat-trigger[aria-expanded="true"] .chev{transform:rotate(180deg)}
+
+/* Panel con la lista (crece con scroll si hay muchas categorías) */
+.cat-menu{
+  position:absolute;
+  top:calc(100% + 6px);
+  left:0;
+  z-index:20;
+  width:min(92vw,520px);
+  max-height:min(70vh,460px);
+  overflow-y:auto;
+  padding:10px;
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(190px,1fr));
+  gap:4px;
+  background:rgba(14,14,14,.98);
+  border:1px solid var(--line-light);
+  border-radius:14px;
+  box-shadow:var(--shadow);
+}
+
+.cat-item{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:11px 14px;
+  background:none;
+  border:0;
+  border-radius:9px;
+  color:var(--soft-white);
+  font:inherit;
+  font-size:.9rem;
+  font-weight:600;
+  text-align:left;
+  cursor:pointer;
+  transition:background .15s,color .15s;
+}
+.cat-item small{color:var(--muted);font-size:.75rem;font-weight:700}
+.cat-item:hover{background:#1b1b1b;color:#fff}
+.cat-item.active{background:var(--pink-soft);color:#fff}
+.cat-item.active small{color:var(--pink)}
+
+/* "Ver todo" ocupa una fila completa arriba */
+.cat-item:first-child{
+  grid-column:1 / -1;
+  margin-bottom:4px;
+  border-bottom:1px solid var(--line);
+  border-radius:9px 9px 0 0;
+}
+
+/* Nuevos (color de acento claro) y Promociones (color secundario) */
+.cat-nuevo{color:var(--pink-light)}
+.cat-nuevo::after{background:var(--pink-light)}
+.cat-nuevo:hover,
+.cat-nuevo.active{color:var(--pink-light)}
+
+#catalogo{scroll-margin-top:90px}
+
+@media(max-width:650px){
+  .cat-nav{flex:none;width:100%;justify-content:space-between}
+  .cat-link{padding:14px 10px;font-size:.82rem}
+  .cat-link::after{left:10px;right:10px;bottom:8px}
+  .cat-dropdown{position:static} /* el panel se abre a todo el ancho de la barra */
+  .cat-menu{left:0;right:0;width:auto;max-width:none}
+}

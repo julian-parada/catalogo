@@ -1,4 +1,8 @@
+
+
+
 // utils.js — helpers compartidos
+
 function escapeHtml(str){
   if(str === null || str === undefined) return "";
   return String(str)
@@ -12,7 +16,6 @@ function escapeHtml(str){
 function safeUrl(url){
   if(!url) return "";
   const u = String(url).trim();
-  // Solo permitir http/https/data-imagen
   if(/^(https?:|data:image\/)/i.test(u)) return escapeHtml(u);
   return "";
 }

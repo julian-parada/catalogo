@@ -24,11 +24,15 @@
   --line:rgba(255,255,255,.09);
   --text:#fff;
   --muted:#9a9aa5;
+  /* Acento: lo sobrescribe tema.js según la paleta elegida. Estos valores son el respaldo. */
   --pink:#ff1fa0;
-  --pink-soft:rgba(255,31,160,.14);
+  --pink-rgb:255,31,160;
   --yellow:#f5b914;
-  --grad:linear-gradient(100deg,#f2058f 0%,#ff4f6d 55%,#f5b914 100%);
+  --yellow-rgb:245,185,20;
+  --pink-soft:rgba(var(--pink-rgb),.14);
+  --grad:linear-gradient(100deg,var(--pink) 0%,var(--yellow) 100%);
   --danger:#ff5c7a;
+  --danger-rgb:255,92,122;
   --ok:#2ee59d;
   --display:'Bebas Neue','Impact',sans-serif;
   --body:'Inter',system-ui,sans-serif;
@@ -40,8 +44,8 @@ body{
   font-family:var(--body);
   color:var(--text);
   background:
-    radial-gradient(900px 500px at 100% -10%,rgba(255,31,160,.16),transparent 60%),
-    radial-gradient(700px 400px at -10% 0%,rgba(245,185,20,.07),transparent 60%),
+    radial-gradient(900px 500px at 100% -10%,rgba(var(--pink-rgb),.16),transparent 60%),
+    radial-gradient(700px 400px at -10% 0%,rgba(var(--yellow-rgb),.07),transparent 60%),
     var(--bg);
   background-attachment:fixed;
   min-height:100vh;
@@ -70,7 +74,7 @@ button{font-family:inherit;cursor:pointer}
 .login-glow{
   position:absolute;width:620px;height:620px;border-radius:50%;
   top:-180px;right:-160px;
-  background:radial-gradient(circle,rgba(255,31,160,.35),transparent 65%);
+  background:radial-gradient(circle,rgba(var(--pink-rgb),.35),transparent 65%);
   filter:blur(30px);pointer-events:none;
 }
 .login-card{
@@ -87,7 +91,7 @@ button{font-family:inherit;cursor:pointer}
 
 .login-heading h1{
   font-family:var(--display);font-weight:400;font-size:84px;line-height:.9;
-  text-shadow:3px 3px 0 rgba(255,31,160,.25);
+  text-shadow:3px 3px 0 rgba(var(--pink-rgb),.25);
 }
 .login-heading h1 strong{
   font-weight:400;
@@ -116,12 +120,12 @@ button{font-family:inherit;cursor:pointer}
   display:inline-flex;align-items:center;justify-content:center;gap:12px;
   border:0;border-radius:12px;background:var(--grad);color:#fff;
   font-size:13px;font-weight:800;letter-spacing:.12em;
-  box-shadow:0 10px 28px rgba(255,31,160,.32);
+  box-shadow:0 10px 28px rgba(var(--pink-rgb),.32);
   transition:transform .2s,box-shadow .2s,filter .2s;
 }
 .btn-primary{width:100%;padding:17px 24px;margin-top:6px}
 .btn-primary:hover,.add-main-btn:hover{
-  transform:translateY(-2px);filter:brightness(1.08);box-shadow:0 14px 34px rgba(255,31,160,.42);
+  transform:translateY(-2px);filter:brightness(1.08);box-shadow:0 14px 34px rgba(var(--pink-rgb),.42);
 }
 .login-footer{
   display:flex;align-items:center;justify-content:center;gap:10px;margin-top:26px;
@@ -139,7 +143,7 @@ button{font-family:inherit;cursor:pointer}
 .brand-icon{
   width:50px;height:50px;border-radius:12px;display:grid;place-items:center;
   font-family:var(--display);font-size:30px;line-height:1;color:#fff;
-  background:var(--grad);box-shadow:0 8px 24px rgba(255,31,160,.35);
+  background:var(--grad);box-shadow:0 8px 24px rgba(var(--pink-rgb),.35);
 }
 .brand-mini{display:block;font-size:10px;font-weight:700;letter-spacing:.22em;color:var(--pink)}
 .brand h1{font-family:var(--display);font-size:32px;font-weight:400;letter-spacing:.02em;line-height:1}
@@ -162,7 +166,7 @@ button{font-family:inherit;cursor:pointer}
 .admin-intro h2{
   font-family:var(--display);font-weight:400;
   font-size:clamp(56px,9vw,104px);line-height:.92;letter-spacing:.01em;
-  text-shadow:3px 3px 0 rgba(255,31,160,.25);
+  text-shadow:3px 3px 0 rgba(var(--pink-rgb),.25);
 }
 .admin-intro h2 strong{
   font-weight:400;
@@ -204,7 +208,7 @@ button{font-family:inherit;cursor:pointer}
   background:var(--card);border:1px solid var(--line);border-radius:18px;
   transition:border-color .2s,transform .2s;
 }
-.admin-products > *:hover{border-color:rgba(255,31,160,.45)}
+.admin-products > *:hover{border-color:rgba(var(--pink-rgb),.45)}
 
 .admin-products img{
   width:96px;height:96px;flex:none;object-fit:cover;
@@ -236,10 +240,10 @@ button{font-family:inherit;cursor:pointer}
 .admin-products a[href*="editar"]:hover{border-color:var(--pink);color:var(--pink)}
 .admin-products button[class*="del"],
 .admin-products button[class*="elim"],
-.admin-products button[class*="remove"]{color:var(--danger);border-color:rgba(255,92,122,.35)}
+.admin-products button[class*="remove"]{color:var(--danger);border-color:rgba(var(--danger-rgb),.35)}
 .admin-products button[class*="del"]:hover,
 .admin-products button[class*="elim"]:hover,
-.admin-products button[class*="remove"]:hover{background:rgba(255,92,122,.12);border-color:var(--danger);color:var(--danger)}
+.admin-products button[class*="remove"]:hover{background:rgba(var(--danger-rgb),.12);border-color:var(--danger);color:var(--danger)}
 
 /* ================= RESPONSIVE ================= */
 @media (max-width:720px){
@@ -253,3 +257,52 @@ button{font-family:inherit;cursor:pointer}
   .login-heading h1{font-size:68px}
 }
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+/* =========================================================
+   BRAND UNIFICADO — mismo look que el index
+   ========================================================= */
+
+.brand-unificado{
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  text-decoration: none;
+  color: var(--text);
+  white-space: nowrap;
+}
+
+.brand-unificado .brand-logo{
+  height: 56px;
+  width: auto;
+  max-width: 180px;
+  object-fit: contain;
+  border-radius: 10px;
+  background: #000;
+  padding: 4px;
+  display: block;
+}
+
+.brand-unificado .brand-nombre{
+  font-family: var(--display);       /* Bebas Neue */
+  font-size: 2rem;
+  letter-spacing: .05em;
+  line-height: 1;
+  color: var(--text);
+  font-weight: 400;
+}
+
+.brand-unificado.sin-logo .brand-logo{ display: none; }
+.brand-unificado.sin-nombre .brand-nombre{ display: none; }
+
+/* Estado por si falla la carga */
+.brand-unificado:empty::before{
+  content: "Mi tienda";
+  font-family: var(--display);
+  font-size: 2rem;
+  color: var(--text);
+  opacity: .5;
+}
+
+@media (max-width: 720px){
+  .brand-unificado .brand-logo{ height: 44px; max-width: 140px; }
+  .brand-unificado .brand-nombre{ font-size: 1.5rem; }
+}

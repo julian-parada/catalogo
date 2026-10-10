@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#080808">
+  <title>Mi tienda — Admin</title>
+
+  <link rel="stylesheet" href="agregarPrenda.css">
+  <link rel="stylesheet" href="ajustes.css">
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+ <script src="supabaseConfig.js"></script>
+<script src="utils.js"></script>         <!-- 👈 NUEVA LÍNEA -->
+<script src="tema.js"></script>
+<script src="tienda.js"></script>
+<script src="admin.js" defer></script>
+</head>
+<body>
+
+  <main class="admin-shell">
+
+    <!-- HEADER -->
+    <header class="admin-header">
+  <a href="index.html" class="brand-unificado" id="adminBrand"></a>
+
+  <div class="header-right">
+    <div class="online-status">
+      <span class="status-dot"></span>
+    </div>
+    <button class="logout-btn" id="logoutBtn">
+      <span>↪</span>
+      Cerrar sesión
+    </button>
+  </div>
+</header>
+
+
+    <!-- INTRO -->
+    <section class="page-intro">
+      <div>
+        <span class="eyebrow">PERSONALIZACIÓN</span>
+        <h2>Mi <strong>tienda</strong></h2>
+        <p>Cambia el logo, los colores y los textos de tu catálogo. Todo se guarda con el botón del final.</p>
+      </div>
+
+            <a href="admin.html" class="add-main-btn">
+        <span class="plus">+</span>
+        <span>principal</span>
+      </a>
+
+      <a href="agregarPrenda.html" class="add-main-btn">
+        <span class="plus">+</span>
+        <span>Agregar prenda</span>
+      </a>
+    </section>
+
+
+
+
+<section class="admin-intro">
+
+
+      
+</section>
+
+
+
+
+
+
+    <!-- NAV -->
+
+
+
+    <form class="ajustes" id="tiendaForm" novalidate>
+
+      <!-- 01 IDENTIDAD -->
+      <section class="form-card">
+        <div class="form-card-header">
+          <div>
+            <span class="section-kicker">01 · IDENTIDAD</span>
+            <h3>Nombre, logo y colores</h3>
+          </div>
+          <span class="required-label">* CAMPOS REQUERIDOS</span>
+        </div>
+
+        <div class="ajustes-body">
+          <div class="form-grid">
+
+            <div class="field field-full">
+              <label for="nombre_tienda">Nombre de la tienda <span>*</span></label>
+              <div class="input-box">
+                <span class="field-icon">✦</span>
+                <input type="text" id="nombre_tienda" maxlength="60" placeholder="Ej. QualityShoes">
+              </div>
+              <small>Aparece en la barra de arriba, en el buscador, en la pestaña del navegador y en el pie de página.</small>
+            </div>
+
+            <div class="field field-full">
+              <label for="logoArchivo">Logo</label>
+              <div class="media-preview logo-preview" id="logoPreview"></div>
+              <div class="input-box">
+                <span class="field-icon">▣</span>
+                <input type="file" id="logoArchivo" accept="image/*">
+              </div>
+              <small>Lo mejor es un PNG con fondo transparente. Máximo 2 MB.</small>
+              <label class="check"><input type="checkbox" id="quitar_logo"> Quitar el logo actual</label>
+              <label class="check"><input type="checkbox" id="mostrar_nombre"> Mostrar el nombre junto al logo</label>
+            </div>
+
+            <div class="field field-full">
+              <label>Colores de la tienda</label>
+              <div class="swatches" id="paletas"></div>
+              <small>Al elegir uno, esta pantalla cambia al instante. Se aplica a toda la tienda cuando guardas.</small>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+
+      <!-- 02 CONTACTO -->
+      <section class="form-card">
+        <div class="form-card-header">
+          <div>
+            <span class="section-kicker">02 · CONTACTO</span>
+            <h3>WhatsApp y redes sociales</h3>
+          </div>
+        </div>
+
+        <div class="ajustes-body">
+          <div class="form-grid">
+
+            <div class="field field-full">
+              <label for="whatsapp">Número de WhatsApp <span>*</span></label>
+              <div class="input-box">
+                <span class="field-icon">✆</span>
+                <input type="text" id="whatsapp" inputmode="numeric" maxlength="20" placeholder="573001234567">
+              </div>
+              <small>Aquí llegan los pedidos. Si escribes los 10 dígitos de un celular colombiano, le agregamos el 57 solos.</small>
+            </div>
+
+            <div class="field">
+              <label for="instagram_url">Instagram</label>
+              <div class="input-box">
+                <span class="field-icon">◈</span>
+                <input type="text" id="instagram_url" maxlength="255" placeholder="https://instagram.com/tutienda">
+              </div>
+            </div>
+
+            <div class="field">
+              <label for="tiktok_url">TikTok</label>
+              <div class="input-box">
+                <span class="field-icon">◈</span>
+                <input type="text" id="tiktok_url" maxlength="255" placeholder="https://tiktok.com/@tutienda">
+              </div>
+            </div>
+
+            <div class="field field-full">
+              <label for="facebook_url">Facebook</label>
+              <div class="input-box">
+                <span class="field-icon">◈</span>
+                <input type="text" id="facebook_url" maxlength="255" placeholder="https://facebook.com/tutienda">
+              </div>
+              <small>Las redes salen en el pie de página. Si dejas una vacía, no aparece.</small>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+
+      <!-- 03 PORTADA -->
+      <section class="form-card">
+        <div class="form-card-header">
+          <div>
+            <span class="section-kicker">03 · PORTADA</span>
+            <h3>Lo primero que ve el cliente</h3>
+          </div>
+        </div>
+
+        <div class="ajustes-body">
+          <div class="form-grid">
+
+            <div class="field field-full">
+              <label for="bannerArchivo">Foto de fondo (banner)</label>
+              <div class="media-preview banner-preview" id="bannerPreview"></div>
+              <div class="input-box">
+                <span class="field-icon">▣</span>
+                <input type="file" id="bannerArchivo" accept="image/*">
+              </div>
+              <small>Foto horizontal, de al menos 1600 px de ancho. Máximo 5 MB.</small>
+              <label class="check"><input type="checkbox" id="quitar_banner"> Quitar la foto y usar la de por defecto</label>
+            </div>
+
+            <div class="field field-full">
+              <label for="portada_frase">Frase pequeña</label>
+              <div class="input-box">
+                <span class="field-icon">✦</span>
+                <input type="text" id="portada_frase" maxlength="80" placeholder="Ej. Streetwear • Calidad • Actitud">
+              </div>
+              <small>Va encima del título. Si la dejas vacía, no se muestra.</small>
+            </div>
+
+            <div class="field">
+              <label for="portada_titulo">Título <span>*</span></label>
+              <div class="input-box">
+                <span class="field-icon">✦</span>
+                <input type="text" id="portada_titulo" maxlength="60" placeholder="Ej. Catálogo">
+              </div>
+            </div>
+
+            <div class="field">
+              <label for="portada_boton">Texto del botón</label>
+              <div class="input-box">
+                <span class="field-icon">✦</span>
+                <input type="text" id="portada_boton" maxlength="30" placeholder="Ej. Ver catálogo">
+              </div>
+            </div>
+
+            <div class="field field-full">
+              <label for="portada_subtitulo">Subtítulo</label>
+              <textarea id="portada_subtitulo" maxlength="160" placeholder="Una o dos frases que expliquen cómo comprar en tu tienda"></textarea>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+
+      <!-- 04 CATÁLOGO -->
+      <section class="form-card">
+        <div class="form-card-header">
+          <div>
+            <span class="section-kicker">04 · CATÁLOGO</span>
+            <h3>Título de la sección y mensaje de pedido</h3>
+          </div>
+        </div>
+
+        <div class="ajustes-body">
+          <div class="form-grid">
+
+            <div class="field">
+              <label for="catalogo_etiqueta">Etiqueta pequeña</label>
+              <div class="input-box">
+                <span class="field-icon">✦</span>
+                <input type="text" id="catalogo_etiqueta" maxlength="40" placeholder="Ej. Nueva colección">
+              </div>
+            </div>
+
+            <div class="field">
+              <label for="catalogo_titulo">Título de la sección <span>*</span></label>
+              <div class="input-box">
+                <span class="field-icon">✦</span>
+                <input type="text" id="catalogo_titulo" maxlength="60" placeholder="Ej. Escoge tus prendas">
+              </div>
+            </div>
+
+            <div class="field field-full">
+              <label for="mensaje_saludo">Saludo del mensaje de WhatsApp <span>*</span></label>
+              <textarea id="mensaje_saludo" maxlength="200" placeholder="Hola, buen día 👋 Quiero hacer este pedido:"></textarea>
+              <small>Es la primera línea que recibe tu tienda con cada pedido. Después van el link con las fotos y el total.</small>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+
+      <!-- 05 PIE DE PÁGINA -->
+      <section class="form-card">
+        <div class="form-card-header">
+          <div>
+            <span class="section-kicker">05 · PIE DE PÁGINA</span>
+            <h3>Ubicación y datos del local</h3>
+          </div>
+        </div>
+
+        <div class="ajustes-body">
+          <div class="form-grid">
+
+            <div class="field field-full">
+              <label for="footer_texto">Texto corto</label>
+              <textarea id="footer_texto" maxlength="200" placeholder="Una frase sobre tu tienda"></textarea>
+            </div>
+
+            <div class="field">
+              <label for="footer_direccion">Dirección</label>
+              <div class="input-box">
+                <span class="field-icon">⌖</span>
+                <input type="text" id="footer_direccion" maxlength="160" placeholder="Ej. Calle 10 # 5-20, Centro">
+              </div>
+            </div>
+
+            <div class="field">
+              <label for="footer_horario">Horario</label>
+              <div class="input-box">
+                <span class="field-icon">◷</span>
+                <input type="text" id="footer_horario" maxlength="160" placeholder="Ej. Lun a Sáb, 9am a 7pm">
+              </div>
+            </div>
+
+            <div class="field field-full">
+              <label for="footer_mapa_url">Link de Google Maps</label>
+              <div class="input-box">
+                <span class="field-icon">⌖</span>
+                <input type="text" id="footer_mapa_url" maxlength="255" placeholder="https://maps.app.goo.gl/...">
+              </div>
+              <small>En Google Maps busca tu local, toca «Compartir» y pega aquí el link.</small>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+
+      <div class="form-msg" id="formMsg"></div>
+
+      <div class="form-actions">
+        <a href="admin.html" class="cancel-btn">Volver</a>
+
+        <button type="submit" class="submit-btn" id="guardarBtn">
+          <span>✓</span>
+          GUARDAR CAMBIOS
+          <strong>→</strong>
+        </button>
+      </div>
+
+    </form>
+
+  </main>
+
+  <script src="ajustes.js"></script>
+</body>
+</html>

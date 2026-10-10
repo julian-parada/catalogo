@@ -9,6 +9,12 @@
   <title>Editar prenda — Admin</title>
 
   <link rel="stylesheet" href="agregarPrenda.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+ <script src="supabaseConfig.js"></script>
+<script src="utils.js"></script>         <!-- 👈 NUEVA LÍNEA -->
+<script src="tema.js"></script>
+<script src="tienda.js"></script>
+<script src="admin.js" defer></script>
 </head>
 
 <body>
@@ -17,23 +23,13 @@
 
     <!-- ================= HEADER ================= -->
     <header class="admin-header">
-
-      <a href="admin.html" class="brand">
-        <div class="brand-icon">C</div>
-
-        <div>
-          <span class="brand-mini">PANEL DE</span>
-          <h1>MI TIENDA</h1>
+          <a href="index.html" class="brand-unificado" id="adminBrand"></a>
         </div>
       </a>
 
       <div class="header-right">
 
-        <div class="online-status">
-          <span class="status-dot"></span>
-          <span>EN LÍNEA</span>
-        </div>
-
+       
         <button class="logout-btn" id="logoutBtn">
           <span>↪</span>
           Cerrar sesión
@@ -42,6 +38,8 @@
       </div>
 
     </header>
+
+    
 
 
     <!-- ================= INTRO ================= -->
@@ -63,53 +61,23 @@
 
       </div>
 
-      <div class="step-indicator">
+      <a href="admin.html" class="add-main-btn">
+        <span class="plus">+</span>
+        <span>principal</span>
+      </a>
 
-        <span class="step-active">
-          01
-        </span>
+      <a href="agregarPrenda.html" class="add-main-btn">
+        <span class="plus">+</span>
+        <span>Agregar prenda</span>
+      </a>
 
-        <span class="step-line"></span>
 
-        <span>
-          02
-        </span>
-
-      </div>
 
     </section>
 
 
     <!-- ================= NAVEGACIÓN ================= -->
-    <nav class="admin-tabs">
 
-      <a href="admin.html" class="admin-tab">
-
-        <span class="tab-icon">⌂</span>
-
-        Principal
-
-      </a>
-
-
-      <a href="agregarPrenda.html" class="admin-tab">
-
-        <span class="tab-icon">＋</span>
-
-        Agregar prenda
-
-      </a>
-
-
-      <a href="#" class="admin-tab active">
-
-        <span class="tab-icon">✎</span>
-
-        Editar prenda
-
-      </a>
-
-    </nav>
 
 
     <!-- ================= CONTENIDO ================= -->
@@ -519,9 +487,7 @@
 
   <!-- ================= SCRIPTS ================= -->
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-  <script src="supabaseConfig.js"></script>
+  
 
   <script src="editarPrenda.js"></script>
 

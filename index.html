@@ -7,15 +7,43 @@
   <title>Catálogo | 324 734 8475</title>
   <meta name="description" content="Catálogo de gorras. Selecciona tus modelos y haz tu pedido por WhatsApp.">
   <link rel="stylesheet" href="style.css">
+  
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabaseConfig.js"></script>
+<script src="tema.js"></script>
+
 </head>
 
 <body>
+  
+  <div class="topbar">
+  <div class="topbar-inner">
+    <a class="brand-unificado" id="topbarBrand"></a>
+
+    <nav class="cat-nav" id="catNav" aria-label="Categorías">
+      <div class="cat-dropdown" id="catDropdown" hidden>
+        <button type="button" class="cat-link cat-trigger" id="catTrigger" aria-haspopup="true" aria-expanded="false">
+          <span id="catTriggerLabel">Categorías</span>
+          <svg class="chev" viewBox="0 0 12 12" aria-hidden="true"><path d="M2 4.5 6 8.5 10 4.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <div class="cat-menu" id="catMenu" hidden></div>
+      </div>
+
+      <button type="button" class="cat-link cat-nuevo" id="btnNuevos" data-cat="__nuevos__" hidden>Productos Nuevos</button>
+      <button type="button" class="cat-link cat-promo" id="btnPromos" data-cat="__promos__" hidden>Promociones</button>
+    </nav>
+
+    <input id="searchInput" type="search" placeholder="Buscar">
+  </div>
+</div>
+
   <header class="hero">
     <div class="hero-overlay">
-      <span class="tag">STREETWEAR • CALIDAD • ACTITUD</span>
-      <h1>CATÁLOGO</h1>
-      <p>Elige tus modelos, arma tu pedido y envíalo directamente por WhatsApp.</p>
-      <a href="#catalogo" class="btn btn-primary">VER CATÁLOGO</a>
+      <span data-cfg="portada_frase" class="tag">STREETWEAR • CALIDAD • ACTITUD</span>
+      <a class="brand-unificado" id="adminBrand"></a>
+      <p data-cfg="portada_subtitulo"></p>
+      <a href="#catalogo" class="btn btn-primary" data-cfg="portada_boton"></a>
     </div>
   </header>
 
@@ -23,39 +51,21 @@
     <section class="section" id="catalogo">
       <div class="section-title">
         <div>
-          <span class="eyebrow">NUEVA COLECCIÓN</span>
-          <h2>Escoge tus LOOK</h2>
+          <span class="eyebrow" data-cfg="catalogo_etiqueta"></span>
+          <h2 data-cfg="catalogo_titulo"></h2>
         </div>
         <button class="cart-button" id="openCart"> Pedido <span id="cartCount">0</span></button>
       </div>
 
-      <div class="filters">
-  <input id="searchInput" type="search" placeholder="BUSCAR EN QualityShoes">
-  <select id="categoryFilter">
-    <option value="all">Todas</option>
-  </select>
-</div>
+
 
       
 
       <div class="products" id="products"></div>
     </section>
 
-    <section class="how">
-      <div><strong>01</strong><span>ARMA TU NUEVO OUTFIT </span></div>
-      <div><strong>02</strong><span>Añádelas al pedido</span></div>
-      <div><strong>03</strong><span>Envía por WhatsApp</span></div>
-    </section>
+    
   </main>
-
-  <footer>
-    <div>
-      <strong>CATÁLOGO</strong>
-      <p>Pedidos por WhatsApp: 324 734 8475</p>
-    </div>
-    <a href="https://wa.me/573247348475" target="_blank" rel="noopener">WhatsApp ↗</a>
-  </footer>
-
   <div class="modal" id="cartModal" aria-hidden="true">
     <div class="modal-card">
       <button class="close" id="closeCart">×</button>
@@ -77,8 +87,32 @@
   </div>
 </div>
 <div id="toast" class="toast"></div>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="script.js"></script>
+<footer class="footer" id="footer">
+  <div class="footer-inner">
+    <div class="footer-col">
+      <a href="index.html" class="footer-name" id="footerBrand"></a>
+      <p class="footer-text" id="footerTexto"></p>
+      <div class="footer-social" id="footerSocial"></div>
+    </div>
+
+    <div class="footer-col">
+      <h4>Contacto</h4>
+      <ul class="footer-list" id="footerContacto"></ul>
+    </div>
+
+    <div class="footer-col">
+      <h4>Explora</h4>
+      <ul class="footer-list" id="footerCats"></ul>
+    </div>
+  </div>
+
+  <div class="footer-bottom" id="footerCopy"></div>
+</footer>
+
+
+  <script src="tienda.js"></script>
+<script src="script.js"></script>
+  
 </body>
 
 </html>

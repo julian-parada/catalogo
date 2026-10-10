@@ -1,11 +1,18 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
+  
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#080808">
   <title>Agregar prenda — Admin</title>
   <link rel="stylesheet" href="agregarPrenda.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabaseConfig.js"></script>
+<script src="utils.js"></script>         <!-- 👈 NUEVA LÍNEA -->
+<script src="tema.js"></script>
+<script src="tienda.js"></script>
+<script src="admin.js" defer></script>
 </head>
 <body>
 
@@ -13,18 +20,16 @@
 
     <!-- HEADER -->
     <header class="admin-header">
-      <a href="admin.html" class="brand">
-        <div class="brand-icon"><img src="img/logo.jpg" alt="Logo Mi Tienda"></div>
-          <span class="brand-mini">PANEL DE</span>
-          <h1>MI TIENDA</h1>
+      
+      
+        <div>
+          
+          <a href="index.html" class="brand-unificado" id="adminBrand"></a>
         </div>
       </a>
 
       <div class="header-right">
-        <div class="online-status">
-          <span class="status-dot"></span>
-          <span>EN LÍNEA</span>
-        </div>
+        
 
         <button class="logout-btn" id="logoutBtn">
           <span>↪</span>
@@ -41,13 +46,6 @@
         <h2>Agregar <strong>prenda</strong></h2>
         <p>Completa la información y publica un nuevo producto en tu catálogo.</p>
         
-      </div>
-
-
-      <div class="step-indicator">
-        <span class="step-active">01</span>
-        <span class="step-line"></span>
-        <span>02</span>
       </div>
       <a href="admin.html" class="add-main-btn">
         <span class="plus">+</span>
@@ -157,7 +155,8 @@
                 <button type="button" data-size="M">M</button>
                 <button type="button" data-size="L">L</button>
                 <button type="button" data-size="XL">XL</button>
-                <em>Déjalo vacío para talla única.</em>
+
+                
               </div>
             </div>
 
@@ -209,7 +208,7 @@
 
         <div class="preview-copy">
           <span class="preview-category" id="previewCategory">CATEGORÍA</span>
-          <h3 id="previewName">Nombre de la prenda</h3>
+          <h3 id="previewName">Nombre del producto</h3>
           <strong id="previewPrice">$0</strong>
         </div>
 
@@ -230,8 +229,7 @@
   </main>
 
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="supabaseConfig.js"></script>
+  
   <script src="agregarPrenda.js"></script>
 
   <script>

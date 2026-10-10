@@ -1,0 +1,240 @@
+/* =====================================================
+   MI TIENDA (ajustes.html)
+   Se carga DESPUÉS de agregarPrenda.css y usa sus variables,
+   así los colores siguen la paleta que elija el cliente.
+   ===================================================== */
+
+   .admin-intro{
+  display:flex;align-items:flex-end;justify-content:space-between;gap:24px;padding:56px 0 34px;
+}
+.admin-intro h2{
+  font-family:var(--display);font-weight:400;
+  font-size:clamp(56px,9vw,104px);line-height:.92;letter-spacing:.01em;
+  text-shadow:3px 3px 0 rgba(var(--pink-rgb),.25);
+}
+.admin-intro h2 strong{
+  font-weight:400;
+  background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;
+  text-shadow:none;
+}
+.admin-intro p{color:var(--muted);margin-top:16px;font-size:16px}
+@media (max-width:720px){
+  .admin-shell{width:calc(100% - 28px);padding-top:18px}
+  .online-status{display:none}
+  .admin-intro{flex-direction:column;align-items:flex-start;padding:36px 0 24px}
+  .add-main-btn{width:100%}
+  .admin-products > *{flex-wrap:wrap;gap:16px}
+  .admin-products img{width:80px;height:80px}
+  .login-card{padding:28px}
+  .login-heading h1{font-size:68px}
+}
+.add-main-btn{padding:17px 26px;font-size:14px;letter-spacing:.04em;font-weight:700;white-space:nowrap}
+.add-main-btn .plus{font-size:20px;line-height:1}
+
+.btn-primary,.add-main-btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:12px;
+  border:0;border-radius:12px;background:var(--grad);color:#fff;
+  font-size:13px;font-weight:800;letter-spacing:.12em;
+  box-shadow:0 10px 28px rgba(var(--pink-rgb),.32);
+  transition:transform .2s,box-shadow .2s,filter .2s;
+}
+.btn-primary{width:100%;padding:17px 24px;margin-top:6px}
+.btn-primary:hover,.add-main-btn:hover{
+  transform:translateY(-2px);filter:brightness(1.08);box-shadow:0 14px 34px rgba(var(--pink-rgb),.42);
+}
+
+.ajustes{
+  display:flex;
+  flex-direction:column;
+  gap:26px;
+  max-width:860px;
+}
+
+.ajustes-body{padding:30px}
+
+.ajustes textarea{min-height:92px}
+
+/* Casillas (quitar logo, mostrar nombre...) */
+.field .check{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin:14px 0 0;
+  font-size:14px;
+  font-weight:600;
+  cursor:pointer;
+}
+.field .check input{
+  width:18px;
+  height:18px;
+  accent-color:var(--pink);
+  cursor:pointer;
+}
+
+/* Vista previa del logo y del banner */
+.media-preview{
+  display:grid;
+  place-items:center;
+  margin-bottom:12px;
+  overflow:hidden;
+  background:var(--bg);
+  border:1px dashed var(--line);
+  border-radius:12px;
+}
+.media-preview img{display:block}
+.media-preview .empty-note{
+  padding:18px;
+  color:var(--muted);
+  font-size:13px;
+  text-align:center;
+}
+
+.logo-preview{min-height:96px;padding:14px}
+.logo-preview img{max-height:72px;max-width:100%;object-fit:contain}
+
+.banner-preview{aspect-ratio:16 / 6}
+.banner-preview img{width:100%;height:100%;object-fit:cover}
+
+/* Selector de paleta */
+.swatches{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(130px,1fr));
+  gap:12px;
+}
+.swatch{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:12px 14px;
+  background:var(--bg);
+  border:1px solid var(--line);
+  border-radius:12px;
+  color:var(--text);
+  font-size:13px;
+  font-weight:700;
+  text-align:left;
+  transition:border-color .2s,box-shadow .2s;
+}
+.swatch i{
+  flex:none;
+  width:28px;
+  height:28px;
+  border-radius:50%;
+}
+.swatch:hover{border-color:var(--muted)}
+.swatch.selected{
+  border-color:var(--pink);
+  box-shadow:0 0 0 4px var(--pink-soft);
+}
+
+@media (max-width:640px){
+  .ajustes-body{padding:20px}
+  .banner-preview{aspect-ratio:16 / 9}
+}
+
+.hero p{ color: var(--soft-white); }
+h1{ color: var(--white); }
+.hero{
+  background:
+    linear-gradient(90deg,
+      rgba(var(--black-rgb, 7,7,7), .96) 0%,
+      rgba(var(--black-rgb, 7,7,7), .78) 35%,
+      rgba(var(--black-rgb, 7,7,7), .40) 65%,
+      rgba(var(--black-rgb, 7,7,7), .88) 100%
+    ),
+    var(--hero-img) center/cover no-repeat;
+}
+
+
+
+.brand-unificado{
+  display: inline-flex;
+  align-items: center;
+  gap: 14px;
+  text-decoration: none;
+  color: var(--white);
+  white-space: nowrap;
+}
+
+.brand-unificado .brand-logo{
+  height: 52px;         /* 👈 Logo más grande */
+  width: auto;
+  max-width: 180px;
+  object-fit: contain;
+  border-radius: 10px;
+  background: var(--card);
+  padding: 4px;
+  display: block;
+}
+
+.brand-unificado .brand-nombre{
+  font-family: "Bebas Neue", Impact, sans-serif;
+  font-size: 2rem;       /* 👈 Nombre más grande */
+  letter-spacing: .05em;
+  line-height: 1;
+  color: var(--white);
+  font-weight: 400;
+}
+
+/* Si el logo se oculta o no existe */
+.brand-unificado.sin-logo .brand-logo{
+  display: none;
+}
+
+/* Ocultar el nombre si el admin así lo decide */
+.brand-unificado.sin-nombre .brand-nombre{
+  display: none;
+}
+
+/* Responsive: en móvil un poco más pequeño */
+@media (max-width: 650px){
+  .brand-unificado .brand-logo{ height: 44px; max-width: 140px; }
+  .brand-unificado .brand-nombre{ font-size: 1.5rem; }
+}
+
+
+
+/* =========================================================
+   LAYOUT — centrar el contenido y alinear form + botones
+   ========================================================= */
+
+/* Todo el panel centrado y con un ancho consistente */
+.admin-shell{
+  width: min(980px, calc(100% - 40px));
+  margin: 0 auto;
+}
+
+/* El formulario comparte el mismo ancho que el shell */
+.ajustes{
+  max-width: none;           /* quitar el 860px restrictivo */
+  width: 100%;
+}
+
+/* Los botones de arriba van alineados a la derecha,
+   con el mismo ancho que el form */
+.admin-intro{
+  display: flex;
+  justify-content: flex-end;  /* 👈 todo pegado a la derecha */
+  align-items: center;
+  gap: 14px;
+  padding: 48px 0 28px;
+}
+
+/* Botón "principal" un poco más sobrio */
+.admin-intro .add-main-btn{
+  width: auto;                /* que no se estiren */
+  padding: 14px 22px;
+  font-size: 13px;
+}
+
+/* Responsive: en móvil, botones apilados a lo ancho */
+@media (max-width: 640px){
+  .admin-shell{ width: calc(100% - 28px); }
+  .admin-intro{
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+  .admin-intro .add-main-btn{ width: 100%; }
+}
+
