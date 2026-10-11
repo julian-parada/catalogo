@@ -2154,3 +2154,124 @@ html, body{
     scroll-margin-top: 130px;
   }
 }
+
+/* =========================================================
+   TOPBAR MOBILE — layout de 2 filas (marca + buscador / nav)
+   ========================================================= */
+
+@media (max-width: 750px){
+
+  /* El contenedor ahora permite envolver contenido */
+  .topbar-inner{
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px 8px;
+    padding: 10px 14px;
+  }
+
+  /* ---------- FILA 1: marca ---------- */
+  .brand-unificado,
+  .topbar-brand{
+    order: 1;
+    flex: 0 1 auto;
+    min-width: 0;
+  }
+  .brand-unificado .brand-logo{
+    height: 42px;
+    max-width: 110px;
+    padding: 3px;
+  }
+  .brand-unificado .brand-nombre{
+    display: inline;         /* asegurar que se vea el nombre */
+    font-size: 1.3rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* ---------- FILA 1: buscador (a la derecha del brand) ---------- */
+  .topbar #searchInput{
+    order: 2;
+    flex: 1 1 140px;         /* puede crecer/encogerse */
+    min-width: 0;
+    margin-left: auto;       /* se pega a la derecha */
+    width: auto;             /* quitar el 200px fijo de desktop */
+    font-size: .82rem;
+    padding: 9px 14px;
+    border-radius: 50px;
+  }
+
+  /* ---------- FILA 2: navegación de categorías ---------- */
+  .cat-nav{
+    order: 3;
+    flex: 1 1 100%;          /* ocupa todo el ancho de la fila 2 */
+    width: 100%;
+    display: flex;
+    gap: 4px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding: 4px 0 6px;
+    margin: 0;
+
+    /* Pista visual: el último botón se difumina para indicar scroll */
+    -webkit-mask-image: linear-gradient(
+      90deg,
+      #000 0%,
+      #000 calc(100% - 40px),
+      transparent 100%
+    );
+    mask-image: linear-gradient(
+      90deg,
+      #000 0%,
+      #000 calc(100% - 40px),
+      transparent 100%
+    );
+  }
+  .cat-nav::-webkit-scrollbar{ display: none; }
+
+  /* ---------- Botones de categoría ---------- */
+  .cat-link{
+    flex-shrink: 0;          /* no se encogen */
+    padding: 10px 14px;
+    font-size: .8rem;
+    letter-spacing: .04em;
+    white-space: nowrap;
+  }
+  .cat-link::after{
+    left: 14px;
+    right: 14px;
+    bottom: 4px;
+  }
+
+  /* Dropdown de categorías: ancho completo en móvil */
+  .cat-dropdown{ position: static; }
+  .cat-menu{
+    left: 0;
+    right: 0;
+    width: auto;
+    max-width: none;
+  }
+
+  /* Compensar la altura nueva del topbar (2 filas) al hacer anclas */
+  #catalogo{ scroll-margin-top: 140px; }
+}
+
+/* ---------- PANTALLAS MUY CHICAS (< 380px) ---------- */
+@media (max-width: 380px){
+  .brand-unificado .brand-nombre{
+    font-size: 1.1rem;
+  }
+  .brand-unificado .brand-logo{
+    height: 36px;
+  }
+  .topbar #searchInput{
+    flex: 1 1 100%;          /* en pantallas muy chicas, buscador en fila propia */
+    margin-left: 0;
+  }
+  .cat-link{
+    padding: 9px 12px;
+    font-size: .75rem;
+  }
+}
