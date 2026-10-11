@@ -1050,7 +1050,91 @@ h2{
   }
 }
 
+/* =========================================================
+   TOPBAR MOBILE — una línea con scroll horizontal
+   ========================================================= */
 
+@media (max-width: 750px){
+
+  /* Mantener TODO en una sola fila (no apilar) */
+  .topbar-inner{
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 10px;
+    padding: 10px 12px;
+    flex-wrap: nowrap;
+  }
+
+  /* El logo/nombre no se encoge */
+  .brand-unificado,
+  .topbar-brand{
+    flex-shrink: 0;
+  }
+  .brand-unificado .brand-logo{
+    height: 38px;
+    max-width: 100px;
+  }
+  .brand-unificado .brand-nombre{
+    font-size: 1.15rem;
+  }
+
+  /* Los botones del nav: scroll horizontal con dedo */
+  .cat-nav{
+    flex: 1 1 auto;
+    display: flex;
+    gap: 2px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;   /* scroll suave en iOS */
+    scrollbar-width: none;
+    flex-wrap: nowrap;
+    padding: 4px 0;
+    min-width: 0;                        /* permite que flex se encoja */
+  }
+  .cat-nav::-webkit-scrollbar{
+    display: none;
+  }
+
+  .cat-link{
+    flex-shrink: 0;                      /* los botones NO se encogen */
+    padding: 10px 12px;
+    font-size: .72rem;
+    letter-spacing: .05em;
+    white-space: nowrap;
+  }
+  .cat-link::after{
+    left: 12px;
+    right: 12px;
+    bottom: 4px;
+  }
+
+  /* El buscador: si quieres que ocupe el resto, deja así */
+  .topbar #searchInput{
+    flex-shrink: 0;
+    width: 140px;
+    font-size: .8rem;
+    padding: 8px 14px;
+  }
+
+  /* Scroll-margin para que al hacer click en "Ver catálogo" no quede tapado */
+  #catalogo{
+    scroll-margin-top: 90px;
+  }
+}
+
+/* Pantallas muy chicas: el buscador se achica aún más */
+@media (max-width: 420px){
+  .topbar #searchInput{
+    width: 100px;
+  }
+  .cat-link{
+    padding: 10px 8px;
+    font-size: .7rem;
+  }
+  .brand-unificado .brand-nombre{
+    display: none;      /* en pantallas muy chicas, solo el logo */
+  }
+}
 
 
 
@@ -1730,8 +1814,11 @@ h2{
 /* =========================================================
    BARRA SUPERIOR (marca, categorías y buscador)
    ========================================================= */
+   .topbar{
+  position: relative;    /* ← así se va con el scroll */
+}
 
-.topbar{position:sticky;top:0;z-index:10;background:rgba(10,10,10,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+
 .topbar-inner{max-width:1180px;margin:0 auto;padding:6px 20px;display:flex;align-items:center;gap:24px}
 
 .topbar-brand{display:flex;align-items:center;gap:10px;font-family:"Bebas Neue",Impact,sans-serif;font-size:1.6rem;letter-spacing:.05em;color:#fff;text-decoration:none;white-space:nowrap}
