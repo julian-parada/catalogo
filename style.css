@@ -981,18 +981,104 @@ h2{
   border-color:var(--pink);
 }
 
+.img-thumbs .thumb{
+  width: 80px;        /* antes 60px */
+  height: 80px;
+  object-fit: cover;
+  border-radius: 8px;
+  cursor: pointer;
+  opacity: .5;
+  border: 2px solid transparent;
+  background: #f5f5f5;
+  padding: 4px;
+  transition: .2s;
+}
+.img-thumbs .thumb.active{
+  opacity: 1;
+  border-color: var(--pink);
+}
+.img-thumbs .thumb:hover{
+  opacity: 1;
+}
+
+.img-modal-content{
+  position: relative;
+  max-width: 90vw;
+  text-align: center;
+}
+
+.img-nav{
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: rgba(0,0,0,.6);
+  color: #fff;
+  border: 1px solid rgba(255,255,255,.2);
+  font-size: 24px;
+  line-height: 1;
+  cursor: pointer;
+  z-index: 2;
+  transition: background .2s;
+}
+.img-nav:hover{ background: var(--pink); border-color: var(--pink); }
+.img-nav.prev{ left: 16px; }
+.img-nav.next{ right: 16px; }
+
+@media (max-width: 650px){
+  .topbar-inner{
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+    padding: 10px 14px;
+  }
+  .cat-nav{
+    width: 100%;
+    justify-content: space-between;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .cat-nav::-webkit-scrollbar{ display: none; }
+  .cat-link{
+    padding: 12px 8px;
+    font-size: .78rem;
+  }
+  .topbar #searchInput{
+    width: 100%;
+  }
+}
+
+
+
+
+
+
 /* =========================================================
    MODAL DE IMÁGENES
    ========================================================= */
 
 #imgBig{
-  max-width:100%;
-  max-height:90vh;
+  /* 👇 Tamaño forzado: grande siempre, sin importar el tamaño original */
+  width: 90vw;               /* ocupa 90% del ancho del viewport */
+  max-width: 900px;          /* pero no más de 900px */
+  height: 80vh;              /* 80% del alto del viewport */
+  max-height: 900px;
 
-  border-radius:12px;
+  /* 👇 Esto evita que la imagen se deforme */
+  object-fit: contain;
 
-  box-shadow:
-    0 25px 70px rgba(0,0,0,.7);
+  /* 👇 Fondo claro para fotos con transparencia (como la del Milan) */
+  background: #f5f5f5;
+  padding: 20px;
+  border-radius: 12px;
+
+  box-shadow: 0 25px 70px rgba(0,0,0,.7);
+
+  /* 👇 Para que no quede pegada al borde superior si la pantalla es grande */
+  display: block;
+  margin: 0 auto;
 }
 
 .img-modal-content{
@@ -1817,4 +1903,99 @@ h2{
 @media (max-width: 650px){
   .brand-unificado .brand-logo{ height: 44px; max-width: 140px; }
   .brand-unificado .brand-nombre{ font-size: 1.5rem; }
+}
+
+/* ===== Aprovechar el ancho de la pantalla ===== */
+.topbar-inner,
+.hero-overlay,
+.section,
+.footer-inner,
+.footer-bottom {
+  max-width: 1600px;
+  width: min(94%, 1600px);
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Más productos por fila, tarjetas que se adaptan */
+.products {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 24px;
+}
+
+/* ===== Botón "Pedido" más grande ===== */
+.cart-button {
+  font-size: 1.25rem;
+  padding: 18px 32px;
+  border-radius: 999px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, .45);
+}
+
+.cart-button #cartCount {
+  font-size: 1.1rem;
+  min-width: 30px;
+  height: 30px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
+
+/* ============ FIX MOBILE — espacios y overflow ============ */
+
+/* Evitar scroll horizontal en móvil */
+html, body{
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
+/* El hero::after (franja decorativa) no debe salirse del viewport */
+.hero::after{
+  left: 0;
+  right: 0;
+}
+
+/* Reducir padding del catálogo en móvil */
+@media (max-width: 750px){
+  .section{
+    padding: 40px 0 60px;   /* antes era 100px en cada lado */
+  }
+  .hero{
+    min-height: 70vh;
+  }
+  /* El título del catálogo no debe heredar padding gigante */
+  .section-title{
+    margin-bottom: 20px;
+  }
+}
+
+/* Si la sección .how no existe o está vacía, no deja hueco */
+.how:empty{
+  display: none;
+}
+
+/* El footer no debe tener un gap enorme arriba */
+.footer{
+  margin-top: 0;
+}
+/* ============ HERO MOBILE ============ */
+@media (max-width: 650px){
+  .hero-overlay{
+    padding: 40px 20px;   /* menos padding para que no se corte */
+  }
+  .hero h1,
+  .hero h1 span{
+    font-size: clamp(3rem, 18vw, 5rem);
+    line-height: .85;
+  }
+  .hero p{
+    font-size: .95rem;
+  }
+  /* El botón "Ver catálogo" debe ser cómodo de tocar */
+  .hero .btn-primary{
+    padding: 14px 22px;
+    font-size: .85rem;
+  }
 }

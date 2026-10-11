@@ -444,6 +444,24 @@ document.getElementById("cartModal").addEventListener("click", e => {
   if(e.target.id === "cartModal") e.currentTarget.classList.remove("show");
 });
 document.getElementById("sendWhatsapp").onclick = sendWhatsapp;
+// Navegación con teclado en la galería
+document.addEventListener("keydown", (e) => {
+  const modal = document.getElementById("imgModal");
+  if(!modal.classList.contains("show")) return;
+
+  if(e.key === "ArrowRight" && currentGallery.length > 1){
+    currentIndex = (currentIndex + 1) % currentGallery.length;
+    renderGallery();
+  }
+  if(e.key === "ArrowLeft" && currentGallery.length > 1){
+    currentIndex = (currentIndex - 1 + currentGallery.length) % currentGallery.length;
+    renderGallery();
+  }
+  if(e.key === "Escape"){
+    modal.classList.remove("show");
+  }
+});
+
 
 cargarProductos();
 renderCart();

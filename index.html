@@ -11,6 +11,7 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabaseConfig.js"></script>
+<script src="utils.js"></script> 
 <script src="tema.js"></script>
 
 </head>
@@ -41,7 +42,6 @@
   <header class="hero">
     <div class="hero-overlay">
       <span data-cfg="portada_frase" class="tag">STREETWEAR • CALIDAD • ACTITUD</span>
-      <a class="brand-unificado" id="adminBrand"></a>
       <p data-cfg="portada_subtitulo"></p>
       <a href="#catalogo" class="btn btn-primary" data-cfg="portada_boton"></a>
     </div>
@@ -81,17 +81,22 @@
     </div>
   </div>
   <div class="modal" id="imgModal">
-  <div class="img-modal-content">
-    <img id="imgBig" src="" alt="">
-    <div id="imgThumbs" class="img-thumbs"></div>
-  </div>
+ <div class="img-modal-content">
+  <button class="img-nav prev" onclick="event.stopPropagation(); selectThumb((currentIndex - 1 + currentGallery.length) % currentGallery.length)">‹</button>
+  <img id="imgBig" src="" alt="">
+  <button class="img-nav next" onclick="event.stopPropagation(); selectThumb((currentIndex + 1) % currentGallery.length)">›</button>
+  <div id="imgThumbs" class="img-thumbs"></div>
+</div>
 </div>
 <div id="toast" class="toast"></div>
+
+
+
+
 <footer class="footer" id="footer">
   <div class="footer-inner">
     <div class="footer-col">
-      <a href="index.html" class="footer-name" id="footerBrand"></a>
-      <p class="footer-text" id="footerTexto"></p>
+      
       <div class="footer-social" id="footerSocial"></div>
     </div>
 
