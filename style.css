@@ -1814,11 +1814,9 @@ h2{
 /* =========================================================
    BARRA SUPERIOR (marca, categorías y buscador)
    ========================================================= */
-   .topbar{
-  position: relative;    /* ← así se va con el scroll */
-}
 
 
+.topbar{position:relative;z-index:10;background:rgba(10,10,10,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
 .topbar-inner{max-width:1180px;margin:0 auto;padding:6px 20px;display:flex;align-items:center;gap:24px}
 
 .topbar-brand{display:flex;align-items:center;gap:10px;font-family:"Bebas Neue",Impact,sans-serif;font-size:1.6rem;letter-spacing:.05em;color:#fff;text-decoration:none;white-space:nowrap}
@@ -2034,8 +2032,8 @@ h2{
 
 /* Evitar scroll horizontal en móvil */
 html, body{
-  overflow-x: hidden;
-  max-width: 100vw;
+  overflow-x: hidden;   /* ✅ solo bloquea horizontal */
+  overflow-y: auto;     /* ✅ permite vertical */
 }
 
 /* El hero::after (franja decorativa) no debe salirse del viewport */
@@ -2084,5 +2082,75 @@ html, body{
   .hero .btn-primary{
     padding: 14px 22px;
     font-size: .85rem;
+  }
+}
+
+/* BARRA SUPERIOR FIJA: acompaña al bajar */
+
+.topbar{
+  position:sticky!important;
+  top:0!important;
+}
+
+/* overflow-x:hidden en el body puede romper el sticky; clip recorta igual pero no lo rompe */
+body{overflow-x:clip}
+
+/* En celular la barra ocupa mucho (marca + menú + buscador apilados): se compacta */
+
+
+
+
+/* overflow-x:hidden en el body puede romper el sticky; clip recorta igual pero no lo rompe */
+body{overflow-x:clip}
+
+/* BARRA SUPERIOR FIJA: acompaña al bajar */
+
+.topbar{
+  position:sticky!important;
+  top:0!important;
+}
+
+/* overflow-x:hidden en el body puede romper el sticky; clip recorta igual pero no lo rompe */
+body{overflow-x:clip}
+
+/* En celular la barra ocupa mucho (marca + menú + buscador apilados): se compacta */
+@media(max-width:650px){
+  .topbar-inner{padding:6px 14px;gap:6px}
+  .topbar-brand{font-size:1.4rem}
+  .brand-logo{height:32px}
+  .cat-link{padding:10px 8px}
+  .cat-link::after{bottom:5px}
+  .topbar #searchInput{padding:8px 14px}
+}
+/* =========================================================
+   TOPBAR STICKY — la barra se queda pegada arriba
+   ========================================================= */
+
+/* 1. Permitir que html/body tengan scroll normal SIN romper sticky */
+html, body{
+  overflow-x: clip;   /* 👈 'clip' NO rompe sticky (a diferencia de 'hidden') */
+  overflow-y: visible;
+}
+
+/* 2. La barra se queda pegada arriba */
+.topbar{
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 100;        /* más alto que el hero, modales secundarios, etc. */
+  background: rgba(10, 10, 10, .92);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--line);
+}
+
+/* 3. Compensar la altura de la barra al hacer scroll a #catalogo */
+#catalogo{
+  scroll-margin-top: 80px;
+}
+
+/* 4. En móvil, la barra puede ser más alta por el layout en columna */
+@media (max-width: 750px){
+  #catalogo{
+    scroll-margin-top: 130px;
   }
 }

@@ -461,7 +461,14 @@ document.addEventListener("keydown", (e) => {
     modal.classList.remove("show");
   }
 });
-
+(function(){
+  const barra = document.querySelector(".topbar");
+  if(!barra) return;
+  const medir = () => document.documentElement.style.setProperty("--topbar-h", barra.offsetHeight + "px");
+  medir();
+  window.addEventListener("resize", medir);
+  if(window.ResizeObserver) new ResizeObserver(medir).observe(barra);
+})();
 
 cargarProductos();
 renderCart();
