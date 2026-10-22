@@ -308,6 +308,8 @@ async function sendWhatsapp(){
   if(!numero){ alert("La tienda todavía no tiene un número de WhatsApp configurado."); return; }
   const saludo = window.CFG.mensaje_saludo || "Hola, quiero hacer este pedido:";
 
+  
+
   const btn = document.getElementById("sendWhatsapp");
   btn.disabled = true;
   btn.textContent = "Generando pedido...";
@@ -470,5 +472,53 @@ document.addEventListener("keydown", (e) => {
   if(window.ResizeObserver) new ResizeObserver(medir).observe(barra);
 })();
 
+
+// script.js de la página del CLIENTE
+async function verificarEstado() {
+  // Identificador único de esta página (debe coincidir con la tabla en Supabase)
+  const miUrl = "tienda-xyz"; 
+
+  // Llamamos a la función segura que creamos en Supabase
+ // ✅ Correcto
+const { data, error } = await supabaseClient.rpc('verificar_suscripcion', { p_url: miUrl });
+
+  if (error) {
+    console.error("Error verificando suscripción:", error);
+    return;
+  }
+
+  // Si no encuentra la página o está suspendida
+  if (!data || data.length === 0 || data[0].estado === 'suspendido') {
+    bloquearPagina();
+    return;
+  }
+
+  // Si la fecha de vencimiento ya pasó
+  const hoy = new Date();
+  const vencimiento = new Date(data[0].fecha_vencimiento);
+  
+  if (hoy > vencimiento) {
+    bloquearPagina();
+  }
+}
+
+function bloquearPagina() {
+  document.body.innerHTML = `
+    <div style="display:flex; flex-direction:column; justify-content:center; align-items:center; height:100vh; background:#070707; color:white; text-align:center; font-family:sans-serif; padding:20px;">
+      <h1 style="font-size:3rem; color:#ff1493; font-family:'Bebas Neue', sans-serif;">SERVICIO SUSPENDIDO</h1>
+      <p style="font-size:1.2rem; max-width:400px;">El servicio de esta página web se encuentra temporalmente inactivo por falta de pago o mantenimiento.</p>
+      <a href="https://wa.me/573000000000" style="margin-top:20px; padding:12px 24px; background:#25D366; color:white; text-decoration:none; border-radius:8px; font-weight:bold;">Contactar al Proveedor</a>
+    </div>
+  `;
+}
+
+
+// Ejecutar al cargar la página
+document.addEventListener('DOMContentLoaded', verificarEstado);
+
+
+
+
 cargarProductos();
 renderCart();
+

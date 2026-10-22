@@ -2,6 +2,147 @@
 // Solo cambia colores de acento. Los fondos y grises de cada página no se tocan.
 
 const PALETAS = {
+    // ==========================================
+  // PALETAS CLÁSICAS Y DE LUJO
+  // ==========================================
+  esmeralda_lujo: {
+    acento:       "#059669", // Verde esmeralda
+    acentoClaro:  "#10b981",
+    acentoOscuro: "#064e3b",
+    secundario:   "#fbbf24", // Dorado
+    bg:           "#022c22", // Fondo verde muy oscuro
+    bg2:          "#064e3b",
+    card:         "#064e3b",
+    texto:        "#ecfdf5",
+    textoSuave:   "#a7f3d0",
+    textoAcento:  "#ffffff",
+    borde:        "#065f46"
+  },
+  borgona_oro: {
+    acento:       "#9f1239", // Vino/Borgoña
+    acentoClaro:  "#e11d48",
+    acentoOscuro: "#4c0519",
+    secundario:   "#d4af37", // Oro puro
+    bg:           "#0c0002", 
+    bg2:          "#1a0006",
+    card:         "#26000b",
+    texto:        "#fdf8f8",
+    textoSuave:   "#d4a3ab",
+    textoAcento:  "#ffffff",
+    borde:        "#4c0519"
+  },
+  azul_marino_oro: {
+    acento:       "#1e3a8a", // Azul marino clásico
+    acentoClaro:  "#3b82f6",
+    acentoOscuro: "#172554",
+    secundario:   "#fbbf24", // Dorado
+    bg:           "#0f172a",
+    bg2:          "#1e293b",
+    card:         "#1e293b",
+    texto:        "#f8fafc",
+    textoSuave:   "#94a3b8",
+    textoAcento:  "#ffffff",
+    borde:        "#334155"
+  },
+  marfil_minimal: {
+    acento:       "#78350f", // Café oscuro / Chocolate
+    acentoClaro:  "#b45309",
+    acentoOscuro: "#451a03",
+    secundario:   "#d97706",
+    bg:           "#fafaf9", // Fondo marfil/beige
+    bg2:          "#f5f5f4",
+    card:         "#ffffff",
+    texto:        "#1c1917", // Texto casi negro para contrastar
+    textoSuave:   "#78716c",
+    textoAcento:  "#ffffff",
+    borde:        "#e7e5e4"
+  },
+
+  // ==========================================
+  // PALETAS URBANAS Y DE ALTA COSTURA
+  // ==========================================
+  concreto_neon: {
+    acento:       "#ea580c", // Naranja quemado urbano
+    acentoClaro:  "#f97316",
+    acentoOscuro: "#9a3412",
+    secundario:   "#facc15",
+    bg:           "#18181b", // Gris concreto
+    bg2:          "#27272a",
+    card:         "#27272a",
+    texto:        "#fafafa",
+    textoSuave:   "#a1a1aa",
+    textoAcento:  "#ffffff",
+    borde:        "#3f3f46"
+  },
+  cyberpunk_musico: {
+    acento:       "#06b6d4", // Cyan brillante (estilo neón)
+    acentoClaro:  "#22d3ee",
+    acentoOscuro: "#0891b2",
+    secundario:   "#d946ef", // Magenta neón
+    bg:           "#000000", // Negro puro
+    bg2:          "#09090b",
+    card:         "#18181b",
+    texto:        "#f4f4f5",
+    textoSuave:   "#a1a1aa",
+    textoAcento:  "#000000", // Texto negro sobre cyan para que se lea
+    borde:        "#27272a"
+  },
+  blanco_negro: {
+    acento:       "#000000", // Minimalismo total
+    acentoClaro:  "#333333",
+    acentoOscuro: "#000000",
+    secundario:   "#666666",
+    bg:           "#ffffff", 
+    bg2:          "#f3f4f6",
+    card:         "#ffffff",
+    texto:        "#111827",
+    textoSuave:   "#6b7280",
+    textoAcento:  "#ffffff",
+    borde:        "#e5e7eb"
+  },
+
+  // ==========================================
+  // PALETAS FEMENINAS, DELICADAS Y MÍSTICAS
+  // ==========================================
+  rosa_pastel_crema: {
+    acento:       "#f472b6", // Rosa suave
+    acentoClaro:  "#fbcfe8",
+    acentoOscuro: "#be185d",
+    secundario:   "#fcd34d", // Amarillo suave
+    bg:           "#fdf2f8", // Fondo rosa muy claro
+    bg2:          "#ffffff",
+    card:         "#ffffff",
+    texto:        "#1f2937",
+    textoSuave:   "#6b7280",
+    textoAcento:  "#ffffff",
+    borde:        "#fbcfe8"
+  },
+  menta_lavanda: {
+    acento:       "#0d9488", // Verde menta
+    acentoClaro:  "#2dd4bf",
+    acentoOscuro: "#115e59",
+    secundario:   "#c084fc", // Lavanda
+    bg:           "#f0fdfa", // Fondo menta muy claro
+    bg2:          "#ffffff",
+    card:         "#ffffff",
+    texto:        "#134e4a",
+    textoSuave:   "#475569",
+    textoAcento:  "#ffffff",
+    borde:        "#ccfbf1"
+  },
+  amatista_mistico: {
+    acento:       "#9333ea", // Púrpura místico
+    acentoClaro:  "#c084fc",
+    acentoOscuro: "#581c87",
+    secundario:   "#f472b6", // Rosa vibrante
+    bg:           "#09090b", 
+    bg2:          "#18181b",
+    card:         "#27272a",
+    texto:        "#f4f4f5",
+    textoSuave:   "#a1a1aa",
+    textoAcento:  "#ffffff",
+    borde:        "#3f3f46"
+  },
   rosa: {
     acento:       "#ff1493",
     acentoClaro:  "#ff3ca7",
