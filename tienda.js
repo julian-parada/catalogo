@@ -107,8 +107,6 @@ function aplicarConfiguracion(cfg){
   pintarMarca(porId("topbarBrand"), cfg);
 
   // Buscador
-  const buscador = porId("searchInput");
-  if(buscador) buscador.placeholder = "Buscar en " + cfg.nombre_tienda;
 
   // Pestaña del navegador
   document.title = cfg.portada_titulo
