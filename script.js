@@ -316,41 +316,30 @@ async function sendWhatsapp(){
 
   const total = cart.reduce((a,x) => a + x.price * x.qty, 0);
 
-  const { data: pedidoNuevo, error: errorPedido } = await supabaseClient
-    .from("pedidos")
-    .insert({ total })
-    .select()
-    .single();
+  // El pedido se crea en el servidor: él valida las prendas y calcula el total con los precios reales
+  const items = cart.map(x => ({ prenda_id: x.id, talla_id: x.tallaId, cantidad: x.qty }));
+  const { data: codigoPedido, error: errorPedido } = await supabaseClient
+    .rpc("crear_pedido", { p_items: items });
 
-  if(errorPedido){
-    alert("No se pudo generar el pedido, intenta de nuevo.");
+  if(errorPedido || !codigoPedido){
+    console.error(errorPedido);
+    const noDisponible = errorPedido && /Talla no disponible|Prenda no existe/.test(errorPedido.message || "");
+    alert(noDisponible
+      ? "Alguna prenda de tu pedido ya no está disponible. Recarga el catálogo y vuelve a intentar."
+      : "No se pudo generar el pedido, intenta de nuevo.");
     btn.disabled = false;
     btn.textContent = "ENVIAR PEDIDO POR WHATSAPP";
     return;
   }
 
-  const filas = cart.map(x => ({
-    pedido_id: pedidoNuevo.id,
-    prenda_id: x.id,
-    nombre: x.name,
-    talla: x.talla,
-    precio_unitario: x.price,
-    cantidad: x.qty,
-    imagen: x.img
-  }));
+  // Total real calculado por el servidor (si esta consulta falla, se usa el del carrito)
+  let totalFinal = total;
+  const { data: resumen } = await supabaseClient.rpc("obtener_pedido", { p_codigo: codigoPedido });
+  if(resumen && resumen.total != null) totalFinal = Number(resumen.total);
 
-  const { error: errorDetalle } = await supabaseClient.from("detalle_pedido").insert(filas);
+  const urlPedido = `${window.location.origin}${window.location.pathname.replace("index.html","")}pedido.html?codigo=${codigoPedido}`;
 
-  if(errorDetalle){
-    alert("El pedido se creó pero hubo un error al guardar los productos.");
-    btn.disabled = false;
-    btn.textContent = "ENVIAR PEDIDO POR WHATSAPP";
-    return;
-  }
-
-  const urlPedido = `${window.location.origin}${window.location.pathname.replace("index.html","")}pedido.html?codigo=${pedidoNuevo.codigo}`;
-
-  const textoPlano = `${saludo}\n\n${urlPedido}\n\nTotal estimado: ${money(total)}\n\n¿Me confirman disponibilidad y tiempo de envío? Gracias.`;
+  const textoPlano = `${saludo}\n\n${urlPedido}\n\nTotal estimado: ${money(totalFinal)}\n\n¿Me confirman disponibilidad y tiempo de envío? Gracias.`;
   window.open(`https://wa.me/${numero}?text=${encodeURIComponent(textoPlano)}`, "_blank");
 
   btn.disabled = false;
@@ -521,4 +510,3 @@ document.addEventListener('DOMContentLoaded', verificarEstado);
 
 cargarProductos();
 renderCart();
-
