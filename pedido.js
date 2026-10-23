@@ -30,28 +30,21 @@ async function cargarPedido(){
     return;
   }
 
+  // El pedido se consulta por su código con una función del servidor (las tablas no son públicas)
   const { data: pedido, error: errorPedido } = await supabaseClient
-    .from("pedidos")
-    .select("id, codigo, total, creado_en")
-    .eq("codigo", codigo)
-    .single();
+    .rpc("obtener_pedido", { p_codigo: codigo });
 
   if(errorPedido || !pedido){
     wrap.innerHTML = `<div class="pedido-error"><p>No se encontró este pedido. Puede que el link esté incompleto.</p></div>`;
     return;
   }
 
-  const { data: items, error: errorItems } = await supabaseClient
-    .from("detalle_pedido")
-    .select("nombre, talla, precio_unitario, cantidad, imagen")
-    .eq("pedido_id", pedido.id);
+  const items = pedido.items || [];
 
-  if(errorItems){
-    wrap.innerHTML = `<div class="pedido-error"><p>Hubo un problema al cargar los productos de este pedido.</p></div>`;
-    return;
-  }
-
-  const fecha = new Date(pedido.creado_en).toLocaleString("es-CO", { dateStyle: "long", timeStyle: "short" });
+  // La fecha llega sin zona horaria (UTC): se marca como UTC para mostrarla en tu hora local
+  const creado = String(pedido.creado_en || "");
+  const creadoUtc = /[zZ]$|[+-]\d\d(:?\d\d)?$/.test(creado) ? creado : creado + "Z";
+  const fecha = new Date(creadoUtc).toLocaleString("es-CO", { dateStyle: "long", timeStyle: "short" });
 
   wrap.innerHTML = `
     <h1>Resumen del pedido</h1>
