@@ -1,3 +1,22 @@
+// pedido.html no carga utils.js, por eso estas funciones van aquí (así el archivo es autónomo).
+function escapeHtml(str){
+  if(str === null || str === undefined) return "";
+  return String(str)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+// Solo deja pasar links http(s) o imágenes data:image; lo demás queda vacío
+function safeUrl(url){
+  if(!url) return "";
+  const u = String(url).trim();
+  if(/^(https?:|data:image\/)/i.test(u)) return escapeHtml(u);
+  return "";
+}
+
 const params = new URLSearchParams(window.location.search);
 const codigo = params.get("codigo");
 
@@ -40,18 +59,18 @@ async function cargarPedido(){
 
     ${items.map(item => `
       <div class="pedido-item">
-        <img src="${item.imagen}" alt="${item.nombre}">
+        <img src="${safeUrl(item.imagen)}" alt="${escapeHtml(item.nombre)}">
         <div class="pedido-item-body">
-          <h3>${item.nombre}</h3>
-          <p>Talla: ${item.talla} · Cantidad: ${item.cantidad}</p>
-          <p>${money(item.precio_unitario)} c/u</p>
+          <h3>${escapeHtml(item.nombre)}</h3>
+          <p>Talla: ${escapeHtml(item.talla)} · Cantidad: ${Number(item.cantidad) || 0}</p>
+          <p>${money(Number(item.precio_unitario) || 0)} c/u</p>
         </div>
       </div>
     `).join("")}
 
     <div class="pedido-total">
       <span>Total</span>
-      <span>${money(pedido.total)}</span>
+      <span>${money(Number(pedido.total) || 0)}</span>
     </div>
   `;
 }
