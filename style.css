@@ -175,7 +175,7 @@ h2{
   border-bottom:1px solid var(--line);
 }
 .topbar-inner{
-  padding:10px 20px;
+  padding:6px 20px;
   display:flex;
   align-items:center;
   justify-content:space-between; /* Distribuye el espacio */
@@ -198,7 +198,7 @@ h2{
 }
 
 .brand-unificado .brand-logo{
-  height:50px;
+  height:42px;
   width:auto;
   max-width:130px;
   object-fit:contain;
@@ -250,7 +250,7 @@ h2{
   font-size:.85rem;
   letter-spacing:.06em;
   text-transform:uppercase;
-  padding:16px 14px;
+  padding:12px 14px;
   cursor:pointer;
   white-space:nowrap;
   flex-shrink:0;
@@ -259,7 +259,7 @@ h2{
 .cat-link::after{
   content:"";
   position:absolute;
-  left:14px; right:14px; bottom:8px;
+  left:14px; right:14px; bottom:6px;
   height:2px;
   background:var(--pink);
   transform:scaleX(0);
@@ -354,7 +354,7 @@ h2{
 /* Buscador */
 #searchInput {
   width: 160px;
-  height: 40px;
+  height: 36px;
   padding: 0 16px;
   background: var(--bg2, #171717);
   border: 1px solid var(--borde, #252525);
@@ -381,9 +381,9 @@ h2{
   color:#fff;
   border:0;
   border-radius:999px;
-  padding:12px 22px;
+  padding:9px 20px;
   font-weight:900;
-  font-size:.95rem;
+  font-size:.9rem;
   letter-spacing:.04em;
   cursor:pointer;
   flex-shrink:0;
@@ -505,13 +505,13 @@ h2{
 }
 
 @media (min-width: 1440px){
-  .topbar-inner{padding:18px 40px;}
-  .brand-unificado .brand-logo{height:68px; max-width:170px;}
-  .brand-unificado .brand-nombre{font-size:2.3rem;}
-  .cat-link{font-size:1.1rem; padding:22px 20px;}
-  #searchInput{width:160px; height:40px; font-size:1.05rem;}
-  #searchInput:focus{width:200px;}
-  .cart-button{padding:16px 30px; font-size:1.15rem;}
+  .topbar-inner{padding:8px 40px;}
+  .brand-unificado .brand-logo{height:52px; max-width:150px;}
+  .brand-unificado .brand-nombre{font-size:1.9rem;}
+  .cat-link{font-size:.98rem; padding:14px 18px;}
+  #searchInput{width:180px; height:38px; font-size:.95rem;}
+  #searchInput:focus{width:210px;}
+  .cart-button{padding:10px 24px; font-size:1rem;}
 }
 
 @media (max-width:750px){
@@ -759,47 +759,51 @@ h2{
   /* TOPBAR en Móvil (Corregido) */
   .topbar-inner{
     flex-wrap:wrap;
-    gap:8px;
-    padding:10px 14px;
+    gap:6px 8px;
+    padding:6px 12px 0;
   }
-  
+
+  /* Fila 1: marca | buscador | carrito  ·  Fila 2: categorías */
   .brand-unificado{
     order:1;
-    flex:1 1 auto;
+    flex:0 1 auto;
+    max-width:45%;
     min-width:0;
+    margin-right:0;
   }
-  .brand-unificado .brand-logo{height:40px; max-width:90px;}
-  .brand-unificado .brand-nombre{font-size:1.2rem;}
+  .brand-unificado .brand-logo{height:34px; max-width:80px;}
+  .brand-unificado .brand-nombre{font-size:1.1rem;}
 
   .cart-button{
-    order:2;
-    padding:10px 14px;
+    order:3;
+    padding:7px 12px;
     gap:6px;
-    font-size:.85rem;
+    font-size:.82rem;
   }
   .cart-button .cart-text{display:none}
   #cartCount{min-width:20px; height:20px; font-size:.72rem; padding:0 5px;}
 
   #searchInput{
-    order:3;
-    flex:1 1 100%;
-    width:100% !important;
-    height:42px;
-    font-size:.9rem;
-    padding:0 16px;
-    margin:5px 0;
+    order:2;
+    flex:1 1 0;
+    min-width:0;
+    width:auto !important;
+    height:34px;
+    font-size:.85rem;
+    padding:0 12px;
+    margin:0;
   }
-  #searchInput:focus{width:100% !important}
+  #searchInput:focus{width:auto !important}
 
   .cat-nav{
     order:4;
     flex:1 1 100%;
     width:100%;
-    padding:2px 0 4px;
+    padding:0;
     /* Quitamos el mask que rompía el dropdown */
   }
-  .cat-link{padding:10px 12px; font-size:.78rem; letter-spacing:.04em;}
-  .cat-link::after{left:12px; right:12px; bottom:4px}
+  .cat-link{padding:8px 10px; font-size:.76rem; letter-spacing:.04em;}
+  .cat-link::after{left:10px; right:10px; bottom:3px}
 
   /* Dropdown en Móvil */
   .cat-dropdown{position:static}
@@ -851,9 +855,9 @@ h2{
 }
 
 @media (max-width: 380px){
-  .brand-unificado .brand-nombre{font-size:1.05rem}
-  .brand-unificado .brand-logo{height:36px; max-width:80px}
-  .cat-link{padding:9px 10px; font-size:.72rem}
+  .brand-unificado .brand-nombre{font-size:.98rem}
+  .brand-unificado .brand-logo{height:30px; max-width:70px}
+  .cat-link{padding:8px 8px; font-size:.7rem}
   .products{gap:8px}
   .product-body{padding:8px}
   .product-body h3{font-size:.8rem}
