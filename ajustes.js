@@ -210,6 +210,7 @@ function construirFuentes(){
 
 function elegirFuente(clave){
   fuenteElegida = (typeof FUENTES !== "undefined" && FUENTES[clave]) ? clave : "moderno";
+  if(typeof aplicarFuente === "function") aplicarFuente(fuenteElegida);   // vista previa en esta pantalla
   document.querySelectorAll(".fuente").forEach(b => {
     const sel = b.dataset.fuente === fuenteElegida;
     b.classList.toggle("selected", sel);

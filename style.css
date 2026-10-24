@@ -440,10 +440,11 @@ h2{
   text-align:left;
 }
 .hero-overlay .tag{
-  font-size:clamp(1.6rem, 3.4vw, 3rem);
-  font-weight:800;
+  font-family:var(--font-titulo, "Bebas Neue", Impact, sans-serif);
+  font-weight:var(--font-titulo-peso, 400);
+  font-size:clamp(1.8rem, 3.8vw, 3.4rem);
   line-height:1.05;
-  letter-spacing:.14em;
+  letter-spacing:.06em;
   text-transform:uppercase;
   text-shadow:0 4px 24px rgba(0,0,0,.5);
 }
@@ -923,8 +924,8 @@ h2{
     margin:0 4%; display:flex; flex-direction:column; align-items:flex-start; text-align:left; gap:2px;
   }
   .hero-overlay .tag{
-    font-size:clamp(1.15rem, 5.4vw, 1.6rem); font-weight:800; line-height:1.1;
-    letter-spacing:.05em; text-transform:uppercase; text-shadow:0 2px 14px rgba(0,0,0,.55);
+    font-size:clamp(1.35rem, 6vw, 1.9rem); font-weight:var(--font-titulo-peso, 400); line-height:1.1;
+    letter-spacing:.04em; text-transform:uppercase; text-shadow:0 2px 14px rgba(0,0,0,.55);
   }
   .hero-overlay .tag::before{display:none}
   .hero-overlay p, .hero-sub{

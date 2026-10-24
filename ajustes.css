@@ -16,7 +16,17 @@
     radial-gradient(900px 500px at 100% -10%, rgba(var(--pink-rgb), .14), transparent 60%),
     var(--bg);
   color:var(--text);
+  font-family:var(--font-texto, var(--body));   /* la letra elegida se ve al instante */
 }
+/* Títulos del panel con la letra de títulos de la tienda */
+.pagina-ajustes .aj-intro h2,
+.pagina-ajustes .aj-card-head h3,
+.pagina-ajustes .brand-unificado .brand-nombre{
+  font-family:var(--font-titulo, var(--display));
+  font-weight:var(--font-titulo-peso, 400);
+}
+.pagina-ajustes .aj-intro h2 strong{font-weight:inherit}
+.pagina-ajustes .aj-card-head h3{font-size:22px; letter-spacing:.01em}
 .pagina-ajustes .admin-shell{width:min(1120px, calc(100% - 40px)); padding-bottom:120px}
 
 /* ---------- Encabezado ---------- */
