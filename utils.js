@@ -13,6 +13,13 @@ function escapeHtml(str){
     .replace(/'/g, "&#39;");
 }
 
+// Link para abrir un chat de WhatsApp con un mensaje.
+// api.whatsapp.com conserva bien tildes y caracteres especiales; wa.me a veces los daña al redirigir.
+function enlaceWhatsapp(numero, texto){
+  const n = String(numero || "").replace(/\D/g, "");
+  return `https://api.whatsapp.com/send?phone=${n}&text=${encodeURIComponent(texto || "")}`;
+}
+
 function safeUrl(url){
   if(!url) return "";
   const u = String(url).trim();

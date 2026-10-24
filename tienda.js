@@ -146,7 +146,7 @@ function pintarWhatsappFlotante(cfg){
   const numero = String(cfg.whatsapp || "").replace(/\D/g, "");
   if(numero.length < 10 || numero === "573000000000"){ btn.hidden = true; return; }
   const texto = `Hola${cfg.nombre_tienda ? " " + cfg.nombre_tienda : ""}, vi su catálogo y tengo una pregunta.`;
-  btn.href = `https://wa.me/${numero}?text=${encodeURIComponent(texto)}`;
+  btn.href = enlaceWhatsapp(numero, texto);
   btn.hidden = false;
 }
 

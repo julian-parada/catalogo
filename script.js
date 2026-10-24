@@ -423,18 +423,20 @@ async function sendWhatsapp(){
 
   guardarDatosCliente(cliente);   // para que la próxima compra ya salga lleno
 
-  const lineas = [saludo, "", `👤 ${cliente.nombre}`];
+  // Sin emojis a propósito: algunos WhatsApp (sobre todo Web/escritorio) los muestran como "�".
+  // Las *palabras entre asteriscos* WhatsApp las pone en negrita.
+  const lineas = [saludo, "", `*Cliente:* ${cliente.nombre}`];
   if(cliente.entrega === "domicilio"){
-    lineas.push(`🛵 Domicilio: ${cliente.direccion}, barrio ${cliente.barrio}`);
-    if(cliente.referencia) lineas.push(`📍 ${cliente.referencia}`);
+    lineas.push(`*Entrega:* Domicilio`, `*Dirección:* ${cliente.direccion}, barrio ${cliente.barrio}`);
+    if(cliente.referencia) lineas.push(`*Referencia:* ${cliente.referencia}`);
   }else{
-    lineas.push("🏪 Lo recojo en la tienda");
+    lineas.push("*Entrega:* Lo recojo en la tienda");
   }
-  lineas.push(`💳 Pago: ${NOMBRES_PAGO[cliente.pago]}`);
-  if(cliente.nota) lineas.push(`📝 ${cliente.nota}`);
-  lineas.push("", `🧾 Ver pedido: ${urlPedido}`, `💰 Total: ${money(totalFinal)}`, "", "¿Me confirman disponibilidad? Gracias.");
+  lineas.push(`*Pago:* ${NOMBRES_PAGO[cliente.pago]}`);
+  if(cliente.nota) lineas.push(`*Nota:* ${cliente.nota}`);
+  lineas.push("", `*Ver pedido:* ${urlPedido}`, `*Total:* ${money(totalFinal)}`, "", "¿Me confirman disponibilidad? Gracias.");
 
-  const urlWhatsapp = `https://wa.me/${numero}?text=${encodeURIComponent(lineas.join("\n"))}`;
+  const urlWhatsapp = enlaceWhatsapp(numero, lineas.join("\n"));
   // Algunos celulares bloquean la ventana nueva: en ese caso se abre en la misma pestaña
   const ventana = window.open(urlWhatsapp, "_blank");
   if(!ventana) window.location.href = urlWhatsapp;
