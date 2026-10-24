@@ -300,6 +300,66 @@ function aplicarPaleta(clave){
 }
 
 /* =========================================================
+   ESTILOS DE LETRA
+   Cada estilo = una letra para títulos + una para textos (Google Fonts).
+   La tienda usa:  var(--font-titulo)  var(--font-texto)  var(--font-titulo-peso)
+   ========================================================= */
+const FUENTES = {
+  moderno: {
+    nombre: "Moderna", descripcion: "Fuerte y llamativa",
+    titulo: "'Bebas Neue', Impact, sans-serif", texto: "'Inter', system-ui, sans-serif", peso: 400,
+    google: "family=Bebas+Neue&family=Inter:wght@400;500;600;700;800;900"
+  },
+  elegante: {
+    nombre: "Elegante", descripcion: "Fina, para marcas premium",
+    titulo: "'Playfair Display', Georgia, serif", texto: "'Lato', system-ui, sans-serif", peso: 700,
+    google: "family=Playfair+Display:wght@600;700;800&family=Lato:wght@400;700;900"
+  },
+  minimal: {
+    nombre: "Minimalista", descripcion: "Limpia y actual",
+    titulo: "'Montserrat', system-ui, sans-serif", texto: "'Montserrat', system-ui, sans-serif", peso: 800,
+    google: "family=Montserrat:wght@400;500;600;700;800;900"
+  },
+  urbano: {
+    nombre: "Urbana", descripcion: "Streetwear, deportiva",
+    titulo: "'Anton', Impact, sans-serif", texto: "'Roboto', system-ui, sans-serif", peso: 400,
+    google: "family=Anton&family=Roboto:wght@400;500;700;900"
+  },
+  clasico: {
+    nombre: "Clásica", descripcion: "Tradicional y confiable",
+    titulo: "'Cormorant Garamond', Georgia, serif", texto: "'Nunito Sans', system-ui, sans-serif", peso: 700,
+    google: "family=Cormorant+Garamond:wght@600;700&family=Nunito+Sans:wght@400;600;700;800;900"
+  },
+  divertido: {
+    nombre: "Divertida", descripcion: "Redondeada, para niños o regalos",
+    titulo: "'Fredoka', system-ui, sans-serif", texto: "'Nunito', system-ui, sans-serif", peso: 600,
+    google: "family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800;900"
+  },
+  delicado: {
+    nombre: "Delicada", descripcion: "Suave, para belleza o accesorios",
+    titulo: "'Josefin Sans', system-ui, sans-serif", texto: "'Raleway', system-ui, sans-serif", peso: 700,
+    google: "family=Josefin+Sans:wght@500;600;700&family=Raleway:wght@400;500;600;700;800;900"
+  }
+};
+
+// Carga la letra desde Google Fonts (una sola vez por estilo) y la aplica a la página
+function aplicarFuente(clave){
+  const f = FUENTES[clave] || FUENTES.moderno;
+  const id = "fuente-" + (FUENTES[clave] ? clave : "moderno");
+  if(!document.getElementById(id)){
+    const link = document.createElement("link");
+    link.id = id;
+    link.rel = "stylesheet";
+    link.href = `https://fonts.googleapis.com/css2?${f.google}&display=swap`;
+    document.head.appendChild(link);
+  }
+  const raiz = document.documentElement.style;
+  raiz.setProperty("--font-titulo", f.titulo);
+  raiz.setProperty("--font-texto", f.texto);
+  raiz.setProperty("--font-titulo-peso", String(f.peso));
+}
+
+/* =========================================================
    TIENDA ACTUAL (multi-tienda)
    ---------------------------------------------------------
    · Catálogo y pedido: la tienda sale del link  ?t=slug
@@ -370,9 +430,10 @@ window.tiendaActual = (async () => {
   }
 })();
 
-// 1) Aplica enseguida la paleta de la visita anterior a ESTA tienda (evita el parpadeo)
+// 1) Aplica enseguida la paleta (y la letra) de la visita anterior a ESTA tienda (evita el parpadeo)
 const paletaGuardada = leerLocal(claveLocal("tiendaPaleta"));
 aplicarPaleta(paletaGuardada || "rosa");
+if(!ES_PAGINA_ADMIN) aplicarFuente(leerLocal(claveLocal("tiendaFuente")) || "moderno");
 
 // 2) Una sola consulta de configuración para toda la página.
 //    Los demás scripts la reutilizan con:  const cfg = await window.configTienda;
@@ -388,6 +449,10 @@ window.configTienda = window.tiendaActual
     if(error || !data){ if(error) console.error("No se pudo leer la configuración:", error); return null; }
     aplicarPaleta(data.paleta);
     guardarLocal(claveLocal("tiendaPaleta"), data.paleta);
+    if(!ES_PAGINA_ADMIN){
+      aplicarFuente(data.fuente);
+      guardarLocal(claveLocal("tiendaFuente"), data.fuente || "moderno");
+    }
     return data;
   })
   .catch(err => { console.error(err); return null; });

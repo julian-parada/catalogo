@@ -10,6 +10,13 @@
 const CFG_CACHE = claveLocal("tiendaCfg");   // separado por tienda (viene de tema.js)
 window.CFG = null;
 
+// En las páginas del panel este archivo va en el <head>: antes de pintar
+// hay que esperar a que exista el HTML (si Supabase responde rápido, aún no está)
+const domListo = new Promise(ok => {
+  if(document.readyState === "loading") document.addEventListener("DOMContentLoaded", ok, { once: true });
+  else ok();
+});
+
 const porId = id => document.getElementById(id);
 
 // Solo links http(s): estos valores terminan en un href
@@ -71,7 +78,14 @@ function pintarFooter(cfg){
   if(contacto){
     const items = [];
     if(cfg.whatsapp)         items.push(`<li><span class="label">WhatsApp</span>+${escapeHtml(cfg.whatsapp)}</li>`);
-    if(cfg.footer_direccion) items.push(`<li><span class="label">Dirección</span>${escapeHtml(cfg.footer_direccion)}</li>`);
+    if(cfg.footer_direccion){
+      // Si la tienda puso su link de Google Maps, la dirección abre el mapa
+      const mapa = safeUrl(cfg.footer_mapa_url);
+      const dir = escapeHtml(cfg.footer_direccion);
+      items.push(`<li><span class="label">Dirección</span>${mapa ? `<a href="${mapa}" target="_blank" rel="noopener">${dir} ↗</a>` : dir}</li>`);
+    }else if(safeUrl(cfg.footer_mapa_url)){
+      items.push(`<li><span class="label">Ubicación</span><a href="${safeUrl(cfg.footer_mapa_url)}" target="_blank" rel="noopener">Ver en Google Maps ↗</a></li>`);
+    }
     if(cfg.footer_horario)   items.push(`<li><span class="label">Horario</span>${escapeHtml(cfg.footer_horario)}</li>`);
     contacto.innerHTML = items.join("");
   }
@@ -137,14 +151,16 @@ function pintarWhatsappFlotante(cfg){
 }
 
 // 1) Lo último que se guardó en este navegador: evita ver los textos de ejemplo un instante
-try{
-  const guardada = JSON.parse(localStorage.getItem(CFG_CACHE));
-  if(guardada) aplicarConfiguracion(guardada);
-}catch(e){ /* si el caché está dañado, se ignora */ }
+domListo.then(() => {
+  try{
+    const guardada = JSON.parse(localStorage.getItem(CFG_CACHE));
+    if(guardada && !window.CFG) aplicarConfiguracion(guardada);
+  }catch(e){ /* si el caché está dañado, se ignora */ }
+});
 
 // 2) Lo que hay ahora en Supabase
 if(window.configTienda){
-  window.configTienda.then(cfg => {
+  Promise.all([window.configTienda, domListo]).then(([cfg]) => {
     if(!cfg) return;
     aplicarConfiguracion(cfg);
     try{ localStorage.setItem(claveLocal("tiendaCfg"), JSON.stringify(cfg)); }catch(e){}
@@ -217,7 +233,7 @@ function pintarCategoriasFooter(cfg){
   });
 }
 
-window.configTienda.then(cfg => {
+Promise.all([window.configTienda, domListo]).then(([cfg]) => {
   if(!cfg) return;
 
   // Marca visual en las 3 páginas

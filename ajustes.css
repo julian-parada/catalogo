@@ -1,241 +1,265 @@
 /* =====================================================
    MI TIENDA (ajustes.html)
-   Se carga DESPUÉS de agregarPrenda.css y usa sus variables,
-   así los colores siguen la paleta que elija el cliente.
+   Se carga DESPUÉS de agregarPrenda.css y usa sus variables
+   (--bg, --card, --line, --text, --muted, --pink, --grad...),
+   que tema.js cambia según la paleta de la tienda.
    ===================================================== */
 
-   .admin-intro{
-  display:flex;align-items:flex-end;justify-content:space-between;gap:24px;padding:56px 0 34px;
+.pagina-ajustes{
+  overflow-x:hidden;
+  /* El panel toma TODOS los colores de la paleta (tema.js pone --black, --white...):
+     así se ve bien con paletas claras y sirve de vista previa */
+  --bg:var(--black, #0a0a0c);
+  --bg-2:var(--black-2, #111114);
+  --text:var(--white, #fff);
+  background:
+    radial-gradient(900px 500px at 100% -10%, rgba(var(--pink-rgb), .14), transparent 60%),
+    var(--bg);
+  color:var(--text);
 }
-.admin-intro h2{
-  font-family:var(--display);font-weight:400;
-  font-size:clamp(56px,9vw,104px);line-height:.92;letter-spacing:.01em;
-  text-shadow:3px 3px 0 rgba(var(--pink-rgb),.25);
-}
-.admin-intro h2 strong{
-  font-weight:400;
-  background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;
-  text-shadow:none;
-}
-.admin-intro p{color:var(--muted);margin-top:16px;font-size:16px}
-@media (max-width:720px){
-  .admin-shell{width:calc(100% - 28px);padding-top:18px}
-  .online-status{display:none}
-  .admin-intro{flex-direction:column;align-items:flex-start;padding:36px 0 24px}
-  .add-main-btn{width:100%}
-  .admin-products > *{flex-wrap:wrap;gap:16px}
-  .admin-products img{width:80px;height:80px}
-  .login-card{padding:28px}
-  .login-heading h1{font-size:68px}
-}
-.add-main-btn{padding:17px 26px;font-size:14px;letter-spacing:.04em;font-weight:700;white-space:nowrap}
-.add-main-btn .plus{font-size:20px;line-height:1}
+.pagina-ajustes .admin-shell{width:min(1120px, calc(100% - 40px)); padding-bottom:120px}
 
-.btn-primary,.add-main-btn{
-  display:inline-flex;align-items:center;justify-content:center;gap:12px;
-  border:0;border-radius:12px;background:var(--grad);color:#fff;
-  font-size:13px;font-weight:800;letter-spacing:.12em;
-  box-shadow:0 10px 28px rgba(var(--pink-rgb),.32);
-  transition:transform .2s,box-shadow .2s,filter .2s;
+/* ---------- Encabezado ---------- */
+.pagina-ajustes .admin-header{gap:12px}
+.pagina-ajustes .brand-unificado{
+  display:inline-flex; align-items:center; gap:12px; min-width:0;
+  color:var(--text); text-decoration:none;
 }
-.btn-primary{width:100%;padding:17px 24px;margin-top:6px}
-.btn-primary:hover,.add-main-btn:hover{
-  transform:translateY(-2px);filter:brightness(1.08);box-shadow:0 14px 34px rgba(var(--pink-rgb),.42);
+.pagina-ajustes .brand-unificado .brand-logo{
+  height:44px; width:auto; max-width:140px; object-fit:contain;
+  border-radius:10px; background:var(--card); padding:4px; display:block;
 }
-
-.ajustes{
-  display:flex;
-  flex-direction:column;
-  gap:26px;
-  max-width:860px;
+.pagina-ajustes .brand-unificado .brand-nombre{
+  font-family:var(--display); font-size:1.8rem; letter-spacing:.04em; line-height:1;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis; min-width:0;
 }
+.pagina-ajustes .brand-unificado.sin-logo .brand-logo,
+.pagina-ajustes .brand-unificado.sin-nombre .brand-nombre{display:none}
 
-.ajustes-body{padding:30px}
-
-.ajustes textarea{min-height:92px}
-
-/* Casillas (quitar logo, mostrar nombre...) */
-.field .check{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  margin:14px 0 0;
-  font-size:14px;
-  font-weight:600;
-  cursor:pointer;
+/* ---------- Intro ---------- */
+.aj-intro{
+  display:flex; align-items:flex-end; justify-content:space-between; gap:24px;
+  padding:44px 0 30px;
 }
-.field .check input{
-  width:18px;
-  height:18px;
-  accent-color:var(--pink);
-  cursor:pointer;
+.aj-intro h2{
+  font-family:var(--display); font-weight:400;
+  font-size:clamp(52px, 8vw, 92px); line-height:.92; letter-spacing:.01em;
 }
+.aj-intro h2 strong{
+  font-weight:400; background:var(--grad);
+  -webkit-background-clip:text; background-clip:text; color:transparent;
+}
+.aj-intro p{color:var(--muted); margin-top:12px; font-size:15px; max-width:52ch}
+.aj-intro-acciones{display:flex; gap:10px; flex-wrap:wrap}
+.aj-btn-sec{
+  display:inline-flex; align-items:center; gap:8px;
+  padding:12px 18px; border-radius:11px;
+  background:var(--bg-2); border:1px solid var(--line); color:var(--text);
+  font-size:14px; font-weight:700; white-space:nowrap;
+  transition:border-color .2s, color .2s;
+}
+.aj-btn-sec:hover{border-color:var(--pink); color:var(--pink)}
 
-/* Vista previa del logo y del banner */
+/* ---------- Layout: menú + formulario ---------- */
+.aj-layout{display:grid; grid-template-columns:200px minmax(0, 1fr); gap:28px; align-items:start}
+
+.aj-nav{
+  position:sticky; top:20px;
+  display:flex; flex-direction:column; gap:2px;
+  padding:8px; border-radius:16px;
+  background:var(--card); border:1px solid var(--line);
+}
+.aj-nav a{
+  padding:11px 14px; border-radius:10px;
+  font-size:14px; font-weight:600; color:var(--muted);
+  transition:background .15s, color .15s;
+}
+.aj-nav a:hover{color:var(--text); background:rgba(127,127,127,.1)}
+.aj-nav a.activo{color:var(--text); background:var(--pink-soft); box-shadow:inset 3px 0 0 var(--pink)}
+
+.ajustes{display:flex; flex-direction:column; gap:22px; min-width:0}
+
+/* ---------- Tarjetas ---------- */
+.aj-card{
+  background:var(--card); border:1px solid var(--line); border-radius:18px;
+  scroll-margin-top:20px; min-width:0;
+}
+.aj-card-head{padding:22px 26px 18px; border-bottom:1px solid var(--line)}
+.aj-card-head h3{font-size:20px; font-weight:700; letter-spacing:-.01em}
+.aj-card-body{padding:24px 26px; display:flex; flex-direction:column; gap:22px}
+.aj-grid{display:grid; grid-template-columns:1fr 1fr; gap:20px 18px}
+.aj-full{grid-column:1 / -1}
+
+/* ---------- Campos ---------- */
+.aj-campo{min-width:0}
+.aj-campo > label{display:block; margin-bottom:8px; font-size:13px; font-weight:700; color:var(--text)}
+.aj-campo .req{color:var(--pink)}
+.aj-campo small{display:block; margin-top:7px; font-size:12.5px; line-height:1.45; color:var(--muted)}
+.aj-campo small strong{color:var(--text)}
+
+.aj-campo input[type="text"],
+.aj-campo textarea{
+  width:100%; min-width:0;
+  padding:13px 15px; border-radius:11px;
+  background:var(--bg); border:1px solid var(--line); color:var(--text);
+  font:inherit; font-size:16px;            /* 16px: el iPhone no hace zoom al escribir */
+  outline:0; transition:border-color .2s, box-shadow .2s;
+}
+.aj-campo textarea{min-height:auto; resize:vertical}
+.aj-campo input[type="text"]:focus,
+.aj-campo textarea:focus{border-color:var(--pink); box-shadow:0 0 0 4px var(--pink-soft)}
+.aj-campo input::placeholder, .aj-campo textarea::placeholder{color:#62626d}
+
+/* Casillas */
+.check{display:flex; align-items:center; gap:10px; font-size:14px; font-weight:600; cursor:pointer; color:var(--text)}
+.check input{width:18px; height:18px; accent-color:var(--pink); cursor:pointer; flex:none}
+
+/* ---------- Logo y portada ---------- */
+.aj-media{display:flex; gap:18px; align-items:center}
+.aj-media-acciones{display:flex; flex-direction:column; gap:12px; min-width:0}
+.aj-media-fila{flex-direction:row; flex-wrap:wrap; align-items:center; gap:12px 20px; margin-top:12px}
+
 .media-preview{
-  display:grid;
-  place-items:center;
-  margin-bottom:12px;
-  overflow:hidden;
-  background:var(--bg);
-  border:1px dashed var(--line);
-  border-radius:12px;
+  display:grid; place-items:center; overflow:hidden;
+  background:var(--bg); border:1px dashed var(--line); border-radius:12px;
 }
 .media-preview img{display:block}
-.media-preview .empty-note{
-  padding:18px;
-  color:var(--muted);
-  font-size:13px;
-  text-align:center;
+.media-preview .empty-note{padding:14px; color:var(--muted); font-size:12.5px; text-align:center}
+.logo-preview{width:140px; height:110px; flex:none; padding:10px}
+.logo-preview img{max-width:100%; max-height:100%; object-fit:contain}
+.banner-preview{aspect-ratio:16 / 6; width:100%}
+.banner-preview img{width:100%; height:100%; object-fit:cover}
+
+/* Botón de subir archivo (el input real queda oculto pero accesible) */
+.aj-archivo{position:relative; display:inline-flex; width:fit-content; cursor:pointer}
+.aj-archivo input{position:absolute; inset:0; opacity:0; cursor:pointer; width:100%}
+.aj-archivo span{
+  display:inline-flex; align-items:center; gap:8px;
+  padding:10px 16px; border-radius:10px;
+  background:var(--pink-soft); border:1px solid var(--pink); color:var(--text);
+  font-size:13.5px; font-weight:700; white-space:nowrap;
+  transition:background .2s;
 }
+.aj-archivo span::before{content:"↑"; font-weight:800; color:var(--pink)}
+.aj-archivo:hover span{background:rgba(var(--pink-rgb), .24)}
+.aj-archivo input:focus-visible + span{outline:2px solid var(--pink); outline-offset:2px}
+.aj-archivo.con-archivo span::before{content:"✓"}
 
-.logo-preview{min-height:96px;padding:14px}
-.logo-preview img{max-height:72px;max-width:100%;object-fit:contain}
-
-.banner-preview{aspect-ratio:16 / 6}
-.banner-preview img{width:100%;height:100%;object-fit:cover}
-
-/* Selector de paleta */
-.swatches{
-  display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(130px,1fr));
-  gap:12px;
+/* ---------- Selector de colores ---------- */
+.aj-grupo-titulo{
+  margin:4px 0 10px; font-size:11px; font-weight:800; letter-spacing:.18em; color:var(--muted);
 }
-.swatch{
-  display:flex;
-  align-items:center;
-  gap:12px;
-  padding:12px 14px;
+.aj-grupo-titulo:not(:first-child){margin-top:18px}
+.aj-paletas-grid{display:grid; grid-template-columns:repeat(auto-fill, minmax(150px, 1fr)); gap:10px}
+
+.paleta{
+  display:flex; flex-direction:column; gap:8px; padding:8px; text-align:left;
+  width:100%; min-width:0;                 /* sin esto, un nombre largo ensancha la página */
+  background:var(--bg); border:1px solid var(--line); border-radius:14px; color:var(--text);
+  cursor:pointer; transition:border-color .2s, box-shadow .2s, transform .2s;
+}
+.paleta:hover{border-color:var(--muted); transform:translateY(-1px)}
+.paleta.selected{border-color:var(--pink); box-shadow:0 0 0 3px var(--pink-soft)}
+
+/* Mini tienda dentro de la tarjeta: fondo, tarjeta, texto y botón de la paleta */
+.paleta-muestra{
+  position:relative; display:flex; flex-direction:column; justify-content:space-between;
+  width:100%; height:72px; padding:9px; border-radius:9px; overflow:hidden;
+  box-shadow:inset 0 0 0 1px rgba(127,127,127,.25);
+}
+.paleta-muestra b{font-size:15px; font-weight:800; line-height:1}
+.paleta-muestra .pm-linea{display:block; width:60%; height:5px; border-radius:3px; opacity:.55}
+.paleta-muestra .pm-boton{
+  align-self:flex-start; padding:3px 9px; border-radius:6px;
+  font-size:9px; font-weight:800; letter-spacing:.06em;
+}
+.paleta-muestra .pm-punto{position:absolute; right:9px; top:9px; width:14px; height:14px; border-radius:50%}
+.paleta-nombre{width:100%; min-width:0; display:flex; align-items:center; justify-content:space-between; gap:6px; padding:0 4px 2px; font-size:13px; font-weight:700}
+.paleta.selected .paleta-nombre::after{content:"✓"; color:var(--pink); font-weight:900}
+
+/* ---------- Selector de letra ---------- */
+.aj-fuentes{display:grid; grid-template-columns:repeat(auto-fill, minmax(190px, 1fr)); gap:10px}
+.fuente{
+  display:flex; flex-direction:column; gap:4px; padding:14px 14px 12px; text-align:left;
+  width:100%; min-width:0;
+  background:var(--bg); border:1px solid var(--line); border-radius:14px; color:var(--text);
+  cursor:pointer; transition:border-color .2s, box-shadow .2s, transform .2s;
+}
+.fuente:hover{border-color:var(--muted); transform:translateY(-1px)}
+.fuente.selected{border-color:var(--pink); box-shadow:0 0 0 3px var(--pink-soft)}
+.fuente-muestra{
+  display:block; max-width:100%;
+  font-size:26px; line-height:1.1; letter-spacing:.01em;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+.fuente-texto{display:block; max-width:100%; font-size:13px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.fuente-pie{display:flex; justify-content:space-between; align-items:center; margin-top:6px; font-size:12px; font-weight:800; letter-spacing:.04em}
+.fuente.selected .fuente-pie::after{content:"✓"; color:var(--pink); font-weight:900}
+
+/* ---------- Barra de guardado fija ---------- */
+.aj-barra{
+  position:fixed; left:0; right:0; bottom:0; z-index:50;
   background:var(--bg);
-  border:1px solid var(--line);
-  border-radius:12px;
-  color:var(--text);
-  font-size:13px;
-  font-weight:700;
-  text-align:left;
-  transition:border-color .2s,box-shadow .2s;
+  background:color-mix(in srgb, var(--bg) 90%, transparent);
+  backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px);
+  border-top:1px solid var(--line);
+  padding:12px 0 calc(12px + env(safe-area-inset-bottom));
 }
-.swatch i{
-  flex:none;
-  width:28px;
-  height:28px;
-  border-radius:50%;
+.aj-barra-in{
+  width:min(1120px, calc(100% - 40px)); margin:0 auto;
+  display:flex; align-items:center; justify-content:space-between; gap:14px;
 }
-.swatch:hover{border-color:var(--muted)}
-.swatch.selected{
-  border-color:var(--pink);
-  box-shadow:0 0 0 4px var(--pink-soft);
-}
+.aj-barra-estado{display:flex; flex-direction:column; gap:2px; min-width:0; flex:1}
+.aj-barra .form-msg{margin:0; min-height:0; font-size:13.5px}
+.aj-barra .form-msg:empty{display:none}
+.aj-sin-guardar{font-size:13px; font-weight:700; color:var(--yellow)}
+.aj-sin-guardar[hidden]{display:none}
+.aj-barra .submit-btn{padding:14px 26px; letter-spacing:.06em; white-space:nowrap; flex:none}
 
-@media (max-width:640px){
-  .ajustes-body{padding:20px}
-  .banner-preview{aspect-ratio:16 / 9}
-}
-
-
-.hero p{ color: var(--soft-white); }
-h1{ color: var(--white); }
-.hero{
-  background:
-    linear-gradient(90deg,
-      rgba(var(--black-rgb, 7,7,7), .96) 0%,
-      rgba(var(--black-rgb, 7,7,7), .78) 35%,
-      rgba(var(--black-rgb, 7,7,7), .40) 65%,
-      rgba(var(--black-rgb, 7,7,7), .88) 100%
-    ),
-    var(--hero-img) center/cover no-repeat;
-}
-
-
-
-.brand-unificado{
-  display: inline-flex;
-  align-items: center;
-  gap: 14px;
-  text-decoration: none;
-  color: var(--white);
-  white-space: nowrap;
-}
-
-.brand-unificado .brand-logo{
-  height: 52px;         /* 👈 Logo más grande */
-  width: auto;
-  max-width: 180px;
-  object-fit: contain;
-  border-radius: 10px;
-  background: var(--card);
-  padding: 4px;
-  display: block;
-}
-
-.brand-unificado .brand-nombre{
-  font-family: "Bebas Neue", Impact, sans-serif;
-  font-size: 2rem;       /* 👈 Nombre más grande */
-  letter-spacing: .05em;
-  line-height: 1;
-  color: var(--white);
-  font-weight: 400;
-}
-
-/* Si el logo se oculta o no existe */
-.brand-unificado.sin-logo .brand-logo{
-  display: none;
-}
-
-/* Ocultar el nombre si el admin así lo decide */
-.brand-unificado.sin-nombre .brand-nombre{
-  display: none;
-}
-
-/* Responsive: en móvil un poco más pequeño */
-@media (max-width: 650px){
-  .brand-unificado .brand-logo{ height: 44px; max-width: 140px; }
-  .brand-unificado .brand-nombre{ font-size: 1.5rem; }
-}
-
-
-
-/* =========================================================
-   LAYOUT — centrar el contenido y alinear form + botones
-   ========================================================= */
-
-/* Todo el panel centrado y con un ancho consistente */
-.admin-shell{
-  width: min(980px, calc(100% - 40px));
-  margin: 0 auto;
-}
-
-/* El formulario comparte el mismo ancho que el shell */
-.ajustes{
-  max-width: none;           /* quitar el 860px restrictivo */
-  width: 100%;
-}
-
-/* Los botones de arriba van alineados a la derecha,
-   con el mismo ancho que el form */
-.admin-intro{
-  display: flex;
-  justify-content: flex-end;  /* 👈 todo pegado a la derecha */
-  align-items: center;
-  gap: 14px;
-  padding: 48px 0 28px;
-}
-
-/* Botón "principal" un poco más sobrio */
-.admin-intro .add-main-btn{
-  width: auto;                /* que no se estiren */
-  padding: 14px 22px;
-  font-size: 13px;
-}
-
-/* Responsive: en móvil, botones apilados a lo ancho */
-@media (max-width: 640px){
-  .admin-shell{ width: calc(100% - 28px); }
-  .admin-intro{
-    flex-direction: column;
-    align-items: stretch;
-    gap: 10px;
+/* ---------- Tablet ---------- */
+@media (max-width:900px){
+  .aj-layout{grid-template-columns:1fr; gap:18px}
+  /* El menú pasa a una fila deslizable y fija arriba */
+  .aj-nav{
+    top:0; z-index:40; flex-direction:row; overflow-x:auto; scrollbar-width:none;
+    border-radius:0 0 14px 14px; padding:6px;
+    background:var(--card);
   }
-  .admin-intro .add-main-btn{ width: 100%; }
+  .aj-nav::-webkit-scrollbar{display:none}
+  .aj-nav a{white-space:nowrap; padding:9px 12px; font-size:13px}
+  .aj-nav a.activo{box-shadow:inset 0 -2px 0 var(--pink)}
+  .aj-card{scroll-margin-top:64px}
 }
 
+/* ---------- Celular ---------- */
+@media (max-width:640px){
+  .pagina-ajustes .admin-shell{width:calc(100% - 24px); padding-top:14px}
+  .pagina-ajustes .brand-unificado .brand-logo{height:36px; max-width:100px}
+  .pagina-ajustes .brand-unificado .brand-nombre{font-size:1.35rem}
+  .pagina-ajustes .logout-btn{padding:10px 12px; font-size:13px}
+
+  .aj-intro{flex-direction:column; align-items:stretch; gap:16px; padding:26px 0 18px}
+  .aj-intro h2{font-size:52px}
+  .aj-intro p{font-size:14px}
+  .aj-intro-acciones{display:grid; grid-template-columns:1fr 1fr}
+  .aj-btn-sec{justify-content:center; padding:11px 10px; font-size:13px}
+
+  .aj-card{border-radius:16px}
+  .aj-card-head{padding:18px 16px 14px}
+  .aj-card-head h3{font-size:18px}
+  .aj-card-body{padding:18px 16px; gap:18px}
+  .aj-grid{grid-template-columns:1fr; gap:18px}
+
+  .aj-media{flex-direction:column; align-items:stretch}
+  .logo-preview{width:100%; height:100px}
+  .banner-preview{aspect-ratio:16 / 8}
+
+  .aj-paletas-grid{grid-template-columns:repeat(2, minmax(0, 1fr)); gap:8px}
+  .paleta-muestra{height:62px}
+  .aj-fuentes{grid-template-columns:repeat(2, minmax(0, 1fr)); gap:8px}
+  .fuente{padding:12px 10px 10px}
+  .fuente-muestra{font-size:22px}
+
+  .aj-barra-in{width:calc(100% - 24px)}
+  .aj-barra .submit-btn{padding:13px 18px; font-size:12.5px}
+}

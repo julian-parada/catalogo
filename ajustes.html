@@ -10,325 +10,262 @@
   <link rel="stylesheet" href="ajustes.css">
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
- <script src="supabaseConfig.js"></script>
-<script src="utils.js"></script>         <!-- 👈 NUEVA LÍNEA -->
-<script src="tema.js"></script>
-<script src="tienda.js"></script>
+  <script src="supabaseConfig.js"></script>
+  <script src="utils.js"></script>
+  <script src="tema.js"></script>
+  <script src="tienda.js"></script>
 </head>
-<body>
+<body class="pagina-ajustes">
 
   <main class="admin-shell">
 
-    <!-- HEADER -->
+    <!-- ENCABEZADO -->
     <header class="admin-header">
-  <a href="index.html" class="brand-unificado" id="adminBrand"></a>
-
-  <div class="header-right">
-    <div class="online-status">
-      <span class="status-dot"></span>
-    </div>
-    <button class="logout-btn" id="logoutBtn">
-      <span>↪</span>
-      Cerrar sesión
-    </button>
-  </div>
-</header>
-
-
-    <!-- INTRO -->
-    <section class="page-intro">
-      <div>
-        <span class="eyebrow">PERSONALIZACIÓN</span>
-        <h2>Mi <strong>tienda</strong></h2>
-        <p>Cambia el logo, los colores y los textos de tu catálogo. Todo se guarda con el botón del final.</p>
-      </div>
-
-            <a href="admin.html" class="add-main-btn">
-        <span class="plus">+</span>
-        <span>principal</span>
-      </a>
-
-      <a href="agregarPrenda.html" class="add-main-btn">
-        <span class="plus">+</span>
-        <span>Agregar prenda</span>
-      </a>
-    </section>
-
-
-
-
-<section class="admin-intro">
-
-
-      
-</section>
-
-
-
-
-
-
-    <!-- NAV -->
-
-
-
-    <form class="ajustes" id="tiendaForm" novalidate>
-
-      <!-- 01 IDENTIDAD -->
-      <section class="form-card">
-        <div class="form-card-header">
-          <div>
-            <span class="section-kicker">01 · IDENTIDAD</span>
-            <h3>Nombre, logo y colores</h3>
-          </div>
-          <span class="required-label">* CAMPOS REQUERIDOS</span>
-        </div>
-
-        <div class="ajustes-body">
-          <div class="form-grid">
-
-            <div class="field field-full">
-              <label for="nombre_tienda">Nombre de la tienda <span>*</span></label>
-              <div class="input-box">
-                <span class="field-icon">✦</span>
-                <input type="text" id="nombre_tienda" maxlength="60" placeholder="Ej. QualityShoes">
-              </div>
-              <small>Aparece en la barra de arriba, en el buscador, en la pestaña del navegador y en el pie de página.</small>
-            </div>
-
-            <div class="field field-full">
-              <label for="logoArchivo">Logo</label>
-              <div class="media-preview logo-preview" id="logoPreview"></div>
-              <div class="input-box">
-                <span class="field-icon">▣</span>
-                <input type="file" id="logoArchivo" accept="image/*">
-              </div>
-              <small>Lo mejor es un PNG con fondo transparente. Máximo 2 MB.</small>
-              <label class="check"><input type="checkbox" id="quitar_logo"> Quitar el logo actual</label>
-              <label class="check"><input type="checkbox" id="mostrar_nombre"> Mostrar el nombre junto al logo</label>
-            </div>
-
-            <div class="field field-full">
-              <label>Colores de la tienda</label>
-              <div class="swatches" id="paletas"></div>
-              <small>Al elegir uno, esta pantalla cambia al instante. Se aplica a toda la tienda cuando guardas.</small>
-            </div>
-
-          </div>
-        </div>
-      </section>
-
-
-      <!-- 02 CONTACTO -->
-      <section class="form-card">
-        <div class="form-card-header">
-          <div>
-            <span class="section-kicker">02 · CONTACTO</span>
-            <h3>WhatsApp y redes sociales</h3>
-          </div>
-        </div>
-
-        <div class="ajustes-body">
-          <div class="form-grid">
-
-            <div class="field field-full">
-              <label for="whatsapp">Número de WhatsApp <span>*</span></label>
-              <div class="input-box">
-                <span class="field-icon">✆</span>
-                <input type="text" id="whatsapp" inputmode="numeric" maxlength="20" placeholder="573001234567">
-              </div>
-              <small>Aquí llegan los pedidos. Si escribes los 10 dígitos de un celular colombiano, le agregamos el 57 solos.</small>
-            </div>
-
-            <div class="field">
-              <label for="instagram_url">Instagram</label>
-              <div class="input-box">
-                <span class="field-icon">◈</span>
-                <input type="text" id="instagram_url" maxlength="255" placeholder="https://instagram.com/tutienda">
-              </div>
-            </div>
-
-            <div class="field">
-              <label for="tiktok_url">TikTok</label>
-              <div class="input-box">
-                <span class="field-icon">◈</span>
-                <input type="text" id="tiktok_url" maxlength="255" placeholder="https://tiktok.com/@tutienda">
-              </div>
-            </div>
-
-            <div class="field field-full">
-              <label for="facebook_url">Facebook</label>
-              <div class="input-box">
-                <span class="field-icon">◈</span>
-                <input type="text" id="facebook_url" maxlength="255" placeholder="https://facebook.com/tutienda">
-              </div>
-              <small>Las redes salen en el pie de página. Si dejas una vacía, no aparece.</small>
-            </div>
-
-          </div>
-        </div>
-      </section>
-
-
-      <!-- 03 PORTADA -->
-      <section class="form-card">
-        <div class="form-card-header">
-          <div>
-            <span class="section-kicker">03 · PORTADA</span>
-            <h3>Lo primero que ve el cliente</h3>
-          </div>
-        </div>
-
-        <div class="ajustes-body">
-          <div class="form-grid">
-
-            <div class="field field-full">
-              <label for="bannerArchivo">Foto de fondo (banner)</label>
-              <div class="media-preview banner-preview" id="bannerPreview"></div>
-              <div class="input-box">
-                <span class="field-icon">▣</span>
-                <input type="file" id="bannerArchivo" accept="image/*">
-              </div>
-              <small>Foto horizontal, de al menos 1600 px de ancho. Máximo 5 MB.</small>
-              <label class="check"><input type="checkbox" id="quitar_banner"> Quitar la foto y usar la de por defecto</label>
-            </div>
-
-            <div class="field field-full">
-              <label for="portada_frase">Frase pequeña</label>
-              <div class="input-box">
-                <span class="field-icon">✦</span>
-                <input type="text" id="portada_frase" maxlength="80" placeholder="Ej. Streetwear • Calidad • Actitud">
-              </div>
-              <small>Va encima del título. Si la dejas vacía, no se muestra.</small>
-            </div>
-
-            <div class="field">
-              <label for="portada_titulo">Título <span>*</span></label>
-              <div class="input-box">
-                <span class="field-icon">✦</span>
-                <input type="text" id="portada_titulo" maxlength="60" placeholder="Ej. Catálogo">
-              </div>
-            </div>
-
-            <div class="field">
-              <label for="portada_boton">Texto del botón</label>
-              <div class="input-box">
-                <span class="field-icon">✦</span>
-                <input type="text" id="portada_boton" maxlength="30" placeholder="Ej. Ver catálogo">
-              </div>
-            </div>
-
-            <div class="field field-full">
-              <label for="portada_subtitulo">Subtítulo</label>
-              <textarea id="portada_subtitulo" maxlength="160" placeholder="Una o dos frases que expliquen cómo comprar en tu tienda"></textarea>
-            </div>
-
-          </div>
-        </div>
-      </section>
-
-
-      <!-- 04 CATÁLOGO -->
-      <section class="form-card">
-        <div class="form-card-header">
-          <div>
-            <span class="section-kicker">04 · CATÁLOGO</span>
-            <h3>Título de la sección y mensaje de pedido</h3>
-          </div>
-        </div>
-
-        <div class="ajustes-body">
-          <div class="form-grid">
-
-            <div class="field">
-              <label for="catalogo_etiqueta">Etiqueta pequeña</label>
-              <div class="input-box">
-                <span class="field-icon">✦</span>
-                <input type="text" id="catalogo_etiqueta" maxlength="40" placeholder="Ej. Nueva colección">
-              </div>
-            </div>
-
-            <div class="field">
-              <label for="catalogo_titulo">Título de la sección <span>*</span></label>
-              <div class="input-box">
-                <span class="field-icon">✦</span>
-                <input type="text" id="catalogo_titulo" maxlength="60" placeholder="Ej. Escoge tus prendas">
-              </div>
-            </div>
-
-            <div class="field field-full">
-              <label for="mensaje_saludo">Saludo del mensaje de WhatsApp <span>*</span></label>
-              <textarea id="mensaje_saludo" maxlength="200" placeholder="Hola, buen día 👋 Quiero hacer este pedido:"></textarea>
-              <small>Es la primera línea que recibe tu tienda con cada pedido. Después van el link con las fotos y el total.</small>
-            </div>
-
-          </div>
-        </div>
-      </section>
-
-
-      <!-- 05 PIE DE PÁGINA -->
-      <section class="form-card">
-        <div class="form-card-header">
-          <div>
-            <span class="section-kicker">05 · PIE DE PÁGINA</span>
-            <h3>Ubicación y datos del local</h3>
-          </div>
-        </div>
-
-        <div class="ajustes-body">
-          <div class="form-grid">
-
-            <div class="field field-full">
-              <label for="footer_texto">Texto corto</label>
-              <textarea id="footer_texto" maxlength="200" placeholder="Una frase sobre tu tienda"></textarea>
-            </div>
-
-            <div class="field">
-              <label for="footer_direccion">Dirección</label>
-              <div class="input-box">
-                <span class="field-icon">⌖</span>
-                <input type="text" id="footer_direccion" maxlength="160" placeholder="Ej. Calle 10 # 5-20, Centro">
-              </div>
-            </div>
-
-            <div class="field">
-              <label for="footer_horario">Horario</label>
-              <div class="input-box">
-                <span class="field-icon">◷</span>
-                <input type="text" id="footer_horario" maxlength="160" placeholder="Ej. Lun a Sáb, 9am a 7pm">
-              </div>
-            </div>
-
-            <div class="field field-full">
-              <label for="footer_mapa_url">Link de Google Maps</label>
-              <div class="input-box">
-                <span class="field-icon">⌖</span>
-                <input type="text" id="footer_mapa_url" maxlength="255" placeholder="https://maps.app.goo.gl/...">
-              </div>
-              <small>En Google Maps busca tu local, toca «Compartir» y pega aquí el link.</small>
-            </div>
-
-          </div>
-        </div>
-      </section>
-
-
-      <div class="form-msg" id="formMsg"></div>
-
-      <div class="form-actions">
-        <a href="admin.html" class="cancel-btn">Volver</a>
-
-        <button type="submit" class="submit-btn" id="guardarBtn">
-          <span>✓</span>
-          GUARDAR CAMBIOS
-          <strong>→</strong>
+      <a href="index.html" class="brand-unificado" id="adminBrand"></a>
+      <div class="header-right">
+        <button class="logout-btn" id="logoutBtn" type="button">
+          <span>↪</span> Cerrar sesión
         </button>
       </div>
+    </header>
 
-    </form>
+    <!-- INTRO -->
+    <section class="aj-intro">
+      <div>
+        <span class="eyebrow">PANEL DE TU TIENDA</span>
+        <h2>Mi <strong>tienda</strong></h2>
+        <p>Nombre, colores, letra y textos de tu catálogo. Los cambios se ven en la tienda al guardar.</p>
+      </div>
+      <div class="aj-intro-acciones">
+        <a href="admin.html" class="aj-btn-sec">← Mis prendas</a>
+        <!-- tema.js le agrega ?t=slug -->
+        <a href="index.html" class="aj-btn-sec" target="_blank" rel="noopener">Ver mi tienda ↗</a>
+      </div>
+    </section>
 
+    <div class="aj-layout">
+
+      <!-- MENÚ DE SECCIONES (en el celular se vuelve una fila deslizable) -->
+      <nav class="aj-nav" aria-label="Secciones">
+        <a href="#sec-identidad" class="activo">Identidad</a>
+        <a href="#sec-estilo">Colores y letra</a>
+        <a href="#sec-contacto">Contacto</a>
+        <a href="#sec-portada">Portada</a>
+        <a href="#sec-catalogo">Catálogo y pedidos</a>
+        <a href="#sec-pie">Pie de página</a>
+      </nav>
+
+      <form class="ajustes" id="tiendaForm" novalidate>
+
+        <!-- 01 IDENTIDAD -->
+        <section class="aj-card" id="sec-identidad">
+          <header class="aj-card-head">
+            <span class="section-kicker">01 · IDENTIDAD</span>
+            <h3>Nombre y logo</h3>
+          </header>
+          <div class="aj-card-body">
+
+            <div class="aj-campo">
+              <label for="nombre_tienda">Nombre de la tienda <span class="req">*</span></label>
+              <input type="text" id="nombre_tienda" maxlength="60" placeholder="Ej. LookShop">
+              <small>Sale arriba en la tienda, en la pestaña del navegador y en el pie de página.</small>
+            </div>
+
+            <div class="aj-campo">
+              <label for="logoArchivo">Logo</label>
+              <div class="aj-media">
+                <div class="media-preview logo-preview" id="logoPreview"></div>
+                <div class="aj-media-acciones">
+                  <label class="aj-archivo">
+                    <input type="file" id="logoArchivo" accept="image/*">
+                    <span>Subir logo</span>
+                  </label>
+                  <label class="check"><input type="checkbox" id="quitar_logo"> Quitar el logo</label>
+                  <label class="check"><input type="checkbox" id="mostrar_nombre"> Mostrar el nombre junto al logo</label>
+                </div>
+              </div>
+              <small>Lo ideal es un PNG con fondo transparente. Se ajusta solo de tamaño.</small>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- 02 ESTILO -->
+        <section class="aj-card" id="sec-estilo">
+          <header class="aj-card-head">
+            <span class="section-kicker">02 · ESTILO</span>
+            <h3>Colores y letra</h3>
+          </header>
+          <div class="aj-card-body">
+
+            <div class="aj-campo">
+              <label>Colores</label>
+              <div id="paletas" class="aj-paletas"></div>
+              <small>Esta pantalla cambia al instante para que veas cómo queda.</small>
+            </div>
+
+            <div class="aj-campo">
+              <label>Estilo de letra</label>
+              <div id="fuentes" class="aj-fuentes"></div>
+              <small>Se usa en los títulos, el nombre de la tienda y los textos del catálogo.</small>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- 03 CONTACTO -->
+        <section class="aj-card" id="sec-contacto">
+          <header class="aj-card-head">
+            <span class="section-kicker">03 · CONTACTO</span>
+            <h3>WhatsApp y redes sociales</h3>
+          </header>
+          <div class="aj-card-body aj-grid">
+
+            <div class="aj-campo aj-full">
+              <label for="whatsapp">WhatsApp de la tienda <span class="req">*</span></label>
+              <input type="text" id="whatsapp" inputmode="numeric" maxlength="20" placeholder="Ej. 3001234567">
+              <small>Aquí llegan los pedidos y las preguntas. Con los 10 dígitos basta, el 57 se agrega solo.</small>
+            </div>
+
+            <div class="aj-campo">
+              <label for="instagram_url">Instagram</label>
+              <input type="text" id="instagram_url" maxlength="255" placeholder="instagram.com/tutienda">
+            </div>
+
+            <div class="aj-campo">
+              <label for="tiktok_url">TikTok</label>
+              <input type="text" id="tiktok_url" maxlength="255" placeholder="tiktok.com/@tutienda">
+            </div>
+
+            <div class="aj-campo aj-full">
+              <label for="facebook_url">Facebook</label>
+              <input type="text" id="facebook_url" maxlength="255" placeholder="facebook.com/tutienda">
+              <small>Las redes salen en el pie de página. Las que dejes vacías no aparecen.</small>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- 04 PORTADA -->
+        <section class="aj-card" id="sec-portada">
+          <header class="aj-card-head">
+            <span class="section-kicker">04 · PORTADA</span>
+            <h3>Lo primero que ve el cliente</h3>
+          </header>
+          <div class="aj-card-body aj-grid">
+
+            <div class="aj-campo aj-full">
+              <label for="bannerArchivo">Foto de portada</label>
+              <div class="media-preview banner-preview" id="bannerPreview"></div>
+              <div class="aj-media-acciones aj-media-fila">
+                <label class="aj-archivo">
+                  <input type="file" id="bannerArchivo" accept="image/*">
+                  <span>Subir foto</span>
+                </label>
+                <label class="check"><input type="checkbox" id="quitar_banner"> Quitar la foto</label>
+              </div>
+              <small>Una foto horizontal de tu tienda o de tus prendas, <strong>sin textos encima</strong>: el texto lo pones abajo.</small>
+            </div>
+
+            <div class="aj-campo aj-full">
+              <label for="portada_frase">Frase principal</label>
+              <input type="text" id="portada_frase" maxlength="80" placeholder="Ej. Nueva colección">
+              <small>El texto grande de la portada. Mejor corto: 3 a 5 palabras.</small>
+            </div>
+
+            <div class="aj-campo aj-full">
+              <label for="portada_subtitulo">Texto debajo de la frase</label>
+              <textarea id="portada_subtitulo" maxlength="160" rows="2" placeholder="Ej. Pago contra entrega · Envíos en Ocaña"></textarea>
+            </div>
+
+            <div class="aj-campo">
+              <label for="portada_boton">Texto del botón</label>
+              <input type="text" id="portada_boton" maxlength="30" placeholder="Ej. Ver catálogo">
+            </div>
+
+            <div class="aj-campo">
+              <label for="portada_titulo">Título de la pestaña <span class="req">*</span></label>
+              <input type="text" id="portada_titulo" maxlength="60" placeholder="Ej. Ropa para dama">
+              <small>No sale en la portada: se ve en la pestaña del navegador y al compartir el link.</small>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- 05 CATÁLOGO Y PEDIDOS -->
+        <section class="aj-card" id="sec-catalogo">
+          <header class="aj-card-head">
+            <span class="section-kicker">05 · CATÁLOGO Y PEDIDOS</span>
+            <h3>Sección de prendas y mensaje del pedido</h3>
+          </header>
+          <div class="aj-card-body aj-grid">
+
+            <div class="aj-campo">
+              <label for="catalogo_titulo">Título de la sección <span class="req">*</span></label>
+              <input type="text" id="catalogo_titulo" maxlength="60" placeholder="Ej. Catálogo">
+            </div>
+
+            <div class="aj-campo">
+              <label for="catalogo_etiqueta">Texto pequeño encima</label>
+              <input type="text" id="catalogo_etiqueta" maxlength="40" placeholder="Ej. Lo más nuevo">
+            </div>
+
+            <div class="aj-campo aj-full">
+              <label for="mensaje_saludo">Saludo del pedido por WhatsApp <span class="req">*</span></label>
+              <textarea id="mensaje_saludo" maxlength="200" rows="2" placeholder="Ej. Hola 👋 quiero hacer este pedido:"></textarea>
+              <small>Es la primera línea del mensaje que te llega. Después van los datos del cliente, el link del pedido y el total.</small>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- 06 PIE DE PÁGINA -->
+        <section class="aj-card" id="sec-pie">
+          <header class="aj-card-head">
+            <span class="section-kicker">06 · PIE DE PÁGINA</span>
+            <h3>Ubicación y datos del local</h3>
+          </header>
+          <div class="aj-card-body aj-grid">
+
+            <div class="aj-campo aj-full">
+              <label for="footer_texto">Frase sobre tu tienda</label>
+              <textarea id="footer_texto" maxlength="200" rows="2" placeholder="Ej. Ropa de moda a precios justos desde 2020"></textarea>
+            </div>
+
+            <div class="aj-campo">
+              <label for="footer_direccion">Dirección</label>
+              <input type="text" id="footer_direccion" maxlength="160" placeholder="Ej. Calle 10 #5-20, Centro">
+              <small>También se muestra a quien elige "recoger en tienda".</small>
+            </div>
+
+            <div class="aj-campo">
+              <label for="footer_horario">Horario</label>
+              <input type="text" id="footer_horario" maxlength="160" placeholder="Ej. Lun a Sáb, 9am a 7pm">
+            </div>
+
+            <div class="aj-campo aj-full">
+              <label for="footer_mapa_url">Link de Google Maps</label>
+              <input type="text" id="footer_mapa_url" maxlength="255" placeholder="https://maps.app.goo.gl/...">
+              <small>En Google Maps busca tu local, toca «Compartir» y pega el link. La dirección abrirá el mapa.</small>
+            </div>
+
+          </div>
+        </section>
+
+      </form>
+    </div>
   </main>
+
+  <!-- BARRA DE GUARDADO: siempre a mano, también en el celular -->
+  <div class="aj-barra">
+    <div class="aj-barra-in">
+      <div class="aj-barra-estado">
+        <span class="aj-sin-guardar" id="sinGuardar" hidden>● Cambios sin guardar</span>
+        <span class="form-msg" id="formMsg" role="status"></span>
+      </div>
+      <button type="submit" form="tiendaForm" class="submit-btn" id="guardarBtn">Guardar cambios</button>
+    </div>
+  </div>
 
   <script src="ajustes.js"></script>
 </body>
