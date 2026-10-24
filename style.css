@@ -991,3 +991,37 @@ h2{
   .img-close{top:12px; right:12px; width:42px; height:42px}
   .wa-flotante svg{width:27px; height:27px}
 }
+
+/* =========================================================
+   LETRA DEL ESTILO EN TODA LA TIENDA
+   - Los botones y campos no heredan la letra solos: se fuerza
+   - Las partes que más se ven usan la letra de TÍTULOS del estilo;
+     los textos chicos (categoría, talla, contacto) siguen con la de texto
+   ========================================================= */
+button, input, select, textarea{font-family:inherit}
+
+.cat-link,
+.product-body h3,
+.price,
+.add,
+.footer-col h4,
+.footer-social a,
+.cart-total strong,
+.datos-cliente h3,
+.toast{
+  font-family:var(--font-titulo, "Bebas Neue", Impact, sans-serif);
+  font-weight:var(--font-titulo-peso, 400);
+}
+.product-body h3{font-size:1.08rem; letter-spacing:.01em}
+.price{font-size:1.3rem; letter-spacing:.01em}
+.price .price-old, .price .price-badge{font-family:var(--font-texto, 'Inter', Arial, sans-serif)}
+.price .price-badge{font-weight:900}
+.add{font-size:.98rem; letter-spacing:.08em}
+.footer-col h4{font-size:.85rem}
+.cart-total strong{font-size:1.7rem}
+
+@media (max-width:750px){
+  .product-body h3{font-size:.95rem}
+  .price{font-size:1.1rem}
+  .add{font-size:.82rem}
+}
