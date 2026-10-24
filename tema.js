@@ -299,21 +299,95 @@ function aplicarPaleta(clave){
   s.setProperty("--orange", p.acento);
 }
 
-// 1) Aplica enseguida la paleta de la visita anterior (evita el parpadeo)
-const paletaGuardada = localStorage.getItem("tiendaPaleta");
+/* =========================================================
+   TIENDA ACTUAL (multi-tienda)
+   ---------------------------------------------------------
+   · Catálogo y pedido: la tienda sale del link  ?t=slug
+   · Panel admin: la tienda sale del usuario logueado (no del link)
+   Los demás scripts usan:
+     await window.tiendaActual   → { id, slug, activa } o null
+     await window.configTienda   → fila de "configuracion" o null
+     linkTienda("pedido.html", { codigo }) → "pedido.html?t=slug&codigo=..."
+     claveLocal("capCart")       → nombre para localStorage separado por tienda
+   ========================================================= */
+
+// Tienda que se abre cuando el link NO trae ?t= (para que los links viejos sigan funcionando).
+// Déjalo en "" si prefieres que sin ?t= salga "Tienda no encontrada".
+const TIENDA_POR_DEFECTO = "lookshop";
+
+const ES_PAGINA_ADMIN = /(admin|agregarPrenda|editarPrenda|ajustes)\.html$/i.test(location.pathname);
+
+function limpiarSlug(valor){
+  return String(valor || "").trim().toLowerCase().replace(/[^a-z0-9-]/g, "");
+}
+
+const SLUG_URL = limpiarSlug(new URLSearchParams(location.search).get("t"));
+
+// localStorage es compartido por TODAS las tiendas (mismo dominio): cada clave lleva el slug
+function leerLocal(clave){ try{ return localStorage.getItem(clave); }catch(e){ return null; } }
+function guardarLocal(clave, valor){ try{ localStorage.setItem(clave, valor); }catch(e){} }
+
+let SLUG_ACTUAL = ES_PAGINA_ADMIN
+  ? (leerLocal("adminSlug") || SLUG_URL)          // en el panel: la última tienda que se abrió
+  : (SLUG_URL || TIENDA_POR_DEFECTO);
+
+function claveLocal(nombre){ return `${nombre}:${SLUG_ACTUAL || "_"}`; }
+
+function linkTienda(pagina, extra){
+  const params = new URLSearchParams();
+  if(SLUG_ACTUAL) params.set("t", SLUG_ACTUAL);
+  Object.entries(extra || {}).forEach(([k, v]) => params.set(k, v));
+  const q = params.toString();
+  return q ? `${pagina}?${q}` : pagina;
+}
+
+async function buscarTiendaPublica(slug){
+  if(!slug) return null;
+  const { data, error } = await supabaseClient.rpc("tienda_publica", { p_slug: slug });
+  if(error){ console.error("No se pudo buscar la tienda:", error); return null; }
+  return data && data.length ? { id: data[0].id, slug, activa: data[0].activa } : null;
+}
+
+window.tiendaActual = (async () => {
+  try{
+    if(ES_PAGINA_ADMIN){
+      const { data: { session } } = await supabaseClient.auth.getSession();
+      // Sin sesión (pantalla de login): si el link trae ?t=, se muestra la marca de esa tienda
+      if(!session) return buscarTiendaPublica(SLUG_URL);
+
+      const { data, error } = await supabaseClient.rpc("mi_tienda_info");
+      if(error){ console.error("No se pudo leer tu tienda:", error); return null; }
+      if(!data || !data.length) return null;          // usuario sin tienda asignada
+      const t = data[0];
+      SLUG_ACTUAL = t.slug;
+      guardarLocal("adminSlug", t.slug);
+      return t;                                       // { id, slug, nombre, activa, vence }
+    }
+    return buscarTiendaPublica(SLUG_ACTUAL);
+  }catch(err){
+    console.error(err);
+    return null;
+  }
+})();
+
+// 1) Aplica enseguida la paleta de la visita anterior a ESTA tienda (evita el parpadeo)
+const paletaGuardada = leerLocal(claveLocal("tiendaPaleta"));
 aplicarPaleta(paletaGuardada || "rosa");
 
 // 2) Una sola consulta de configuración para toda la página.
 //    Los demás scripts la reutilizan con:  const cfg = await window.configTienda;
-window.configTienda = supabaseClient
-  .from("configuracion")
-  .select("*")
-  .eq("id", 1)
-  .single()
-  .then(({ data, error }) => {
-    if(error || !data){ console.error("No se pudo leer la configuración:", error); return null; }
+window.configTienda = window.tiendaActual
+  .then(async tienda => {
+    if(!tienda) return null;
+    const { data, error } = await supabaseClient
+      .from("configuracion")
+      .select("*")
+      .eq("tienda_id", tienda.id)
+      .maybeSingle();
+    // Tienda vencida o suspendida: el servidor no devuelve su configuración
+    if(error || !data){ if(error) console.error("No se pudo leer la configuración:", error); return null; }
     aplicarPaleta(data.paleta);
-    localStorage.setItem("tiendaPaleta", data.paleta);
+    guardarLocal(claveLocal("tiendaPaleta"), data.paleta);
     return data;
   })
   .catch(err => { console.error(err); return null; });
@@ -327,4 +401,14 @@ if(!paletaGuardada){
   setTimeout(mostrar, 1500);
 }
 
-
+// 4) Los links a index.html llevan a la tienda correcta (agrega ?t=slug)
+window.tiendaActual.then(() => {
+  const ajustarLinks = () => {
+    document.querySelectorAll('a[href="index.html"], a[href^="index.html#"]').forEach(a => {
+      const [pagina, ancla] = a.getAttribute("href").split("#");
+      a.setAttribute("href", linkTienda(pagina) + (ancla ? "#" + ancla : ""));
+    });
+  };
+  if(document.readyState === "loading") document.addEventListener("DOMContentLoaded", ajustarLinks);
+  else ajustarLinks();
+});

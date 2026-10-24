@@ -7,7 +7,7 @@
 //     y se oculta solo si el cliente la deja vacía.
 //   - Lo demás (marca, buscador, banner, footer) se arma por id.
 
-const CFG_CACHE = "tiendaCfg";
+const CFG_CACHE = claveLocal("tiendaCfg");   // separado por tienda (viene de tema.js)
 window.CFG = null;
 
 const porId = id => document.getElementById(id);
@@ -135,7 +135,7 @@ if(window.configTienda){
   window.configTienda.then(cfg => {
     if(!cfg) return;
     aplicarConfiguracion(cfg);
-    try{ localStorage.setItem(CFG_CACHE, JSON.stringify(cfg)); }catch(e){}
+    try{ localStorage.setItem(claveLocal("tiendaCfg"), JSON.stringify(cfg)); }catch(e){}
   });
 }
 
@@ -189,16 +189,20 @@ function pintarCategoriasFooter(cfg){
   // Rellena #footerCats con las categorías del catálogo
   const cont = document.getElementById("footerCats");
   if(!cont) return;
-  supabaseClient
-    .from("categorias")
-    .select("nombre")
-    .order("nombre")
-    .then(({ data, error }) => {
-      if(error || !data) return;
-      cont.innerHTML = data
-        .map(c => `<li><a href="index.html">${escapeHtml(c.nombre)}</a></li>`)
-        .join("");
-    });
+  window.tiendaActual.then(tienda => {
+    if(!tienda) return;
+    supabaseClient
+      .from("categorias")
+      .select("nombre")
+      .eq("tienda_id", tienda.id)
+      .order("nombre")
+      .then(({ data, error }) => {
+        if(error || !data) return;
+        cont.innerHTML = data
+          .map(c => `<li><a href="${escapeHtml(linkTienda("index.html"))}">${escapeHtml(c.nombre)}</a></li>`)
+          .join("");
+      });
+  });
 }
 
 window.configTienda.then(cfg => {

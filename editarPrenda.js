@@ -17,11 +17,14 @@ document.getElementById("logoutBtn").addEventListener("click", async () => {
 });
 
 async function cargarCategorias(){
-  const { data, error } = await supabaseClient.from("categorias").select("id, nombre");
+  const tienda = await window.tiendaActual;
+  if(!tienda){ window.location.href = "admin.html"; return; }
+  const { data, error } = await supabaseClient
+    .from("categorias").select("id, nombre").eq("tienda_id", tienda.id);
   if(error){ console.error(error); return; }
   categoriasCache = data;
   document.getElementById("categoriasList").innerHTML =
-    data.map(c => `<option value="${c.nombre}"></option>`).join("");
+    data.map(c => `<option value="${escapeHtml(c.nombre)}"></option>`).join("");
 }
 
 async function resolverCategoria(nombreTexto){
@@ -38,7 +41,7 @@ async function resolverCategoria(nombreTexto){
 async function cargarPrenda(){
   const { data, error } = await supabaseClient
     .from("prendas")
-    .select(`id, nombre, precio, imagen, descripcion, categorias(nombre)`)
+    .select(`id, nombre, precio, precio_oferta, imagen, descripcion, categorias(nombre)`)
     .eq("id", prendaId)
     .single();
 
@@ -102,7 +105,7 @@ async function cargarTallas(){
       <div class="admin-item-body" style="display:flex;align-items:center;gap:10px">
         <label class="talla-chip" style="margin:0">
           <input type="checkbox" data-talla="${t.id}" ${t.disponible ? "checked" : ""}>
-          Talla ${t.talla}
+          Talla ${escapeHtml(t.talla)}
         </label>
       </div>
       <button class="delete-btn" data-borrar-talla="${t.id}">Eliminar talla</button>

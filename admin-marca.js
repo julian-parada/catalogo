@@ -6,7 +6,7 @@
 // y, si existe, el nombre de la pantalla de login (.brand-mark).
 
 (function(){
-  const CACHE = "tiendaCfg";
+  // Caché separada por tienda (claveLocal viene de tema.js)
   const tituloBase = document.title.split(" — ")[0]; // "Agregar prenda — Admin" -> "Agregar prenda"
 
   function urlSegura(u){
@@ -67,7 +67,7 @@
 
   // 1) Lo último guardado en este navegador (evita ver un nombre equivocado un instante)
   try{
-    const guardada = JSON.parse(localStorage.getItem(CACHE));
+    const guardada = JSON.parse(localStorage.getItem(claveLocal("tiendaCfg")));
     if(guardada) pintar(guardada);
   }catch(e){ /* caché dañado: se ignora */ }
 
@@ -76,7 +76,7 @@
     window.configTienda.then(cfg => {
       if(!cfg) return;
       pintar(cfg);
-      try{ localStorage.setItem(CACHE, JSON.stringify(cfg)); }catch(e){}
+      try{ localStorage.setItem(claveLocal("tiendaCfg"), JSON.stringify(cfg)); }catch(e){}
     });
   }
 })();

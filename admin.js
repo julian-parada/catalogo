@@ -22,7 +22,8 @@ document.getElementById("loginForm").addEventListener("submit", async (e) => {
   const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
   if(error){ errorBox.textContent = "Correo o contraseña incorrectos."; return; }
   errorBox.textContent = "";
-  mostrarPanel();
+  // Se recarga para que tema.js lea la tienda de este usuario
+  location.reload();
 });
 
 // ---------- LOGOUT ----------
@@ -33,9 +34,38 @@ document.getElementById("logoutBtn").addEventListener("click", async () => {
 
 // ---------- MOSTRAR PANEL ----------
 async function mostrarPanel(){
+  const tienda = await window.tiendaActual;
+  if(!tienda){
+    alert("Tu usuario no tiene una tienda asignada. Escríbele al administrador de la plataforma.");
+    await supabaseClient.auth.signOut();
+    location.reload();
+    return;
+  }
   document.getElementById("loginBox").style.display = "none";
   document.getElementById("panel").style.display = "block";
+  avisoSuscripcion(tienda);
   await cargarPrendas();
+}
+
+// Aviso dentro del panel si la tienda está vencida o por vencer
+function avisoSuscripcion(tienda){
+  const panel = document.getElementById("panel");
+  if(!panel || document.getElementById("avisoSuscripcion")) return;
+
+  const hoy = new Date(); hoy.setHours(0, 0, 0, 0);
+  const vence = tienda.vence ? new Date(tienda.vence + "T00:00:00") : null;
+  const dias = vence ? Math.round((vence - hoy) / 86400000) : null;
+
+  let texto = "";
+  if(!tienda.activa) texto = "Tu tienda está suspendida o vencida: los clientes no pueden verla. Comunícate con tu proveedor para reactivarla.";
+  else if(dias !== null && dias <= 5) texto = dias === 0 ? "Tu suscripción vence hoy." : `Tu suscripción vence en ${dias} día${dias === 1 ? "" : "s"}.`;
+  if(!texto) return;
+
+  const aviso = document.createElement("p");
+  aviso.id = "avisoSuscripcion";
+  aviso.textContent = texto;
+  aviso.style.cssText = "background:rgba(255,92,122,.12);border:1px solid #ff5c7a;color:#ff5c7a;padding:12px 16px;border-radius:10px;margin:0 0 18px";
+  panel.prepend(aviso);
 }
 
 // ---------- CARGAR PRENDAS ----------
@@ -44,9 +74,13 @@ async function cargarPrendas(){
   if(!cont) return;
   cont.innerHTML = "<p style='color:var(--muted)'>Cargando prendas...</p>";
 
+  const tienda = await window.tiendaActual;
+  if(!tienda) return;
+
   const { data, error } = await supabaseClient
     .from("prendas")
     .select(`id, nombre, precio, imagen, categorias(nombre), tallas(id, talla, disponible)`)
+    .eq("tienda_id", tienda.id)
     .order("creado_en", { ascending: false });
 
   if(error){

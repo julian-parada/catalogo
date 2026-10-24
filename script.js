@@ -10,7 +10,8 @@ let currentCategory = "all"; // "all", "__nuevos__", "__promos__" o el id de una
 
 // Carrito guardado en el navegador. Se descartan restos de versiones viejas (sin cartId).
 let cart = [];
-try{ cart = JSON.parse(localStorage.getItem("capCart") || "[]"); }catch(e){ cart = []; }
+const CART_KEY = claveLocal("capCart");   // cada tienda tiene su carrito (claveLocal viene de tema.js)
+try{ cart = JSON.parse(localStorage.getItem(CART_KEY) || "[]"); }catch(e){ cart = []; }
 if(!Array.isArray(cart)) cart = [];
 cart = cart.filter(x => x && x.cartId);
 
@@ -43,9 +44,14 @@ function esNuevo(p){
    CARGA DE DATOS
    --------------------------------------------------------- */
 async function cargarProductos(){
+  const tienda = await window.tiendaActual;
+  if(!tienda){ pantallaBloqueo("noExiste"); return; }
+  if(!tienda.activa){ pantallaBloqueo("suspendida"); return; }
+
   const { data, error } = await supabaseClient
     .from("prendas")
     .select(`id, nombre, precio, precio_oferta, imagen, creado_en, categoria_id, categorias(nombre), tallas(id, talla, disponible), imagenes_prenda(url, orden)`)
+    .eq("tienda_id", tienda.id)
     .order("creado_en", { ascending: false });
 
   if(error){ console.error(error); return; }
@@ -69,6 +75,7 @@ async function cargarProductos(){
   const { data: cats, error: errorCats } = await supabaseClient
     .from("categorias")
     .select("id, nombre")
+    .eq("tienda_id", tienda.id)
     .eq("en_menu", true)
     .order("orden")
     .order("id");
@@ -225,7 +232,7 @@ function renderProducts(){
 /* ---------------------------------------------------------
    CARRITO
    --------------------------------------------------------- */
-function save(){ localStorage.setItem("capCart", JSON.stringify(cart)); updateCount(); }
+function save(){ try{ localStorage.setItem(CART_KEY, JSON.stringify(cart)); }catch(e){} updateCount(); }
 
 function addToCart(id){
   const p = products.find(x => x.id === id);
@@ -323,7 +330,7 @@ async function sendWhatsapp(){
 
   if(errorPedido || !codigoPedido){
     console.error(errorPedido);
-    const noDisponible = errorPedido && /Talla no disponible|Prenda no existe/.test(errorPedido.message || "");
+    const noDisponible = errorPedido && /Talla no disponible|Prenda no existe|Tienda no disponible/.test(errorPedido.message || "");
     alert(noDisponible
       ? "Alguna prenda de tu pedido ya no está disponible. Recarga el catálogo y vuelve a intentar."
       : "No se pudo generar el pedido, intenta de nuevo.");
@@ -337,7 +344,8 @@ async function sendWhatsapp(){
   const { data: resumen } = await supabaseClient.rpc("obtener_pedido", { p_codigo: codigoPedido });
   if(resumen && resumen.total != null) totalFinal = Number(resumen.total);
 
-  const urlPedido = `${window.location.origin}${window.location.pathname.replace("index.html","")}pedido.html?codigo=${codigoPedido}`;
+  const base = `${window.location.origin}${window.location.pathname.replace(/index\.html$/, "")}`;
+  const urlPedido = base + linkTienda("pedido.html", { codigo: codigoPedido });
 
   const textoPlano = `${saludo}\n\n${urlPedido}\n\nTotal estimado: ${money(totalFinal)}\n\n¿Me confirman disponibilidad y tiempo de envío? Gracias.`;
   window.open(`https://wa.me/${numero}?text=${encodeURIComponent(textoPlano)}`, "_blank");
@@ -462,48 +470,31 @@ document.addEventListener("keydown", (e) => {
 })();
 
 
-// script.js de la página del CLIENTE
-async function verificarEstado() {
-  // Identificador único de esta página (debe coincidir con la tabla en Supabase)
-  const miUrl = "tienda-xyz"; 
+/* ---------------------------------------------------------
+   TIENDA NO ENCONTRADA / SUSPENDIDA
+   El bloqueo real lo hace el servidor (no entrega el catálogo de una tienda
+   vencida); esto solo muestra un mensaje claro en vez de una página vacía.
+   --------------------------------------------------------- */
+function pantallaBloqueo(motivo){
+  const textos = {
+    noExiste:   ["TIENDA NO ENCONTRADA", "Revisa que el link esté completo."],
+    suspendida: ["SERVICIO SUSPENDIDO", "Esta tienda se encuentra temporalmente inactiva."]
+  };
+  const [titulo, detalle] = textos[motivo] || textos.noExiste;
 
-  // Llamamos a la función segura que creamos en Supabase
- // ✅ Correcto
-const { data, error } = await supabaseClient.rpc('verificar_suscripcion', { p_url: miUrl });
-
-  if (error) {
-    console.error("Error verificando suscripción:", error);
-    return;
-  }
-
-  // Si no encuentra la página o está suspendida
-  if (!data || data.length === 0 || data[0].estado === 'suspendido') {
-    bloquearPagina();
-    return;
-  }
-
-  // Si la fecha de vencimiento ya pasó
-  const hoy = new Date();
-  const vencimiento = new Date(data[0].fecha_vencimiento);
-  
-  if (hoy > vencimiento) {
-    bloquearPagina();
-  }
+  document.documentElement.style.visibility = "";
+  document.body.textContent = "";
+  const caja = document.createElement("div");
+  caja.style.cssText = "display:flex;flex-direction:column;justify-content:center;align-items:center;min-height:100vh;background:#070707;color:#fff;text-align:center;font-family:sans-serif;padding:20px";
+  const h1 = document.createElement("h1");
+  h1.style.cssText = "font-size:2.6rem;color:#ff1493;font-family:'Bebas Neue',sans-serif;margin:0 0 12px";
+  h1.textContent = titulo;
+  const p = document.createElement("p");
+  p.style.cssText = "font-size:1.1rem;max-width:420px;margin:0";
+  p.textContent = detalle;
+  caja.append(h1, p);
+  document.body.appendChild(caja);
 }
-
-function bloquearPagina() {
-  document.body.innerHTML = `
-    <div style="display:flex; flex-direction:column; justify-content:center; align-items:center; height:100vh; background:#070707; color:white; text-align:center; font-family:sans-serif; padding:20px;">
-      <h1 style="font-size:3rem; color:#ff1493; font-family:'Bebas Neue', sans-serif;">SERVICIO SUSPENDIDO</h1>
-      <p style="font-size:1.2rem; max-width:400px;">El servicio de esta página web se encuentra temporalmente inactivo por falta de pago o mantenimiento.</p>
-      <a href="https://wa.me/573000000000" style="margin-top:20px; padding:12px 24px; background:#25D366; color:white; text-decoration:none; border-radius:8px; font-weight:bold;">Contactar al Proveedor</a>
-    </div>
-  `;
-}
-
-
-// Ejecutar al cargar la página
-document.addEventListener('DOMContentLoaded', verificarEstado);
 
 
 

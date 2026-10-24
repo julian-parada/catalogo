@@ -36,7 +36,11 @@ $("logoutBtn").addEventListener("click", async () => {
   window.location.href = "admin.html";
 });
 
+let tienda = null;
+
 async function iniciar(){
+  tienda = await window.tiendaActual;
+  if(!tienda){ window.location.href = "admin.html"; return; }
   cfg = await window.configTienda;
   if(!cfg){
     mostrarMsg("No se pudo leer la configuración. Revisa que la tabla «configuracion» exista en Supabase.", "error");
@@ -175,7 +179,8 @@ async function subirArchivo(archivo, prefijo, limite){
   }
 
   const ext = ((archivo.name.split(".").pop() || "jpg").toLowerCase().replace(/[^a-z0-9]/g, "")) || "jpg";
-  const nombre = `${prefijo}_${Date.now()}_${Math.random().toString(36).slice(2, 8)}.${ext}`;
+  // Cada tienda sube a su propia carpeta (lo exige el servidor)
+  const nombre = `${tienda.id}/${prefijo}_${Date.now()}_${Math.random().toString(36).slice(2, 8)}.${ext}`;
 
   const { error } = await supabaseClient.storage.from(BUCKET).upload(nombre, archivo);
   if(error) throw error;
@@ -238,16 +243,20 @@ $("tiendaForm").addEventListener("submit", async e => {
     datos.logo_url = logo;
     datos.banner_url = banner;
 
-    const { error } = await supabaseClient.from("configuracion").update(datos).eq("id", 1);
+    const { data: guardada, error } = await supabaseClient
+      .from("configuracion").update(datos).eq("tienda_id", tienda.id).select("id");
     if(error) throw error;
+    if(!guardada || !guardada.length) throw new Error("No se pudo guardar: tu usuario no tiene permiso sobre esta tienda.");
 
     // Ya guardado: se borran los archivos viejos que dejaron de usarse
     if(anterior.logo && anterior.logo !== logo) await borrarAnterior(anterior.logo).catch(() => {});
     if(anterior.banner && anterior.banner !== banner) await borrarAnterior(anterior.banner).catch(() => {});
 
     cfg = { ...cfg, ...datos };
-    localStorage.setItem("tiendaPaleta", datos.paleta);
-    localStorage.setItem("tiendaCfg", JSON.stringify(cfg));
+    try{
+      localStorage.setItem(claveLocal("tiendaPaleta"), datos.paleta);
+      localStorage.setItem(claveLocal("tiendaCfg"), JSON.stringify(cfg));
+    }catch(e){}
 
     $("logoArchivo").value = "";
     $("bannerArchivo").value = "";

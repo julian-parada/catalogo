@@ -8,7 +8,12 @@ async function revisarSesion(){
 }
 
 async function subirImagen(archivo){
-  const nombreArchivo = `${Date.now()}_${archivo.name.replace(/\s+/g, "_")}`;
+  if(!archivo || !archivo.type.startsWith("image/")) throw new Error("El archivo debe ser una imagen.");
+  const tienda = await window.tiendaActual;
+  if(!tienda) throw new Error("No se encontró tu tienda. Vuelve a iniciar sesión.");
+  // Cada tienda sube a su propia carpeta (lo exige el servidor). Sin tildes ni espacios en el nombre.
+  const limpio = archivo.name.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-zA-Z0-9._-]/g, "_");
+  const nombreArchivo = `${tienda.id}/${Date.now()}_${limpio}`;
 
   const { error } = await supabaseClient.storage
     .from("imagenes-prendas")
@@ -30,11 +35,14 @@ document.getElementById("logoutBtn").addEventListener("click", async () => {
 });
 
 async function cargarCategorias(){
-  const { data, error } = await supabaseClient.from("categorias").select("id, nombre");
+  const tienda = await window.tiendaActual;
+  if(!tienda){ window.location.href = "admin.html"; return; }
+  const { data, error } = await supabaseClient
+    .from("categorias").select("id, nombre").eq("tienda_id", tienda.id);
   if(error){ console.error(error); return; }
   categoriasCache = data;
   document.getElementById("categoriasList").innerHTML =
-    data.map(c => `<option value="${c.nombre}"></option>`).join("");
+    data.map(c => `<option value="${escapeHtml(c.nombre)}"></option>`).join("");
 }
 
 async function resolverCategoria(nombreTexto){
