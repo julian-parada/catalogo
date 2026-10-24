@@ -48,7 +48,7 @@ async function cargarPedido(){
 
   wrap.innerHTML = `
     <h1>Resumen del pedido</h1>
-    <p class="pedido-fecha">Pedido realizado el ${fecha}</p>
+    <p class="pedido-fecha">Pedido realizado el ${fecha}${detalleEntrega(pedido)}</p>
 
     ${items.map(item => `
       <div class="pedido-item">
@@ -66,6 +66,13 @@ async function cargarPedido(){
       <span>${money(Number(pedido.total) || 0)}</span>
     </div>
   `;
+}
+
+// "· 🛵 Domicilio · 💳 Nequi" (la dirección no se muestra aquí: este link lo puede abrir cualquiera que lo tenga)
+function detalleEntrega(p){
+  const entrega = { domicilio: "🛵 Domicilio", recoger: "🏪 Recoge en tienda" }[p.entrega];
+  const pago = { efectivo: "💵 Efectivo", nequi: "📱 Nequi", transferencia: "🏦 Transferencia" }[p.pago];
+  return [entrega, pago].filter(Boolean).map(t => " · " + t).join("");
 }
 
 cargarPedido();

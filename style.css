@@ -662,6 +662,48 @@ h2{
 .cart-total strong{color:var(--pink); font-size:1.5rem}
 .note{color:var(--muted); font-size:.78rem; text-align:center; margin-top:12px;}
 
+/* ---------- Datos del comprador (en el carrito) ---------- */
+.datos-cliente{border-top:1px solid var(--line); padding-top:18px; margin-bottom:16px;}
+.datos-cliente[hidden]{display:none}
+.datos-cliente h3{margin:0 0 14px; font-size:1.05rem; font-weight:800; letter-spacing:.02em;}
+
+.dc-campo{display:block; margin-bottom:12px;}
+.dc-campo > span{display:block; font-size:.82rem; font-weight:700; color:var(--soft-white); margin-bottom:6px;}
+.dc-campo small{color:var(--muted); font-weight:400;}
+.dc-campo input, .dc-campo textarea{
+  width:100%; padding:11px 12px; border-radius:9px;
+  background:#101010; border:1px solid var(--line); color:#fff;
+  font:inherit; font-size:16px;   /* 16px evita que el iPhone haga zoom al escribir */
+  transition:border-color .2s;
+}
+.dc-campo textarea{resize:vertical; min-height:58px;}
+.dc-campo input:focus, .dc-campo textarea:focus{outline:none; border-color:var(--pink);}
+.dc-campo input::placeholder, .dc-campo textarea::placeholder{color:#6b6b6b;}
+
+.dc-grupo{border:0; padding:0; margin:0 0 12px;}
+.dc-grupo legend{padding:0; font-size:.82rem; font-weight:700; color:var(--soft-white); margin-bottom:6px;}
+.dc-opciones{display:flex; flex-wrap:wrap; gap:8px;}
+.dc-opcion{flex:1 1 auto; cursor:pointer;}
+.dc-opcion input{position:absolute; opacity:0; pointer-events:none;}
+.dc-opcion span{
+  display:block; text-align:center; white-space:nowrap;
+  padding:10px 12px; border-radius:9px; font-size:.88rem; font-weight:700;
+  background:#101010; border:1px solid var(--line); color:var(--soft-white);
+  transition:border-color .2s, background .2s, color .2s;
+}
+.dc-opcion:hover span{border-color:#444;}
+.dc-opcion input:checked + span{border-color:var(--pink); background:var(--pink-soft); color:#fff;}
+.dc-opcion input:focus-visible + span{outline:2px solid var(--pink); outline-offset:2px;}
+
+.dc-domicilio{padding:12px; margin:-2px 0 12px; border-radius:10px; background:rgba(255,255,255,.03); border:1px dashed var(--line);}
+.dc-domicilio[hidden], .dc-info[hidden]{display:none}
+.dc-domicilio .dc-campo:last-child{margin-bottom:0}
+.dc-info{margin:-2px 0 12px; font-size:.85rem; color:var(--soft-white);}
+
+.dc-invalido, .dc-opciones:has(.dc-invalido) span{border-color:var(--danger, #ff5c7a) !important;}
+.dc-error{min-height:1em; margin:4px 0 0; color:var(--danger, #ff5c7a); font-size:.85rem; font-weight:600;}
+.dc-error:empty{display:none}
+
 .qty{display:flex; align-items:center; gap:12px; margin-top:10px;}
 .qty button{
   width:30px; height:30px; border-radius:50%; border:1px solid var(--line);

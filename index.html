@@ -93,8 +93,59 @@
         <span>Total estimado</span>
         <strong id="cartTotal">$0</strong>
       </div>
+
+      <!-- Datos del comprador: se recuerdan en este navegador para la próxima compra -->
+      <form id="datosCliente" class="datos-cliente" novalidate>
+        <h3>Tus datos</h3>
+
+        <label class="dc-campo">
+          <span>Nombre</span>
+          <input id="dcNombre" type="text" maxlength="80" autocomplete="name" placeholder="¿A nombre de quién va el pedido?">
+        </label>
+
+        <fieldset class="dc-grupo">
+          <legend>¿Cómo lo recibes?</legend>
+          <div class="dc-opciones">
+            <label class="dc-opcion"><input type="radio" name="dcEntrega" value="domicilio"><span>🛵 Domicilio</span></label>
+            <label class="dc-opcion"><input type="radio" name="dcEntrega" value="recoger"><span>🏪 Recoger en tienda</span></label>
+          </div>
+        </fieldset>
+
+        <div id="dcDomicilio" class="dc-domicilio" hidden>
+          <label class="dc-campo">
+            <span>Dirección</span>
+            <input id="dcDireccion" type="text" maxlength="150" autocomplete="street-address" placeholder="Ej: Cra 12 #8-45">
+          </label>
+          <label class="dc-campo">
+            <span>Barrio</span>
+            <input id="dcBarrio" type="text" maxlength="80" placeholder="Ej: Santa Clara">
+          </label>
+          <label class="dc-campo">
+            <span>Punto de referencia <small>(opcional)</small></span>
+            <input id="dcReferencia" type="text" maxlength="150" placeholder="Ej: frente a la panadería">
+          </label>
+        </div>
+        <p id="dcRecoger" class="dc-info" hidden></p>
+
+        <fieldset class="dc-grupo">
+          <legend>Forma de pago</legend>
+          <div class="dc-opciones">
+            <label class="dc-opcion"><input type="radio" name="dcPago" value="efectivo"><span>💵 Efectivo</span></label>
+            <label class="dc-opcion"><input type="radio" name="dcPago" value="nequi"><span>📱 Nequi</span></label>
+            <label class="dc-opcion"><input type="radio" name="dcPago" value="transferencia"><span>🏦 Transferencia</span></label>
+          </div>
+        </fieldset>
+
+        <label class="dc-campo">
+          <span>Nota para la tienda <small>(opcional)</small></span>
+          <textarea id="dcNota" maxlength="300" rows="2" placeholder="Algo que quieras que la tienda sepa. Ej: es para regalo"></textarea>
+        </label>
+
+        <p id="dcError" class="dc-error" role="alert"></p>
+      </form>
+
       <button class="btn btn-whatsapp" id="sendWhatsapp">ENVIAR PEDIDO POR WHATSAPP</button>
-      <p class="note">Se abrirá WhatsApp con el listado de productos seleccionados.</p>
+      <p class="note">Se abrirá WhatsApp con tu pedido y tus datos. La próxima vez ya estarán llenos.</p>
     </div>
   </div>
   <div class="modal" id="imgModal">

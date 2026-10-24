@@ -279,6 +279,8 @@ function changeQty(cartId, delta){
 
 function renderCart(){
   const box = document.getElementById("cartItems");
+  const form = document.getElementById("datosCliente");
+  if(form) form.hidden = !cart.length;
   if(!cart.length){
     box.innerHTML = '<p class="note">Todavía no has seleccionado ninguna prenda.</p>';
     document.getElementById("cartTotal").textContent = money(0);
@@ -315,7 +317,8 @@ async function sendWhatsapp(){
   if(!numero){ alert("La tienda todavía no tiene un número de WhatsApp configurado."); return; }
   const saludo = window.CFG.mensaje_saludo || "Hola, quiero hacer este pedido:";
 
-  
+  const cliente = leerDatosCliente();
+  if(!validarDatosCliente(cliente)) return;
 
   const btn = document.getElementById("sendWhatsapp");
   btn.disabled = true;
@@ -326,12 +329,16 @@ async function sendWhatsapp(){
   // El pedido se crea en el servidor: él valida las prendas y calcula el total con los precios reales
   const items = cart.map(x => ({ prenda_id: x.id, talla_id: x.tallaId, cantidad: x.qty }));
   const { data: codigoPedido, error: errorPedido } = await supabaseClient
-    .rpc("crear_pedido", { p_items: items });
+    .rpc("crear_pedido", { p_items: items, p_cliente: cliente });
 
   if(errorPedido || !codigoPedido){
     console.error(errorPedido);
-    const noDisponible = errorPedido && /Talla no disponible|Prenda no existe|Tienda no disponible/.test(errorPedido.message || "");
-    alert(noDisponible
+    const msg = (errorPedido && errorPedido.message) || "";
+    const noDisponible = /Talla no disponible|Prenda no existe|Tienda no disponible/.test(msg);
+    // Si el servidor rechazó algún dato del comprador, se muestra en el formulario
+    const errorDatos = /nombre|domicilio|dirección|forma de pago|tus datos/i.test(msg);
+    if(errorDatos) mostrarErrorCliente(msg);
+    else alert(noDisponible
       ? "Alguna prenda de tu pedido ya no está disponible. Recarga el catálogo y vuelve a intentar."
       : "No se pudo generar el pedido, intenta de nuevo.");
     btn.disabled = false;
@@ -347,11 +354,124 @@ async function sendWhatsapp(){
   const base = `${window.location.origin}${window.location.pathname.replace(/index\.html$/, "")}`;
   const urlPedido = base + linkTienda("pedido.html", { codigo: codigoPedido });
 
-  const textoPlano = `${saludo}\n\n${urlPedido}\n\nTotal estimado: ${money(totalFinal)}\n\n¿Me confirman disponibilidad y tiempo de envío? Gracias.`;
-  window.open(`https://wa.me/${numero}?text=${encodeURIComponent(textoPlano)}`, "_blank");
+  guardarDatosCliente(cliente);   // para que la próxima compra ya salga lleno
+
+  const lineas = [saludo, "", `👤 ${cliente.nombre}`];
+  if(cliente.entrega === "domicilio"){
+    lineas.push(`🛵 Domicilio: ${cliente.direccion}, barrio ${cliente.barrio}`);
+    if(cliente.referencia) lineas.push(`📍 ${cliente.referencia}`);
+  }else{
+    lineas.push("🏪 Lo recojo en la tienda");
+  }
+  lineas.push(`💳 Pago: ${NOMBRES_PAGO[cliente.pago]}`);
+  if(cliente.nota) lineas.push(`📝 ${cliente.nota}`);
+  lineas.push("", `🧾 Ver pedido: ${urlPedido}`, `💰 Total: ${money(totalFinal)}`, "", "¿Me confirman disponibilidad? Gracias.");
+
+  const urlWhatsapp = `https://wa.me/${numero}?text=${encodeURIComponent(lineas.join("\n"))}`;
+  // Algunos celulares bloquean la ventana nueva: en ese caso se abre en la misma pestaña
+  const ventana = window.open(urlWhatsapp, "_blank");
+  if(!ventana) window.location.href = urlWhatsapp;
 
   btn.disabled = false;
   btn.textContent = "ENVIAR PEDIDO POR WHATSAPP";
+}
+
+/* ---------------------------------------------------------
+   DATOS DEL COMPRADOR
+   Se guardan en este navegador (separados por tienda) para la próxima compra.
+   El servidor vuelve a validar todo en crear_pedido.
+   --------------------------------------------------------- */
+const DATOS_KEY = claveLocal("datosCliente");
+const NOMBRES_PAGO = { efectivo: "Efectivo", nequi: "Nequi", transferencia: "Transferencia" };
+const $dc = id => document.getElementById(id);
+const radioMarcado = nombre => (document.querySelector(`input[name="${nombre}"]:checked`) || {}).value || "";
+
+function leerDatosCliente(){
+  const entrega = radioMarcado("dcEntrega");
+  const datos = {
+    nombre:  $dc("dcNombre").value.trim(),
+    entrega,
+    pago:    radioMarcado("dcPago"),
+    nota:    $dc("dcNota").value.trim()
+  };
+  if(entrega === "domicilio"){
+    datos.direccion  = $dc("dcDireccion").value.trim();
+    datos.barrio     = $dc("dcBarrio").value.trim();
+    datos.referencia = $dc("dcReferencia").value.trim();
+  }
+  return datos;
+}
+
+function mostrarErrorCliente(texto, campo){
+  const caja = $dc("dcError");
+  caja.textContent = texto || "";
+  document.querySelectorAll(".dc-invalido").forEach(el => el.classList.remove("dc-invalido"));
+  if(campo){
+    campo.classList.add("dc-invalido");
+    campo.focus({ preventScroll: true });
+    campo.scrollIntoView({ behavior: "smooth", block: "center" });
+  }else if(texto){
+    caja.scrollIntoView({ behavior: "smooth", block: "center" });
+  }
+}
+
+function validarDatosCliente(d){
+  if(d.nombre.length < 2) return mostrarErrorCliente("Escribe tu nombre.", $dc("dcNombre")), false;
+  if(!d.entrega) return mostrarErrorCliente("Elige si es a domicilio o si lo recoges.", document.querySelector('input[name="dcEntrega"]')), false;
+  if(d.entrega === "domicilio"){
+    if(!d.direccion) return mostrarErrorCliente("Escribe la dirección.", $dc("dcDireccion")), false;
+    if(!d.barrio)    return mostrarErrorCliente("Escribe el barrio.", $dc("dcBarrio")), false;
+  }
+  if(!d.pago) return mostrarErrorCliente("Elige la forma de pago.", document.querySelector('input[name="dcPago"]')), false;
+  mostrarErrorCliente("");
+  return true;
+}
+
+function actualizarEntrega(){
+  if(!$dc("dcDomicilio")) return;   // tienda suspendida / no encontrada: el formulario ya no existe
+  const entrega = radioMarcado("dcEntrega");
+  $dc("dcDomicilio").hidden = entrega !== "domicilio";
+
+  // Si elige recoger y la tienda puso su dirección, se la mostramos
+  const info = $dc("dcRecoger");
+  const dirTienda = window.CFG && window.CFG.footer_direccion;
+  info.hidden = !(entrega === "recoger" && dirTienda);
+  if(!info.hidden) info.textContent = `📍 Lo recoges en: ${dirTienda}`;
+}
+
+function guardarDatosCliente(d){
+  // La nota es de este pedido: no se guarda para la próxima vez
+  const { nota, ...resto } = d;
+  const previos = cargarDatosGuardados();
+  try{ localStorage.setItem(DATOS_KEY, JSON.stringify({ ...previos, ...resto })); }catch(e){}
+}
+
+function cargarDatosGuardados(){
+  try{ return JSON.parse(localStorage.getItem(DATOS_KEY)) || {}; }catch(e){ return {}; }
+}
+
+function llenarDatosCliente(){
+  const d = cargarDatosGuardados();
+  if(d.nombre) $dc("dcNombre").value = d.nombre;
+  if(d.direccion) $dc("dcDireccion").value = d.direccion;
+  if(d.barrio) $dc("dcBarrio").value = d.barrio;
+  if(d.referencia) $dc("dcReferencia").value = d.referencia;
+  ["dcEntrega", "dcPago"].forEach(nombre => {
+    const valor = nombre === "dcEntrega" ? d.entrega : d.pago;
+    const radio = valor && document.querySelector(`input[name="${nombre}"][value="${valor}"]`);
+    if(radio) radio.checked = true;
+  });
+  actualizarEntrega();
+}
+
+if($dc("datosCliente")){
+  document.querySelectorAll('input[name="dcEntrega"]').forEach(r => r.addEventListener("change", actualizarEntrega));
+  // Al corregir un campo se quita el aviso de error
+  $dc("datosCliente").addEventListener("input", () => mostrarErrorCliente(""));
+  $dc("datosCliente").addEventListener("submit", e => e.preventDefault());
+  llenarDatosCliente();
+  // La dirección de la tienda llega después: se refresca el aviso de "recoger"
+  if(window.configTienda) window.configTienda.then(actualizarEntrega);
 }
 
 /* ---------------------------------------------------------
