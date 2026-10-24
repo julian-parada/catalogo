@@ -148,13 +148,14 @@
       <p class="note">Se abrirá WhatsApp con tu pedido y tus datos. La próxima vez ya estarán llenos.</p>
     </div>
   </div>
-  <div class="modal" id="imgModal">
- <div class="img-modal-content">
-  <button class="img-nav prev" onclick="event.stopPropagation(); selectThumb((currentIndex - 1 + currentGallery.length) % currentGallery.length)">‹</button>
-  <img id="imgBig" src="" alt="">
-  <button class="img-nav next" onclick="event.stopPropagation(); selectThumb((currentIndex + 1) % currentGallery.length)">›</button>
-  <div id="imgThumbs" class="img-thumbs"></div>
-</div>
+  <div class="modal" id="imgModal" aria-hidden="true">
+  <button class="img-close" id="imgClose" aria-label="Cerrar">✕</button>
+  <div class="img-modal-content">
+    <button class="img-nav prev" id="imgPrev" aria-label="Foto anterior">‹</button>
+    <img id="imgBig" src="" alt="">
+    <button class="img-nav next" id="imgNext" aria-label="Foto siguiente">›</button>
+    <div id="imgThumbs" class="img-thumbs"></div>
+  </div>
 </div>
 <div id="toast" class="toast"></div>
 

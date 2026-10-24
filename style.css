@@ -592,13 +592,58 @@ h2{
 }
 .product:hover::before{opacity:1}
 
-.product-img{
-  cursor:pointer; aspect-ratio:1/1;
-  background:radial-gradient(circle, #242424, #101010);
-  display:block; width:100%; object-fit:cover;
-  transition:transform .5s ease, filter .4s ease;
+/* ---------- Fotos de la tarjeta (carrusel) ---------- */
+.product-media{position:relative; aspect-ratio:4/5; overflow:hidden; background:#101010;}
+.media-track{
+  display:flex; height:100%;
+  overflow-x:auto; overflow-y:hidden;
+  scroll-snap-type:x mandatory; scroll-behavior:smooth;
+  scrollbar-width:none; -webkit-overflow-scrolling:touch;
+  overscroll-behavior-x:contain;
 }
-.product:hover .product-img{transform:scale(1.055); filter:contrast(1.05) saturate(1.08);}
+.media-track::-webkit-scrollbar{display:none}
+.media-slide{
+  position:relative; flex:0 0 100%; height:100%;
+  scroll-snap-align:start; cursor:zoom-in; overflow:hidden;
+}
+/* Relleno: la misma foto desenfocada, para que no queden franjas vacías */
+.media-slide::before{
+  content:""; position:absolute; inset:-12%;
+  background:var(--bg) center/cover no-repeat;
+  filter:blur(18px) brightness(.85); transform:scale(1.1);
+}
+.product-img{
+  position:relative; display:block; width:100%; height:100%;
+  object-fit:contain;                 /* la foto se ve COMPLETA */
+  transition:transform .5s ease;
+}
+.product:hover .product-img{transform:scale(1.03);}
+
+.media-nav{
+  position:absolute; top:50%; transform:translateY(-50%); z-index:3;
+  width:34px; height:34px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  background:rgba(0,0,0,.55); color:#fff; border:1px solid rgba(255,255,255,.25);
+  font-size:22px; line-height:1; padding:0 0 3px; cursor:pointer;
+  opacity:0; transition:opacity .2s, background .2s;
+}
+.media-nav.prev{left:8px}
+.media-nav.next{right:8px}
+.product:hover .media-nav, .media-nav:focus-visible{opacity:1}
+.media-nav:hover{background:var(--pink); border-color:var(--pink)}
+/* En pantallas táctiles no hay "hover": las flechas se ven siempre */
+@media (hover:none){ .media-nav{opacity:.9} }
+
+.media-dots{
+  position:absolute; left:0; right:0; bottom:8px; z-index:3;
+  display:flex; justify-content:center; gap:5px; pointer-events:none;
+}
+.media-dots i{
+  width:6px; height:6px; border-radius:50%;
+  background:rgba(255,255,255,.55); box-shadow:0 0 3px rgba(0,0,0,.5);
+  transition:width .2s, background .2s;
+}
+.media-dots i.on{width:16px; border-radius:3px; background:#fff;}
 
 .product-body{padding:12px 14px 14px; display:flex; flex-direction:column; flex:1;}
 .product-body h3{
@@ -724,6 +769,19 @@ h2{
   font-size:24px; line-height:1; cursor:pointer; z-index:2; transition:background .2s, border-color .2s;
 }
 .img-nav:hover{background:var(--pink); border-color:var(--pink)}
+.img-nav[hidden]{display:none}
+
+/* Botón ✕ de la foto ampliada: fijo arriba a la derecha, siempre a mano */
+.img-close{
+  position:fixed; top:16px; right:16px; z-index:5;
+  width:46px; height:46px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  background:rgba(0,0,0,.7); color:#fff; border:1px solid rgba(255,255,255,.3);
+  font-size:20px; line-height:1; cursor:pointer;
+  transition:background .2s, transform .2s;
+}
+.img-close:hover{background:var(--pink); border-color:var(--pink); transform:rotate(90deg)}
+.img-close:focus-visible{outline:3px solid #fff; outline-offset:2px}
 .img-nav.prev{left:16px}
 .img-nav.next{right:16px}
 .img-thumbs{display:flex; gap:10px; justify-content:center; margin-top:14px; flex-wrap:wrap;}
@@ -924,5 +982,13 @@ h2{
 
 @media (max-width:750px){
   .wa-flotante{right:14px; bottom:14px; width:52px; height:52px}
+  .media-nav{width:28px; height:28px; font-size:18px}
+  .media-nav.prev{left:5px}
+  .media-nav.next{right:5px}
+  #imgBig{width:94vw; height:72vh; padding:8px}
+  .img-nav{width:40px; height:40px; font-size:20px}
+  .img-nav.prev{left:6px}
+  .img-nav.next{right:6px}
+  .img-close{top:12px; right:12px; width:42px; height:42px}
   .wa-flotante svg{width:27px; height:27px}
 }

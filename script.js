@@ -66,7 +66,7 @@ async function cargarProductos(){
       originalPrice: p.precio_oferta ? p.precio : null,
       img: p.imagen,
       creado: p.creado_en,
-      gallery: [p.imagen, ...p.imagenes_prenda.sort((a,b)=>a.orden-b.orden).map(i=>i.url)],
+      gallery: [...new Set([p.imagen, ...p.imagenes_prenda.sort((a,b)=>a.orden-b.orden).map(i=>i.url)].filter(Boolean))],
       sizes: p.tallas.filter(t => t.disponible)
     }))
     .filter(p => p.sizes.length > 0);
@@ -204,7 +204,7 @@ function renderProducts(){
   const container = document.getElementById("products");
   container.innerHTML = filtered.length ? filtered.map(p => `
   <article class="product">
-    <img class="product-img" src="${esc(p.img)}" alt="${esc(p.name)}" onclick="openGallery(${p.id})" onerror="this.src='img/placeholder.jpg'">
+    ${htmlFotos(p)}
     <div class="product-body">
       <h3>${esc(p.name)}</h3>
       <p>${esc(p.category)}</p>
@@ -227,6 +227,73 @@ function renderProducts(){
     </div>
   </article>
   `).join("") : `<div class="empty">No encontramos productos con esa búsqueda.</div>`;
+
+  activarCarruseles(container);
+}
+
+/* ---------------------------------------------------------
+   FOTOS DE LA TARJETA (carrusel)
+   · La foto se ve COMPLETA (contain) en un cuadro 4:5; lo que sobra
+     se rellena con la misma foto desenfocada
+   · Varias fotos: flechas + puntitos; en el celular se desliza con el dedo
+   --------------------------------------------------------- */
+const fotosDe = p => (p.gallery && p.gallery.length ? p.gallery : [p.img || "img/placeholder.jpg"]);
+// Para usar la URL dentro de url("...") en CSS sin romperlo
+const urlCss = u => String(u).replace(/["'()\\\s]/g, c => "%" + c.charCodeAt(0).toString(16).padStart(2, "0"));
+
+function htmlFotos(p){
+  const fotos = fotosDe(p);
+  const slides = fotos.map((u, i) => `
+      <div class="media-slide" style="--bg:url('${esc(urlCss(u))}')">
+        <img class="product-img" src="${esc(u)}" alt="${esc(p.name)}${fotos.length > 1 ? ` (foto ${i + 1})` : ""}"
+             loading="${i === 0 ? "eager" : "lazy"}" onerror="this.src='img/placeholder.jpg'">
+      </div>`).join("");
+
+  const controles = fotos.length > 1 ? `
+      <button type="button" class="media-nav prev" data-paso="-1" aria-label="Foto anterior">‹</button>
+      <button type="button" class="media-nav next" data-paso="1" aria-label="Foto siguiente">›</button>
+      <div class="media-dots" aria-hidden="true">${fotos.map((_, i) => `<i class="${i === 0 ? "on" : ""}"></i>`).join("")}</div>` : "";
+
+  return `
+    <div class="product-media" data-id="${p.id}">
+      <div class="media-track">${slides}</div>${controles}
+    </div>`;
+}
+
+const indiceFoto = track => Math.round(track.scrollLeft / Math.max(1, track.clientWidth));
+
+function activarCarruseles(contenedor){
+  contenedor.querySelectorAll(".product-media").forEach(media => {
+    const track = media.querySelector(".media-track");
+    const puntos = media.querySelectorAll(".media-dots i");
+
+    // Puntitos siguen a la foto visible (al deslizar o con flechas)
+    if(puntos.length){
+      let pendiente = false;
+      track.addEventListener("scroll", () => {
+        if(pendiente) return;
+        pendiente = true;
+        requestAnimationFrame(() => {
+          pendiente = false;
+          const i = indiceFoto(track);
+          puntos.forEach((d, j) => d.classList.toggle("on", j === i));
+        });
+      }, { passive: true });
+    }
+
+    media.addEventListener("click", e => {
+      const flecha = e.target.closest(".media-nav");
+      const total = track.children.length;
+      if(flecha){
+        e.stopPropagation();
+        // Da la vuelta: de la última pasa a la primera y al revés
+        const siguiente = (indiceFoto(track) + Number(flecha.dataset.paso) + total) % total;
+        track.scrollTo({ left: siguiente * track.clientWidth, behavior: "smooth" });
+        return;
+      }
+      if(e.target.closest(".media-slide")) openGallery(Number(media.dataset.id), indiceFoto(track));
+    });
+  });
 }
 
 /* ---------------------------------------------------------
@@ -492,16 +559,33 @@ function showToast(texto){
 let currentGallery = [];
 let currentIndex = 0;
 
-function openGallery(id){
+function openGallery(id, inicio = 0){
   const p = products.find(x => x.id === id);
   if(!p) return;
-  currentGallery = p.gallery.length ? p.gallery : [p.img];
-  currentIndex = 0;
+  currentGallery = fotosDe(p);
+  currentIndex = Math.min(Math.max(0, inicio), currentGallery.length - 1);
   renderGallery();
-  document.getElementById("imgModal").classList.add("show");
+  const modal = document.getElementById("imgModal");
+  modal.classList.add("show");
+  modal.setAttribute("aria-hidden", "false");
+}
+
+function cerrarGaleria(){
+  const modal = document.getElementById("imgModal");
+  modal.classList.remove("show");
+  modal.setAttribute("aria-hidden", "true");
+}
+
+function moverGaleria(paso){
+  if(currentGallery.length < 2) return;
+  currentIndex = (currentIndex + paso + currentGallery.length) % currentGallery.length;
+  renderGallery();
 }
 
 function renderGallery(){
+  const varias = currentGallery.length > 1;
+  document.getElementById("imgPrev").hidden = !varias;
+  document.getElementById("imgNext").hidden = !varias;
   document.getElementById("imgBig").src = currentGallery[currentIndex];
   document.getElementById("imgThumbs").innerHTML = currentGallery.length > 1
     ? currentGallery.map((url, i) => `
@@ -520,8 +604,24 @@ function selectThumb(i){
    EVENTOS
    --------------------------------------------------------- */
 document.getElementById("imgModal").addEventListener("click", e => {
-  e.currentTarget.classList.remove("show");
+  if(e.target.id === "imgModal" || e.target.closest("#imgClose")) cerrarGaleria();
 });
+document.getElementById("imgPrev").addEventListener("click", e => { e.stopPropagation(); moverGaleria(-1); });
+document.getElementById("imgNext").addEventListener("click", e => { e.stopPropagation(); moverGaleria(1); });
+
+// En el celular: deslizar la foto ampliada para pasar a la otra
+(function(){
+  const img = document.getElementById("imgBig");
+  let x0 = null, y0 = null;
+  img.addEventListener("touchstart", e => { x0 = e.touches[0].clientX; y0 = e.touches[0].clientY; }, { passive: true });
+  img.addEventListener("touchend", e => {
+    if(x0 === null) return;
+    const dx = e.changedTouches[0].clientX - x0;
+    const dy = e.changedTouches[0].clientY - y0;
+    if(Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) moverGaleria(dx < 0 ? 1 : -1);
+    x0 = y0 = null;
+  });
+})();
 
 // Menú desplegable de categorías
 document.getElementById("catTrigger").addEventListener("click", e => {
@@ -568,17 +668,9 @@ document.addEventListener("keydown", (e) => {
   const modal = document.getElementById("imgModal");
   if(!modal.classList.contains("show")) return;
 
-  if(e.key === "ArrowRight" && currentGallery.length > 1){
-    currentIndex = (currentIndex + 1) % currentGallery.length;
-    renderGallery();
-  }
-  if(e.key === "ArrowLeft" && currentGallery.length > 1){
-    currentIndex = (currentIndex - 1 + currentGallery.length) % currentGallery.length;
-    renderGallery();
-  }
-  if(e.key === "Escape"){
-    modal.classList.remove("show");
-  }
+  if(e.key === "ArrowRight") moverGaleria(1);
+  if(e.key === "ArrowLeft") moverGaleria(-1);
+  if(e.key === "Escape") cerrarGaleria();
 });
 (function(){
   const barra = document.querySelector(".topbar");
