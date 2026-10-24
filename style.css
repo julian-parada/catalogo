@@ -416,7 +416,7 @@ h2{
    HERO
    ========================================================= */
 .hero{
-  min-height:82vh;
+  min-height:min(52vh, 500px);
   display:flex;
   align-items:center;
   position:relative;
@@ -430,10 +430,10 @@ h2{
   background:rgba(0,0,0,.45);
   backdrop-filter:blur(6px);
   -webkit-backdrop-filter:blur(6px);
-  padding:28px 32px;
+  padding:22px 28px;
   border-radius:16px;
   width:fit-content;
-  max-width:min(92%, 640px);
+  max-width:min(92%, 600px);
   margin-left:4%;
   display:flex;
   flex-direction:column;
@@ -441,7 +441,7 @@ h2{
   text-align:left;
 }
 .hero-overlay .tag{
-  font-size:clamp(2rem, 5vw, 4rem);
+  font-size:clamp(1.6rem, 3.4vw, 3rem);
   font-weight:800;
   line-height:1.05;
   letter-spacing:.14em;
@@ -450,7 +450,7 @@ h2{
 }
 .hero-overlay .tag::before{display:none}
 .hero-overlay p, .hero-sub{
-  font-size:clamp(1.05rem, 2vw, 1.4rem);
+  font-size:clamp(1rem, 1.5vw, 1.25rem);
   max-width:520px;
   line-height:1.5;
   color:rgba(255,255,255,.85);
@@ -464,12 +464,12 @@ h2{
   display:inline-flex;
   align-items:center;
   gap:14px;
-  margin-top:22px;
-  padding:18px 32px;
+  margin-top:18px;
+  padding:14px 26px;
   background:var(--pink);
   color:#fff;
   font-family:"Bebas Neue", Impact, sans-serif;
-  font-size:clamp(1.2rem, 1.8vw, 1.6rem);
+  font-size:clamp(1.1rem, 1.5vw, 1.4rem);
   font-weight:400;
   letter-spacing:.12em;
   line-height:1;
@@ -516,9 +516,9 @@ h2{
 
 @media (max-width:750px){
   .hero-cta{
-    font-size:1.15rem;
-    padding:15px 24px;
-    gap:10px;
+    font-size:1rem;
+    padding:10px 16px;
+    gap:8px;
     box-shadow:4px 4px 0 rgba(0,0,0,.9), 0 10px 26px rgba(var(--pink-rgb),.3);
   }
   .hero-cta:hover{
@@ -528,7 +528,7 @@ h2{
 }
 
 @media (max-width:380px){
-  .hero-cta{font-size:1rem; padding:13px 20px; letter-spacing:.08em;}
+  .hero-cta{font-size:.95rem; padding:9px 14px; letter-spacing:.08em;}
 }
 
 /* =========================================================
@@ -748,7 +748,7 @@ h2{
    ========================================================= */
 @media (max-width: 1000px){
   .products{grid-template-columns:repeat(3, 1fr)}
-  .hero{min-height:75vh}
+  .hero{min-height:44vh}
 }
 
 @media (max-width: 850px){
@@ -818,23 +818,23 @@ h2{
   #catalogo{scroll-margin-top:150px}
 
   /* HERO */
-  .hero{min-height:70vh}
+  .hero{min-height:240px; align-items:flex-end; padding:0 0 18px;}
   .hero-overlay{
-    background:rgba(0,0,0,.48); backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
-    padding:36px 42px; border-radius:18px; width:fit-content; max-width:min(92%, 720px);
-    margin-left:4%; display:flex; flex-direction:column; align-items:flex-start; text-align:left; gap:6px;
+    background:rgba(0,0,0,.5); backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px);
+    padding:14px 16px; border-radius:14px; width:fit-content; max-width:92%;
+    margin:0 4%; display:flex; flex-direction:column; align-items:flex-start; text-align:left; gap:2px;
   }
   .hero-overlay .tag{
-    font-size:clamp(2.4rem, 5.5vw, 4.8rem); font-weight:800; line-height:1.02;
-    letter-spacing:.10em; text-transform:uppercase; text-shadow:0 4px 24px rgba(0,0,0,.55);
+    font-size:clamp(1.15rem, 5.4vw, 1.6rem); font-weight:800; line-height:1.1;
+    letter-spacing:.05em; text-transform:uppercase; text-shadow:0 2px 14px rgba(0,0,0,.55);
   }
   .hero-overlay .tag::before{display:none}
   .hero-overlay p, .hero-sub{
-    font-size:clamp(1.1rem, 1.9vw, 1.55rem); max-width:560px;
-    line-height:1.5; color:rgba(255,255,255,.88); margin:6px 0 0;
-    text-shadow:0 2px 14px rgba(0,0,0,.85);
+    font-size:.9rem; max-width:none;
+    line-height:1.4; color:rgba(255,255,255,.88); margin:2px 0 0;
+    text-shadow:0 2px 10px rgba(0,0,0,.85);
   }
-  .hero-overlay .btn-primary{font-size:.95rem; padding:13px 24px; margin-top:14px;}
+  .hero-overlay .btn-primary{font-size:.95rem; padding:10px 16px; margin-top:10px;}
 
   /* CATÁLOGO */
   .section{padding:40px 0 70px}
@@ -862,4 +862,25 @@ h2{
   .product-body{padding:8px}
   .product-body h3{font-size:.8rem}
   .add{font-size:.68rem; padding:9px 3px}
+}
+
+/* =========================================================
+   BOTÓN FLOTANTE DE WHATSAPP
+   ========================================================= */
+.wa-flotante{
+  position:fixed; right:20px; bottom:20px; z-index:150;   /* debajo del carrito y la galería (200) */
+  width:58px; height:58px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  background:#25D366; color:#fff;
+  box-shadow:0 8px 24px rgba(0,0,0,.35);
+  transition:transform .2s ease, box-shadow .2s ease;
+}
+.wa-flotante[hidden]{display:none}
+.wa-flotante svg{width:30px; height:30px}
+.wa-flotante:hover{transform:scale(1.08); box-shadow:0 10px 30px rgba(37,211,102,.45)}
+.wa-flotante:focus-visible{outline:3px solid #fff; outline-offset:3px}
+
+@media (max-width:750px){
+  .wa-flotante{right:14px; bottom:14px; width:52px; height:52px}
+  .wa-flotante svg{width:27px; height:27px}
 }

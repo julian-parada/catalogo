@@ -122,6 +122,18 @@ function aplicarConfiguracion(cfg){
   }
 
   pintarFooter(cfg);
+  pintarWhatsappFlotante(cfg);
+}
+
+// Botón flotante de WhatsApp (solo si la tienda tiene número)
+function pintarWhatsappFlotante(cfg){
+  const btn = porId("waFlotante");
+  if(!btn) return;
+  const numero = String(cfg.whatsapp || "").replace(/\D/g, "");
+  if(numero.length < 10 || numero === "573000000000"){ btn.hidden = true; return; }
+  const texto = `Hola${cfg.nombre_tienda ? " " + cfg.nombre_tienda : ""}, vi su catálogo y tengo una pregunta.`;
+  btn.href = `https://wa.me/${numero}?text=${encodeURIComponent(texto)}`;
+  btn.hidden = false;
 }
 
 // 1) Lo último que se guardó en este navegador: evita ver los textos de ejemplo un instante

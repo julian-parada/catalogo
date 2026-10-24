@@ -9,6 +9,7 @@ async function revisarSesion(){
 
 async function subirImagen(archivo){
   if(!archivo || !archivo.type.startsWith("image/")) throw new Error("El archivo debe ser una imagen.");
+  archivo = await comprimirImagen(archivo, 1200);   // de varios MB a ~200 KB (utils.js)
   const tienda = await window.tiendaActual;
   if(!tienda) throw new Error("No se encontró tu tienda. Vuelve a iniciar sesión.");
   // Cada tienda sube a su propia carpeta (lo exige el servidor). Sin tildes ni espacios en el nombre.

@@ -174,6 +174,8 @@ function limpiarWhatsapp(valor){
    --------------------------------------------------------- */
 async function subirArchivo(archivo, prefijo, limite){
   if(!archivo.type.startsWith("image/")) throw new Error("El archivo del " + prefijo + " debe ser una imagen.");
+  // Se comprime antes de revisar el peso: logo hasta 600px, banner hasta 1920px (utils.js)
+  archivo = await comprimirImagen(archivo, prefijo === "logo" ? 600 : 1920, 0.85);
   if(archivo.size > limite){
     throw new Error(`La imagen del ${prefijo} pesa demasiado (máximo ${Math.round(limite / 1024 / 1024)} MB).`);
   }
