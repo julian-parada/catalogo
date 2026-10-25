@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0a0a0a">
+  <meta name="robots" content="noindex">
+  <title>Nueva contraseña</title>
+  <!-- Se guarda el link tal como llegó, antes de que Supabase lo limpie -->
+  <script>window.__URL_INICIAL = location.href;</script>
+  <link rel="stylesheet" href="admin.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabaseConfig.js"></script>
+  <script src="seguridad.js"></script>
+</head>
+<body>
+  <main class="login-screen">
+    <div class="login-glow"></div>
+
+    <section class="login-card">
+      <div class="login-heading titulo-largo">
+        <span class="eyebrow">SEGURIDAD</span>
+        <h1>NUEVA<br><strong>CONTRASEÑA</strong></h1>
+      </div>
+
+      <!-- Mientras se revisa el link -->
+      <p class="olvide-texto" id="revisando">Revisando el link…</p>
+
+      <!-- Link vencido o inválido -->
+      <div id="linkMalo" hidden>
+        <p class="login-error" id="linkMaloTexto">Este link ya venció o ya se usó.</p>
+        <a href="admin.html" class="btn-primary"><span>PEDIR UN LINK NUEVO</span><span class="btn-arrow">→</span></a>
+      </div>
+
+      <!-- Formulario -->
+      <form id="nuevaForm" class="login-form" hidden novalidate>
+        <p class="olvide-texto">Cuenta: <strong id="cuentaCorreo"></strong></p>
+
+        <label for="nueva">Contraseña nueva</label>
+        <div class="input-wrap">
+          <span class="input-icon">●</span>
+          <input type="password" id="nueva" autocomplete="new-password" required>
+          <button type="button" class="ojo" data-ojo="nueva" aria-label="Mostrar contraseña">Ver</button>
+        </div>
+        <div class="fuerza" id="fuerza"></div>
+
+        <label for="repetir">Repite la contraseña</label>
+        <div class="input-wrap">
+          <span class="input-icon">●</span>
+          <input type="password" id="repetir" autocomplete="new-password" required>
+        </div>
+
+        <p class="login-error" id="nuevaError" role="alert"></p>
+        <button type="submit" class="btn-primary" id="nuevaBtn">
+          <span>GUARDAR CONTRASEÑA</span>
+          <span class="btn-arrow">→</span>
+        </button>
+      </form>
+
+      <div class="login-footer"><span>Al guardar se cierra la sesión en todos tus dispositivos</span></div>
+    </section>
+  </main>
+
+<script>
+(async function(){
+  const $ = id => document.getElementById(id);
+  const inicial = new URL(window.__URL_INICIAL);
+  const hash = new URLSearchParams(inicial.hash.slice(1));
+  let correo = "";
+
+  function linkMalo(texto){
+    $("revisando").hidden = true;
+    $("nuevaForm").hidden = true;
+    $("linkMalo").hidden = false;
+    if(texto) $("linkMaloTexto").textContent = texto;
+  }
+
+  // Supabase manda el error en el link si venció o ya se usó
+  if(hash.get("error") || inicial.searchParams.get("error")){
+    linkMalo("Este link ya venció o ya se usó. Pide uno nuevo desde el inicio de sesión.");
+    return;
+  }
+
+  // Solo se muestra el formulario si se llegó desde el link del correo
+  // (así nadie puede abrir esta página con una sesión normal y cambiar la clave sin la actual)
+  const vieneDelCorreo = hash.get("type") === "recovery" || inicial.searchParams.has("code");
+  if(!vieneDelCorreo){ linkMalo("Para cambiar tu contraseña, pide el link desde «¿Olvidaste tu contraseña?»."); return; }
+
+  // Espera a que Supabase lea el link y abra la sesión de recuperación
+  let sesion = null;
+  for(let i = 0; i < 20 && !sesion; i++){
+    const { data } = await supabaseClient.auth.getSession();
+    sesion = data.session;
+    if(!sesion) await new Promise(r => setTimeout(r, 250));
+  }
+  if(!sesion){ linkMalo(); return; }
+
+  correo = sesion.user.email || "";
+  $("cuentaCorreo").textContent = correo;
+  $("revisando").hidden = true;
+  $("nuevaForm").hidden = false;
+  activarOjos();
+  pintarFuerza($("fuerza"), "", correo);
+  $("nueva").addEventListener("input", e => pintarFuerza($("fuerza"), e.target.value, correo));
+  $("nueva").focus();
+
+  $("nuevaForm").addEventListener("submit", async e => {
+    e.preventDefault();
+    const nueva = $("nueva").value, repetir = $("repetir").value, err = $("nuevaError"), btn = $("nuevaBtn");
+    err.textContent = "";
+    if(!contrasenaValida(nueva, correo)){ err.textContent = "La contraseña no cumple todos los requisitos."; return; }
+    if(nueva !== repetir){ err.textContent = "Las dos contraseñas no coinciden."; return; }
+
+    btn.disabled = true;
+    const { error } = await supabaseClient.auth.updateUser({ password: nueva });
+    if(error){ btn.disabled = false; err.textContent = errorAmigable(error); return; }
+
+    // Cierra la sesión en todos los dispositivos: hay que entrar de nuevo con la clave nueva
+    await supabaseClient.auth.signOut({ scope: "global" });
+    location.replace("admin.html?clave=ok");
+  });
+})();
+</script>
+</body>
+</html>

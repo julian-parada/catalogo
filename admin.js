@@ -13,21 +13,173 @@ async function revisarSesion(){
 }
 
 // ---------- LOGIN ----------
-document.getElementById("loginForm").addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const email     = document.getElementById("email").value;
-  const password  = document.getElementById("password").value;
-  const errorBox  = document.getElementById("loginError");
+const $id = id => document.getElementById(id);
+let captchaLogin = SIN_CAPTCHA, captchaOlvide = SIN_CAPTCHA;
+let relojBloqueo;
 
-  const { error } = await supabaseClient.auth.signInWithPassword({ email, password });
-  if(error){ errorBox.textContent = "Correo o contraseña incorrectos."; return; }
+activarOjos();
+prepararCaptcha($id("captchaLogin")).then(c => { captchaLogin = c; });
+
+// Mensaje al volver de restablecer la contraseña
+if(new URLSearchParams(location.search).get("clave") === "ok"){
+  $id("loginOk").textContent = "✓ Contraseña cambiada. Ya puedes entrar con la nueva.";
+  history.replaceState(null, "", location.pathname);
+}
+
+// Si hay demasiados fallos, el botón queda bloqueado con cuenta regresiva
+function mostrarBloqueo(){
+  const btn = $id("loginBtn");
+  const tick = () => {
+    const seg = segundosBloqueo();
+    if(seg <= 0){
+      clearInterval(relojBloqueo);
+      btn.disabled = false;
+      $id("loginError").textContent = "";
+      return;
+    }
+    btn.disabled = true;
+    $id("loginError").textContent = `Demasiados intentos fallidos. Espera ${textoEspera(seg)} para volver a intentar.`;
+  };
+  clearInterval(relojBloqueo);
+  tick();
+  relojBloqueo = setInterval(tick, 1000);
+}
+if(segundosBloqueo() > 0) mostrarBloqueo();
+
+$id("loginForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  if(segundosBloqueo() > 0){ mostrarBloqueo(); return; }
+
+  const email    = $id("email").value.trim().toLowerCase();
+  const password = $id("password").value;
+  const errorBox = $id("loginError");
+  const btn      = $id("loginBtn");
+  $id("loginOk").textContent = "";
+  if(!email || !password){ errorBox.textContent = "Escribe tu correo y tu contraseña."; return; }
+
+  btn.disabled = true;
+  const { error } = await supabaseClient.auth.signInWithPassword({
+    email, password, options: { captchaToken: captchaLogin.token() }
+  });
+  captchaLogin.reiniciar();
+
+  if(error){
+    btn.disabled = false;
+    $id("password").value = "";
+    if(/invalid login|invalid credentials/i.test(error.message)){
+      const espera = registrarFallo();
+      if(espera > 0){ mostrarBloqueo(); return; }
+    }
+    errorBox.textContent = errorAmigable(error);
+    return;
+  }
+  limpiarIntentos();
   errorBox.textContent = "";
   // Se recarga para que tema.js lea la tienda de este usuario
   location.reload();
 });
 
+// ---------- OLVIDÉ MI CONTRASEÑA ----------
+function verOlvide(ver){
+  $id("loginForm").hidden = ver;
+  $id("olvideForm").hidden = !ver;
+  if(ver){
+    $id("olvideEmail").value = $id("email").value.trim();
+    $id("olvideError").textContent = "";
+    $id("olvideOk").textContent = "";
+    if(captchaOlvide === SIN_CAPTCHA) prepararCaptcha($id("captchaOlvide")).then(c => { captchaOlvide = c; });
+    $id("olvideEmail").focus();
+  }else{
+    $id("email").focus();
+  }
+}
+$id("irOlvide").addEventListener("click", () => verOlvide(true));
+$id("volverLogin").addEventListener("click", () => verOlvide(false));
+
+$id("olvideForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const email = $id("olvideEmail").value.trim().toLowerCase();
+  const errorBox = $id("olvideError"), okBox = $id("olvideOk"), btn = $id("olvideBtn");
+  errorBox.textContent = ""; okBox.textContent = "";
+  if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){ errorBox.textContent = "Escribe un correo válido."; return; }
+
+  btn.disabled = true;
+  const { error } = await supabaseClient.auth.resetPasswordForEmail(email, {
+    redirectTo: urlRestablecer(),
+    captchaToken: captchaOlvide.token()
+  });
+  captchaOlvide.reiniciar();
+
+  // Por seguridad, la respuesta es la misma exista o no el correo
+  // (solo se muestran errores de límite de envíos, captcha o conexión)
+  if(error && /rate limit|too many|security purposes|captcha|network|fetch/i.test(error.message)){
+    btn.disabled = false;
+    errorBox.textContent = errorAmigable(error);
+    return;
+  }
+  okBox.textContent = "Si ese correo tiene una cuenta, te llegará un link en unos minutos. Revisa también la carpeta de spam. El link sirve una sola vez.";
+  // Evita reenvíos seguidos
+  setTimeout(() => { btn.disabled = false; }, 60000);
+});
+
+// ---------- CAMBIAR CONTRASEÑA (dentro del panel) ----------
+const dialogo = $id("claveDialog");
+function cerrarDialogo(){ if(dialogo.open) dialogo.close(); }
+
+$id("cambiarClaveBtn").addEventListener("click", () => {
+  $id("claveForm").reset();
+  $id("claveError").textContent = "";
+  pintarFuerza($id("claveFuerza"), "", "");
+  activarOjos(dialogo);
+  if(typeof dialogo.showModal === "function") dialogo.showModal(); else dialogo.setAttribute("open", "");
+  $id("claveActual").focus();
+});
+$id("claveCerrar").addEventListener("click", cerrarDialogo);
+dialogo.addEventListener("click", e => { if(e.target === dialogo) cerrarDialogo(); });
+
+$id("claveNueva").addEventListener("input", async e => {
+  const { data: { session } } = await supabaseClient.auth.getSession();
+  pintarFuerza($id("claveFuerza"), e.target.value, session && session.user.email);
+});
+
+$id("claveForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const errorBox = $id("claveError"), btn = $id("claveGuardar");
+  const actual = $id("claveActual").value;
+  const nueva = $id("claveNueva").value;
+  const repetir = $id("claveRepetir").value;
+  errorBox.textContent = "";
+
+  const { data: { session } } = await supabaseClient.auth.getSession();
+  if(!session){ location.reload(); return; }
+  const correo = session.user.email;
+
+  if(!actual){ errorBox.textContent = "Escribe tu contraseña actual."; return; }
+  if(!contrasenaValida(nueva, correo)){ errorBox.textContent = "La contraseña nueva no cumple todos los requisitos."; return; }
+  if(nueva !== repetir){ errorBox.textContent = "Las dos contraseñas nuevas no coinciden."; return; }
+  if(nueva === actual){ errorBox.textContent = "La nueva debe ser distinta a la actual."; return; }
+
+  btn.disabled = true;
+  // 1) Confirmar que sabe la contraseña actual (si alguien encontró el panel abierto, no puede cambiarla)
+  const { error: errActual } = await supabaseClient.auth.signInWithPassword({ email: correo, password: actual });
+  if(errActual){
+    btn.disabled = false;
+    errorBox.textContent = /invalid/i.test(errActual.message) ? "La contraseña actual no es correcta." : errorAmigable(errActual);
+    return;
+  }
+  // 2) Guardar la nueva
+  const { error } = await supabaseClient.auth.updateUser({ password: nueva });
+  if(error){ btn.disabled = false; errorBox.textContent = errorAmigable(error); return; }
+  // 3) Cerrar las sesiones de otros dispositivos
+  if($id("cerrarOtras").checked) await supabaseClient.auth.signOut({ scope: "others" });
+
+  btn.disabled = false;
+  cerrarDialogo();
+  avisar("✓ Contraseña cambiada.");
+});
+
 // ---------- LOGOUT ----------
-document.getElementById("logoutBtn").addEventListener("click", async () => {
+$id("logoutBtn").addEventListener("click", async () => {
   await supabaseClient.auth.signOut();
   location.reload();
 });

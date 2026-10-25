@@ -8,7 +8,8 @@
   <link rel="stylesheet" href="admin.css">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabaseConfig.js"></script>
-<script src="utils.js"></script>         <!-- 👈 NUEVA LÍNEA -->
+<script src="utils.js"></script>
+<script src="seguridad.js"></script>
 <script src="tema.js"></script>
 <script src="tienda.js"></script>
 <script src="admin.js" defer></script>
@@ -43,17 +44,39 @@
         <div class="input-wrap">
           <span class="input-icon">●</span>
           <input type="password" id="password" placeholder="••••••••" autocomplete="current-password" required>
+          <button type="button" class="ojo" data-ojo="password" aria-label="Mostrar contraseña">Ver</button>
         </div>
 
-        <p class="login-error" id="loginError"></p>
+        <div class="captcha" id="captchaLogin" hidden></div>
+        <p class="login-error" id="loginError" role="alert"></p>
+        <p class="login-ok" id="loginOk" role="status"></p>
 
-        <button type="submit" class="btn-primary">
+        <button type="submit" class="btn-primary" id="loginBtn">
           <span>ENTRAR AL PANEL</span>
           <span class="btn-arrow">→</span>
         </button>
 
+        <button type="button" class="link-sutil" id="irOlvide">¿Olvidaste tu contraseña?</button>
+      </form>
 
+      <!-- RECUPERAR CONTRASEÑA -->
+      <form id="olvideForm" class="login-form" hidden novalidate>
+        <p class="olvide-texto">Escribe tu correo y te enviaremos un link para crear una contraseña nueva.</p>
+        <label for="olvideEmail">Correo electrónico</label>
+        <div class="input-wrap">
+          <span class="input-icon">✉</span>
+          <input type="email" id="olvideEmail" placeholder="admin@correo.com" autocomplete="email" required>
+        </div>
 
+        <div class="captcha" id="captchaOlvide" hidden></div>
+        <p class="login-error" id="olvideError" role="alert"></p>
+        <p class="login-ok" id="olvideOk" role="status"></p>
+
+        <button type="submit" class="btn-primary" id="olvideBtn">
+          <span>ENVIARME EL LINK</span>
+          <span class="btn-arrow">→</span>
+        </button>
+        <button type="button" class="link-sutil" id="volverLogin">← Volver a iniciar sesión</button>
       </form>
 
       <div class="login-footer">
@@ -73,6 +96,10 @@
     <div class="online-status">
       
     </div>
+    <button class="logout-btn" id="cambiarClaveBtn" type="button">
+      <span>🔑</span>
+      <em class="txt-largo">Cambiar contraseña</em>
+    </button>
     <button class="logout-btn" id="logoutBtn">
       <span>↪</span>
       Cerrar sesión
@@ -148,6 +175,38 @@
 
 
   
+  <!-- CAMBIAR CONTRASEÑA -->
+  <dialog class="dialogo" id="claveDialog" aria-labelledby="claveTitulo">
+    <form id="claveForm" novalidate>
+      <button type="button" class="dialogo-cerrar" id="claveCerrar" aria-label="Cerrar">✕</button>
+      <span class="eyebrow">SEGURIDAD</span>
+      <h3 id="claveTitulo">Cambiar contraseña</h3>
+
+      <label for="claveActual">Contraseña actual</label>
+      <div class="input-wrap">
+        <input type="password" id="claveActual" autocomplete="current-password" required>
+        <button type="button" class="ojo" data-ojo="claveActual" aria-label="Mostrar contraseña">Ver</button>
+      </div>
+
+      <label for="claveNueva">Contraseña nueva</label>
+      <div class="input-wrap">
+        <input type="password" id="claveNueva" autocomplete="new-password" required>
+        <button type="button" class="ojo" data-ojo="claveNueva" aria-label="Mostrar contraseña">Ver</button>
+      </div>
+      <div class="fuerza" id="claveFuerza"></div>
+
+      <label for="claveRepetir">Repite la contraseña nueva</label>
+      <div class="input-wrap">
+        <input type="password" id="claveRepetir" autocomplete="new-password" required>
+      </div>
+
+      <label class="check-otros"><input type="checkbox" id="cerrarOtras" checked> Cerrar sesión en mis otros dispositivos</label>
+
+      <p class="login-error" id="claveError" role="alert"></p>
+      <button type="submit" class="btn-primary" id="claveGuardar"><span>GUARDAR CONTRASEÑA</span></button>
+    </form>
+  </dialog>
+
    <script src="admin-marca.js"></script>
     
 </body>

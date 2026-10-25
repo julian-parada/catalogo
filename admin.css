@@ -431,3 +431,71 @@ body{
   --bg-2:var(--black-2, #111114);
   --text:var(--white, #fff);
 }
+
+/* =========================================================
+   SEGURIDAD: ver contraseña, recuperar, medidor, diálogo
+   ========================================================= */
+.ojo{
+  flex:none; padding:6px 10px; border-radius:8px;
+  background:transparent; border:1px solid var(--line); color:var(--muted);
+  font-size:12px; font-weight:800; letter-spacing:.04em; cursor:pointer;
+}
+.ojo:hover{color:var(--text); border-color:var(--muted)}
+
+.link-sutil{
+  display:block; margin:16px auto 0; padding:6px;
+  background:none; border:0; color:var(--muted);
+  font-size:13.5px; font-weight:600; text-decoration:underline; text-underline-offset:3px; cursor:pointer;
+}
+.link-sutil:hover{color:var(--pink)}
+.login-ok{min-height:0; margin-top:10px; font-size:13.5px; font-weight:600; color:var(--ok)}
+.login-ok:empty{display:none}
+.olvide-texto{color:var(--muted); font-size:14px; line-height:1.5; margin:0 0 6px}
+.olvide-texto strong{color:var(--text)}
+.captcha{margin-top:16px; min-height:65px}
+.captcha[hidden]{display:none}
+
+/* Medidor de fuerza */
+.fuerza{margin-top:10px}
+.fuerza-barra{display:grid; grid-template-columns:repeat(4, 1fr); gap:5px}
+.fuerza-barra i{height:5px; border-radius:3px; background:var(--line)}
+.fuerza-barra[data-nivel="1"] i:nth-child(-n+1){background:var(--danger)}
+.fuerza-barra[data-nivel="2"] i:nth-child(-n+2){background:var(--yellow)}
+.fuerza-barra[data-nivel="3"] i:nth-child(-n+3){background:#7bd389}
+.fuerza-barra[data-nivel="4"] i{background:var(--ok)}
+.fuerza-texto{display:block; margin-top:6px; font-size:12px; font-weight:800; color:var(--muted)}
+.fuerza-texto:empty{display:none}
+.fuerza-reglas{list-style:none; margin:8px 0 0; padding:0; display:grid; gap:3px}
+.fuerza-reglas li{font-size:12.5px; color:var(--muted)}
+.fuerza-reglas li.ok{color:var(--ok)}
+
+/* Diálogo cambiar contraseña */
+.dialogo{
+  width:min(460px, calc(100% - 28px)); max-height:calc(100% - 28px); margin:auto;
+  padding:0; border:1px solid var(--line); border-radius:20px;
+  background:var(--card); color:var(--text);
+  box-shadow:0 30px 80px rgba(0,0,0,.6);
+}
+.dialogo::backdrop{background:rgba(0,0,0,.7); backdrop-filter:blur(6px)}
+.dialogo form{position:relative; padding:28px}
+.dialogo h3{font-size:24px; margin:0 0 6px}
+.dialogo label:not(.check-otros){display:block; margin:16px 0 8px; font-size:13px; font-weight:700}
+.dialogo .input-wrap input{font-size:16px}
+.dialogo .btn-primary{margin-top:18px}
+.dialogo-cerrar{
+  position:absolute; top:16px; right:16px; width:38px; height:38px; border-radius:50%;
+  background:var(--bg); border:1px solid var(--line); color:var(--text); font-size:15px; cursor:pointer;
+}
+.dialogo-cerrar:hover{border-color:var(--pink); color:var(--pink)}
+.check-otros{display:flex; align-items:center; gap:9px; margin-top:16px; font-size:13.5px; font-weight:600; cursor:pointer}
+.check-otros input{width:17px; height:17px; accent-color:var(--pink)}
+
+.logout-btn em{font-style:normal}
+@media (max-width:720px){
+  .txt-largo{display:none}           /* en el celular el botón queda solo con la llave */
+  .header-right{gap:8px}
+}
+.btn-primary:disabled{opacity:.55; cursor:not-allowed; transform:none; filter:none}
+/* Títulos largos del login (ej. "NUEVA CONTRASEÑA") sin desbordar en el celular */
+.titulo-largo h1{font-size:clamp(46px, 12vw, 88px); overflow-wrap:anywhere}
+.login-card{min-width:0; max-width:100%}
