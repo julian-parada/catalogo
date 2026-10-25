@@ -74,9 +74,13 @@ const NOMBRES_PALETA = {
   marfil_minimal: "Marfil", concreto_neon: "Concreto neón", cyberpunk_musico: "Cyberpunk",
   blanco_negro: "Blanco y negro", rosa_pastel_crema: "Rosa pastel", menta_lavanda: "Menta y lavanda",
   amatista_mistico: "Amatista", rosa: "Rosa", naranja: "Naranja", azul: "Azul", morado: "Morado",
-  verde: "Verde", rojo: "Rojo", claro: "Claro", oscuro: "Oscuro"
+  verde: "Verde", rojo: "Rojo", claro: "Claro", oscuro: "Oscuro",
+  noche_dorada: "Noche dorada", grafito_lima: "Grafito y lima", oceano_coral: "Océano y coral",
+  cafe_caramelo: "Café caramelo", aurora_boreal: "Aurora boreal", fucsia_neon: "Fucsia neón",
+  perla_oro: "Perla y oro", arena_terracota: "Arena y terracota", cielo_limpio: "Cielo limpio",
+  salvia_natural: "Salvia natural", lavanda_suave: "Lavanda suave", durazno_fresco: "Durazno fresco"
 };
-const nombrePaleta = k => NOMBRES_PALETA[k] || (k.charAt(0).toUpperCase() + k.slice(1)).replace(/_/g, " ");
+const nombrePaleta = k => String(k).startsWith("personal:") ? "Tu paleta" : NOMBRES_PALETA[k] || (k.charAt(0).toUpperCase() + k.slice(1)).replace(/_/g, " ");
 
 // ¿El fondo es claro? (para separar paletas claras y oscuras)
 function esClaro(hex){
@@ -142,10 +146,66 @@ function construirPaletas(){
     cont.append(h, grid);
   });
 
+  cont.append(...bloquePersonal());
+
   cont.addEventListener("click", e => {
     const btn = e.target.closest("[data-paleta]");
     if(btn){ elegirPaleta(btn.dataset.paleta); marcarCambio(); }
   });
+}
+
+/* ---------- Paleta personalizada: la tienda escoge sus 2 colores y el fondo ---------- */
+function clavePersonal(){
+  const modo = document.querySelector('input[name="pModo"]:checked')?.value || "oscuro";
+  return `personal:${$("pAcento").value.toLowerCase()}:${$("pSecundario").value.toLowerCase()}:${modo}`;
+}
+
+function bloquePersonal(){
+  const h = document.createElement("p");
+  h.className = "aj-grupo-titulo";
+  h.textContent = "CREA TU PROPIA PALETA";
+
+  const caja = document.createElement("div");
+  caja.className = "aj-personal";
+  caja.innerHTML = `
+    <div class="aj-personal-muestra" id="pMuestra"></div>
+    <div class="aj-personal-controles">
+      <label class="aj-color"><input type="color" id="pAcento" value="#e11d48"><span><b>Color principal</b><small>Botones y detalles</small></span></label>
+      <label class="aj-color"><input type="color" id="pSecundario" value="#fbbf24"><span><b>Color secundario</b><small>Promociones y efectos</small></span></label>
+      <div class="aj-modo" role="radiogroup" aria-label="Fondo">
+        <label><input type="radio" name="pModo" value="oscuro" checked><span>🌙 Fondo oscuro</span></label>
+        <label><input type="radio" name="pModo" value="claro"><span>☀️ Fondo claro</span></label>
+      </div>
+      <small class="aj-personal-ayuda">Los textos se ajustan solos para que siempre se puedan leer.</small>
+    </div>`;
+
+  const actualizar = (seleccionar) => {
+    const clave = clavePersonal();
+    const muestra = caja.querySelector("#pMuestra");
+    muestra.textContent = "";
+    muestra.appendChild(tarjetaPaleta(clave, obtenerPaleta(clave)));
+    if(seleccionar){ elegirPaleta(clave); marcarCambio(); }
+    else elegirPaleta(paletaElegida);   // solo refresca la marca de seleccionada
+  };
+  caja.addEventListener("input", e => { if(e.target.matches("input")) actualizar(true); });
+  caja.addEventListener("change", e => { if(e.target.matches("input")) actualizar(true); });
+  caja._actualizar = actualizar;
+  setTimeout(() => actualizar(false));
+  return [h, caja];
+}
+
+// Pone los controles con los colores de una paleta personal ya guardada
+function cargarPersonal(clave){
+  const p = paletaPersonal(clave);
+  if(!p) return false;
+  const [, , , modo] = clave.split(":");
+  $("pAcento").value = p.acento;
+  $("pSecundario").value = p.secundario;
+  const radio = document.querySelector(`input[name="pModo"][value="${modo === "claro" ? "claro" : "oscuro"}"]`);
+  if(radio) radio.checked = true;
+  const caja = document.querySelector(".aj-personal");
+  if(caja && caja._actualizar){ paletaElegida = clave; caja._actualizar(false); }
+  return true;
 }
 
 function elegirPaleta(clave){
@@ -270,7 +330,8 @@ window.addEventListener("beforeunload", e => {
 function llenarFormulario(){
   CAMPOS.forEach(c => { $(c).value = cfg[c] ?? ""; });
   $("mostrar_nombre").checked = Boolean(cfg.mostrar_nombre);
-  elegirPaleta(cfg.paleta in PALETAS ? cfg.paleta : "rosa");
+  const esPersonal = String(cfg.paleta || "").startsWith("personal:") && cargarPersonal(cfg.paleta);
+  elegirPaleta(esPersonal || cfg.paleta in PALETAS ? cfg.paleta : "rosa");
   elegirFuente(cfg.fuente || "moderno");
   renderMedia("logo", cfg.logo_url);
   renderMedia("banner", cfg.banner_url);

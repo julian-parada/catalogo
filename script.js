@@ -54,7 +54,7 @@ async function cargarProductos(){
     .eq("tienda_id", tienda.id)
     .order("creado_en", { ascending: false });
 
-  if(error){ console.error(error); return; }
+  if(error){ console.error(error); renderProducts(); return; }
 
   products = data
     .map(p => ({
@@ -138,6 +138,33 @@ function renderNav(){
   btnPromos.classList.toggle("active", currentCategory === "__promos__");
 
   renderFooterCats(items, hayPromos, hayNuevos);
+  renderChips(items, hayPromos, hayNuevos);
+}
+
+// Botones de categorías encima de los productos (se deslizan en el celular)
+function renderChips(items, hayPromos, hayNuevos){
+  const cont = document.getElementById("catChips");
+  if(!cont) return;
+  cont.textContent = "";
+  const opciones = [["all", "Todo"]];
+  if(hayNuevos) opciones.push(["__nuevos__", "✨ Nuevos"]);
+  if(hayPromos) opciones.push(["__promos__", "🔥 Promociones"]);
+  items.forEach(c => opciones.push([String(c.id), c.nombre]));
+  // Con una sola opción ("Todo") no vale la pena mostrarlos
+  cont.hidden = opciones.length < 2;
+  opciones.forEach(([valor, texto]) => {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "chip" + (currentCategory === valor ? " active" : "");
+    b.dataset.cat = valor;
+    b.setAttribute("aria-pressed", currentCategory === valor ? "true" : "false");
+    b.textContent = texto;
+    cont.appendChild(b);
+  });
+  const activo = cont.querySelector(".chip.active");
+  if(activo && cont.scrollWidth > cont.clientWidth){
+    cont.scrollTo({ left: activo.offsetLeft - cont.clientWidth / 2 + activo.offsetWidth / 2, behavior: "smooth" });
+  }
 }
 
 function renderFooterCats(items, hayPromos, hayNuevos){
@@ -201,9 +228,12 @@ function renderProducts(){
     return coincideCategoria && coincideTexto;
   });
 
+  const cuenta = document.getElementById("catCuenta");
+  if(cuenta) cuenta.textContent = products.length ? `${filtered.length} ${filtered.length === 1 ? "producto" : "productos"}` : "";
+
   const container = document.getElementById("products");
-  container.innerHTML = filtered.length ? filtered.map(p => `
-  <article class="product">
+  container.innerHTML = filtered.length ? filtered.map((p, i) => `
+  <article class="product" style="--i:${Math.min(i, 11)}">
     ${htmlFotos(p)}
     <div class="product-body">
       <h3>${esc(p.name)}</h3>
@@ -211,7 +241,6 @@ function renderProducts(){
       <div class="price">
         ${p.originalPrice ? `<span class="price-old">${money(p.originalPrice)}</span>` : ""}
         ${money(p.price)}
-        ${p.originalPrice ? `<span class="price-badge">OFERTA</span>` : ""}
       </div>
       ${p.sizes.length > 1 ? `
         <select class="talla-select" id="talla-${p.id}">
@@ -222,7 +251,7 @@ function renderProducts(){
         ${esOpcionUnica(p.sizes[0].talla) ? "" : `<p class="talla-unica">${esc(p.sizes[0].talla)}</p>`}
         <input type="hidden" id="talla-${p.id}" value="${p.sizes[0].id}">
       `}
-      <button class="add" onclick="addToCart(${p.id})">AÑADIR <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cart4" viewBox="0 0 16 16">
+      <button class="add" data-add="${p.id}" onclick="addToCart(${p.id})"><span>AÑADIR</span> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cart4" viewBox="0 0 16 16">
         <path d="M0 2.5A.5.5 0 0 1 .5 2H2a.5.5 0 0 1 .485.379L2.89 4H14.5a.5.5 0 0 1 .485.621l-1.5 6A.5.5 0 0 1 13 11H4a.5.5 0 0 1-.485-.379L1.61 3H.5a.5.5 0 0 1-.5-.5M3.14 5l.5 2H5V5zM6 5v2h2V5zm3 0v2h2V5zm3 0v2h1.36l.5-2zm1.11 3H12v2h.61zM11 8H9v2h2zM8 8H6v2h2zM5 8H3.89l.5 2H5zm0 5a1 1 0 1 0 0 2 1 1 0 0 0 0-2m-2 1a2 2 0 1 1 4 0 2 2 0 0 1-4 0m9-1a1 1 0 1 0 0 2 1 1 0 0 0 0-2m-2 1a2 2 0 1 1 4 0 2 2 0 0 1-4 0"/>
       </svg></button>
     </div>
@@ -258,9 +287,17 @@ function htmlFotos(p){
       <button type="button" class="media-nav next" data-paso="1" aria-label="Foto siguiente">›</button>
       <div class="media-dots" aria-hidden="true">${fotos.map((_, i) => `<i class="${i === 0 ? "on" : ""}"></i>`).join("")}</div>` : "";
 
+  // Insignias sobre la foto: descuento y "nuevo"
+  const descuento = p.originalPrice ? Math.round((1 - p.price / p.originalPrice) * 100) : 0;
+  const insignias = [
+    descuento > 0 ? `<span class="insignia insignia-oferta">-${descuento}%</span>` : "",
+    esNuevo(p) ? `<span class="insignia insignia-nuevo">Nuevo</span>` : ""
+  ].join("");
+
   return `
     <div class="product-media" data-id="${p.id}">
       <div class="media-track">${slides}</div>${controles}
+      ${insignias ? `<div class="insignias">${insignias}</div>` : ""}
     </div>`;
 }
 
@@ -339,6 +376,16 @@ function addToCart(id){
   btn.classList.add("bump");
 
   showToast(`${p.name} agregado al carrito ✓`);
+
+  // El botón confirma por un momento
+  const boton = document.querySelector(`.add[data-add="${id}"]`);
+  if(boton){
+    const texto = boton.querySelector("span");
+    boton.classList.add("agregado");
+    if(texto) texto.textContent = "✓ AÑADIDO";
+    clearTimeout(boton._t);
+    boton._t = setTimeout(() => { boton.classList.remove("agregado"); if(texto) texto.textContent = "AÑADIR"; }, 1400);
+  }
 }
 
 function removeFromCart(cartId){
@@ -382,7 +429,18 @@ function renderCart(){
 }
 
 function updateCount(){
-  document.getElementById("cartCount").textContent = cart.reduce((a,x) => a + x.qty, 0);
+  const unidades = cart.reduce((a,x) => a + x.qty, 0);
+  document.getElementById("cartCount").textContent = unidades;
+
+  // Barra de abajo con el total: siempre a mano para terminar el pedido
+  const barra = document.getElementById("barraPedido");
+  if(!barra) return;
+  const antes = !barra.hidden;
+  barra.hidden = unidades === 0;
+  document.body.classList.toggle("con-barra", unidades > 0);
+  document.getElementById("bpCant").textContent = unidades;
+  document.getElementById("bpTotal").textContent = money(cart.reduce((a,x) => a + x.price * x.qty, 0));
+  if(antes && unidades){ barra.classList.remove("bump"); void barra.offsetWidth; barra.classList.add("bump"); }
 }
 
 /* ---------------------------------------------------------
@@ -673,6 +731,10 @@ document.getElementById("catNav").addEventListener("click", e => {
   const btn = e.target.closest("[data-cat]");
   if(btn) seleccionarCategoria(btn.dataset.cat);
 });
+document.getElementById("catChips")?.addEventListener("click", e => {
+  const btn = e.target.closest("[data-cat]");
+  if(btn) seleccionarCategoria(btn.dataset.cat);
+});
 document.getElementById("footerCats").addEventListener("click", e => {
   const btn = e.target.closest("[data-cat]");
   if(btn) seleccionarCategoria(btn.dataset.cat);
@@ -684,11 +746,13 @@ document.getElementById("searchInput").addEventListener("input", e => {
   if(e.target.value.trim()) irAlCatalogo();
 });
 
-// Carrito
-document.getElementById("openCart").onclick = () => {
+// Carrito (botón de arriba y barra de abajo)
+function abrirCarrito(){
   renderCart();
   document.getElementById("cartModal").classList.add("show");
-};
+}
+document.getElementById("openCart").onclick = abrirCarrito;
+document.getElementById("barraPedido")?.addEventListener("click", abrirCarrito);
 document.getElementById("closeCart").onclick = () =>
   document.getElementById("cartModal").classList.remove("show");
 document.getElementById("cartModal").addEventListener("click", e => {

@@ -4,22 +4,48 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Resumen del pedido</title>
+  <meta name="robots" content="noindex">
   <link rel="stylesheet" href="style.css">
   <style>
-    .pedido-wrap{max-width:600px;margin:0 auto;padding:40px 20px 80px}
-    .pedido-wrap h1{font-family:var(--font-titulo, "Bebas Neue", Impact, sans-serif);font-weight:var(--font-titulo-peso, 400);font-size:2.2rem;margin-bottom:4px}
-    .pedido-fecha{color:var(--muted);font-size:.85rem;margin-bottom:30px}
-    .pedido-item{display:flex;gap:16px;background:var(--card, #141414);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:14px}
-    .pedido-item img{width:90px;height:90px;object-fit:cover;border-radius:8px;flex-shrink:0}
-    .pedido-item-body h3{margin:0 0 4px}
-    .pedido-item-body p{margin:0;color:var(--muted);font-size:.88rem}
-    .pedido-total{display:flex;justify-content:space-between;font-family:var(--font-titulo, "Bebas Neue", Impact, sans-serif);font-weight:var(--font-titulo-peso, 400);font-size:1.6rem;padding-top:20px;border-top:1px solid var(--line);margin-top:10px}
-    .pedido-total span:last-child{color:var(--orange)}
+    .pedido-wrap{max-width:620px;margin:0 auto;padding:28px 18px 80px;position:relative}
+    .pedido-marca{display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--white);margin-bottom:26px}
+    .pedido-marca img{height:44px;width:auto;max-width:130px;object-fit:contain;border-radius:10px;background:var(--card);padding:4px}
+    .pedido-marca span{font-family:var(--font-titulo);font-weight:var(--font-titulo-peso, 400);font-size:1.5rem;letter-spacing:.03em;line-height:1.1}
+
+    .pedido-hero{position:relative;overflow:hidden;border-radius:22px;padding:24px 22px 22px;margin-bottom:18px;
+      background:linear-gradient(135deg, rgba(var(--pink-rgb), .22), rgba(var(--yellow-rgb), .10) 70%), var(--card);
+      border:1px solid var(--line)}
+    .pedido-hero::after{content:"";position:absolute;width:220px;height:220px;right:-70px;top:-90px;border-radius:50%;
+      background:radial-gradient(circle, rgba(var(--pink-rgb), .35), transparent 70%);pointer-events:none}
+    .pedido-ok{display:inline-flex;align-items:center;gap:8px;font-size:.75rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--acento-texto, var(--pink))}
+    .pedido-ok i{width:20px;height:20px;border-radius:50%;display:grid;place-items:center;background:var(--pink);color:var(--texto-acento, #fff);font-style:normal;font-size:.7rem}
+    .pedido-hero h1{font-family:var(--font-titulo);font-weight:var(--font-titulo-peso, 400);font-size:clamp(2rem, 7vw, 2.8rem);line-height:1.02;margin:10px 0 6px;letter-spacing:.01em;text-shadow:none;text-transform:var(--titulo-transform, uppercase)}
+    .pedido-hero h1 b{color:var(--acento-texto, var(--pink));font-weight:inherit}
+    .pedido-fecha{color:var(--muted);font-size:.86rem;margin:0}
+    .pedido-chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+    .pedido-chips span{padding:7px 12px;border-radius:999px;background:var(--black);border:1px solid var(--line);font-size:.84rem;font-weight:700;color:var(--white)}
+
+    .pedido-item{display:flex;gap:14px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:16px;padding:12px;margin-bottom:10px}
+    .pedido-item img{width:76px;height:76px;object-fit:cover;border-radius:12px;flex-shrink:0;background:var(--black-2)}
+    .pedido-item-body{flex:1;min-width:0}
+    .pedido-item-body h3{margin:0 0 4px;font-size:1rem;line-height:1.3}
+    .pedido-item-body p{margin:0;color:var(--muted);font-size:.85rem}
+    .pedido-item-precio{font-weight:800;white-space:nowrap;font-size:.95rem}
+
+    .pedido-total{display:flex;justify-content:space-between;align-items:center;margin-top:16px;padding:18px 20px;border-radius:16px;background:var(--pink);color:var(--texto-acento, #fff)}
+    .pedido-total span{font-family:var(--font-titulo);font-weight:var(--font-titulo-peso, 400);font-size:1.6rem;letter-spacing:.03em}
+    .pedido-acciones{display:flex;flex-direction:column;gap:10px;margin-top:20px}
+    .pedido-acciones a{display:flex;align-items:center;justify-content:center;gap:10px;padding:14px;border-radius:14px;font-weight:800;text-decoration:none}
+    .pedido-wa{background:#25D366;color:#06150b}
+    .pedido-seguir{border:1px solid var(--line);color:var(--white)}
+    .pedido-wa svg{width:20px;height:20px}
+    .pedido-nota{color:var(--muted);font-size:.8rem;text-align:center;margin-top:16px}
     .pedido-error{text-align:center;padding:80px 20px;color:var(--muted)}
+    @media (max-width:420px){ .pedido-item img{width:62px;height:62px} .pedido-item{align-items:flex-start} .pedido-item-precio{display:none} }
   </style>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="supabaseConfig.js"></script>
-<script src="tema.js"></script>
+  <script src="supabaseConfig.js"></script>
+  <script src="tema.js"></script>
 </head>
 <body>
 
@@ -27,7 +53,6 @@
     <p style="color:var(--muted)">Cargando pedido...</p>
   </div>
 
-  
   <script src="pedido.js"></script>
 </body>
 </html>

@@ -134,6 +134,8 @@ function aplicarConfiguracion(cfg){
   }else{
     document.documentElement.style.removeProperty("--hero-img");
   }
+  // Con foto: la portada usa la foto con un velo del color de fondo. Sin foto: fondo animado de colores
+  document.documentElement.classList.toggle("con-portada", Boolean(banner));
 
   pintarFooter(cfg);
   pintarWhatsappFlotante(cfg);
@@ -229,8 +231,9 @@ function pintarHero(cfg){
   });
 
   // Banner del hero como imagen de fondo
-  if(cfg.banner_url && !cfg.quitar_banner){
-    document.documentElement.style.setProperty("--hero-img", `url("${cfg.banner_url}")`);
+  if(urlSegura(cfg.banner_url) && !cfg.quitar_banner){
+    document.documentElement.style.setProperty("--hero-img", `url("${urlSegura(cfg.banner_url).replace(/"/g, "%22")}")`);
+    document.documentElement.classList.add("con-portada");
   }
 }
 

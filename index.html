@@ -60,6 +60,7 @@
 
   <header class="hero">
     <div class="hero-overlay">
+      <span class="hero-pill"><i aria-hidden="true"></i> Pide fácil por WhatsApp</span>
       <span data-cfg="portada_frase" class="tag"></span>
       <p data-cfg="portada_subtitulo"></p>
       <a href="#catalogo" class="btn btn-primary hero-cta">
@@ -78,10 +79,21 @@
           <span class="eyebrow" data-cfg="catalogo_etiqueta"></span>
           <h2 data-cfg="catalogo_titulo"></h2>
         </div>
-        
+        <span class="cat-cuenta" id="catCuenta" aria-live="polite"></span>
       </div>
 
-      <div class="products" id="products"></div>
+      <!-- Accesos rápidos a las categorías (script.js los llena) -->
+      <div class="cat-chips" id="catChips" role="toolbar" aria-label="Filtrar por categoría" hidden></div>
+
+      <!-- Mientras cargan los productos se ven tarjetas "fantasma" -->
+      <div class="products" id="products">
+        <div class="product esqueleto" aria-hidden="true"><div class="product-media"></div><div class="product-body"><i></i><i></i><i></i></div></div>
+        <div class="product esqueleto" aria-hidden="true"><div class="product-media"></div><div class="product-body"><i></i><i></i><i></i></div></div>
+        <div class="product esqueleto" aria-hidden="true"><div class="product-media"></div><div class="product-body"><i></i><i></i><i></i></div></div>
+        <div class="product esqueleto" aria-hidden="true"><div class="product-media"></div><div class="product-body"><i></i><i></i><i></i></div></div>
+        <div class="product esqueleto" aria-hidden="true"><div class="product-media"></div><div class="product-body"><i></i><i></i><i></i></div></div>
+        <div class="product esqueleto" aria-hidden="true"><div class="product-media"></div><div class="product-body"><i></i><i></i><i></i></div></div>
+      </div>
     </section>
 
     
@@ -167,6 +179,13 @@
   </div>
 </div>
 <div id="toast" class="toast"></div>
+
+<!-- Barra del pedido: aparece cuando hay productos en el carrito -->
+<button type="button" class="barra-pedido" id="barraPedido" hidden>
+  <span class="bp-cant" id="bpCant">0</span>
+  <span class="bp-texto"><small>Tu pedido</small><strong id="bpTotal">$0</strong></span>
+  <span class="bp-ver">Ver pedido <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 5l7 7-7 7"/></svg></span>
+</button>
 
 <!-- Botón flotante de WhatsApp: tienda.js le pone el número de la tienda -->
 <a id="waFlotante" class="wa-flotante" href="#" target="_blank" rel="noopener" aria-label="Escríbenos por WhatsApp" hidden>

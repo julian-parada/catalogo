@@ -1100,3 +1100,304 @@ html[data-fondo="claro"] .footer-social a{color:var(--white)}
 .dc-olvidar{display:block; margin-top:6px; padding:0; background:none; border:0; color:var(--muted); font:inherit; font-size:.74rem; text-decoration:underline; cursor:pointer}
 .dc-olvidar[hidden]{display:none}
 .dc-olvidar:hover{color:var(--danger, #ff537d)}
+
+/* =========================================================
+   DISEÑO 2.0 — Exhibe Pro
+   · Contraste automático: tema.js calcula --acento-texto, --texto-acento…
+     para que ninguna paleta deje textos que no se leen
+   · Portada sin cuadro gris: velo del color de fondo sobre la foto,
+     o fondo animado de colores si la tienda no tiene foto
+   · Botones de categorías, insignias en las fotos, barra del pedido,
+     carrito tipo "hoja" en el celular y animaciones suaves
+   ========================================================= */
+
+/* ---------- Contraste: colores usados como letra ---------- */
+.eyebrow, .tag{color:var(--acento-texto, var(--pink-light))}
+.cat-nuevo, .cat-nuevo:hover, .cat-nuevo.active{color:var(--acento-texto, var(--pink-light))}
+.cat-promo, .cat-promo:hover, .cat-promo.active{color:var(--secundario-texto, var(--yellow))}
+.cat-link:hover, .cat-link.active, .cat-trigger[aria-expanded="true"]{color:var(--white)}
+.cart-total strong, .footer-col h4, .close:hover,
+.footer-list a:hover, .footer-list button:hover,
+.footer-social a:hover, .qty button:hover{color:var(--acento-texto, var(--pink))}
+.footer-social a i, .footer-social .bi-facebook, .footer-social a:hover i{color:var(--acento-texto, var(--pink))}
+.cat-menu > * > :last-child:not(:first-child){color:var(--acento-texto, var(--pink))}
+::-webkit-scrollbar-track{background:var(--black)}
+#searchInput{background:var(--card); border-color:var(--line); color:var(--white)}
+#searchInput::placeholder{color:var(--muted)}
+
+/* ---------- Contraste: letra ENCIMA de los colores ---------- */
+.btn-primary, .cart-button, .price-badge, .media-nav:hover, .img-nav:hover, .img-close:hover{color:var(--texto-acento, #fff)}
+.btn-primary:hover, .cart-button:hover{color:var(--texto-secundario, #111)}
+#cartCount{background:var(--texto-acento, #fff); color:var(--pink)}
+
+/* ---------- Barra superior: vidrio con el color de la tienda ---------- */
+.topbar, html[data-fondo="claro"] .topbar{
+  background:rgba(var(--bg-rgb, 10,10,10), .78);
+  backdrop-filter:blur(16px) saturate(1.4);
+  -webkit-backdrop-filter:blur(16px) saturate(1.4);
+}
+.topbar::after{
+  content:""; position:absolute; left:0; right:0; bottom:-1px; height:1px;
+  background:linear-gradient(90deg, transparent, rgba(var(--pink-rgb), .55), transparent);
+}
+.cart-button{border-radius:999px; box-shadow:0 8px 24px -6px rgba(var(--pink-rgb), .6)}
+
+/* ---------- PORTADA ---------- */
+.hero{
+  min-height:min(58vh, 520px);
+  isolation:isolate;
+  background:var(--black);
+}
+/* Fondo de la portada: foto (si hay) o colores de la tienda en movimiento */
+.hero::before{
+  content:""; position:absolute; inset:0; z-index:-2;
+  background:var(--hero-img) center 35%/cover no-repeat;
+}
+.hero::after{
+  content:""; position:absolute; inset:0; z-index:-1;
+  /* Velo del color de fondo: el texto se lee con cualquier foto y cualquier paleta */
+  background:
+    linear-gradient(90deg, rgba(var(--bg-rgb), .94) 0%, rgba(var(--bg-rgb), .72) 38%, rgba(var(--bg-rgb), .1) 72%, transparent),
+    linear-gradient(0deg, rgba(var(--bg-rgb), .7), transparent 35%);
+}
+/* Sin foto: manchas de color que se mueven despacio + cuadrícula de puntos */
+html:not(.con-portada) .hero::before{
+  inset:-20%;
+  background:
+    radial-gradient(38% 45% at 22% 30%, rgba(var(--pink-rgb), .55), transparent 70%),
+    radial-gradient(32% 40% at 78% 62%, rgba(var(--yellow-rgb), .38), transparent 70%),
+    radial-gradient(30% 35% at 60% 18%, rgba(var(--pink-rgb), .30), transparent 70%);
+  filter:blur(30px);
+  animation:aurora 18s ease-in-out infinite alternate;
+}
+html:not(.con-portada) .hero::after{
+  background:
+    radial-gradient(rgba(var(--texto-rgb, 255,255,255), .10) 1px, transparent 1.4px) 0 0/22px 22px,
+    linear-gradient(0deg, rgba(var(--bg-rgb), .85), transparent 45%);
+  -webkit-mask-image:linear-gradient(180deg, #000 30%, transparent);
+          mask-image:linear-gradient(180deg, #000 30%, transparent);
+}
+@keyframes aurora{
+  0%  {transform:translate(0, 0) rotate(0deg) scale(1)}
+  50% {transform:translate(4%, -3%) rotate(8deg) scale(1.08)}
+  100%{transform:translate(-4%, 3%) rotate(-6deg) scale(1)}
+}
+
+/* Textos de la portada directamente sobre el fondo (sin cuadro gris) */
+.hero-overlay, html[data-fondo] .hero-overlay{
+  background:none; backdrop-filter:none; -webkit-backdrop-filter:none;
+  padding:40px 0; margin-left:max(4%, 20px); max-width:min(92%, 640px);
+  border-radius:0; gap:0;
+}
+.hero-overlay > *{animation:subir .7s cubic-bezier(.2,.7,.2,1) both}
+.hero-overlay > :nth-child(2){animation-delay:.08s}
+.hero-overlay > :nth-child(3){animation-delay:.16s}
+.hero-overlay > :nth-child(4){animation-delay:.24s}
+@keyframes subir{from{opacity:0; transform:translateY(16px)}}
+
+.hero-pill{
+  display:inline-flex; align-items:center; gap:8px;
+  padding:6px 12px 6px 10px; margin-bottom:14px; border-radius:999px;
+  font-size:.74rem; font-weight:800; letter-spacing:.06em;
+  color:var(--white); background:rgba(var(--texto-rgb, 255,255,255), .08);
+  border:1px solid rgba(var(--texto-rgb, 255,255,255), .14);
+  backdrop-filter:blur(8px); -webkit-backdrop-filter:blur(8px);
+}
+.hero-pill i{width:8px; height:8px; border-radius:50%; background:#25D366; box-shadow:0 0 0 0 rgba(37,211,102,.6); animation:latido 2s infinite}
+@keyframes latido{70%{box-shadow:0 0 0 8px rgba(37,211,102,0)} 100%{box-shadow:0 0 0 0 rgba(37,211,102,0)}}
+
+.hero-overlay .tag, html[data-fondo] .hero-overlay .tag{
+  display:block;
+  font-size:clamp(2.4rem, 5.6vw, 4.6rem); line-height:.98; letter-spacing:.01em;
+  text-transform:var(--titulo-transform, uppercase);
+  color:var(--white); text-shadow:none;
+  background:linear-gradient(100deg, var(--white) 35%, var(--acento-texto, var(--pink)) 110%);
+  -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;
+  padding-bottom:.06em;
+}
+.hero-overlay p, .hero-sub, html[data-fondo] .hero-overlay p{
+  color:rgba(var(--texto-rgb, 255,255,255), .82); text-shadow:none;
+  font-size:clamp(1rem, 1.4vw, 1.15rem); margin-top:12px;
+}
+
+/* Botón de la portada: píldora con flecha en círculo */
+.hero-cta, .hero-cta:hover, .hero-cta:active{
+  border-radius:999px; padding:8px 8px 8px 24px; gap:14px; margin-top:24px;
+  color:var(--texto-acento, #fff);
+  box-shadow:0 14px 34px -10px rgba(var(--pink-rgb), .75);
+}
+.hero-cta .cta-arrow{
+  width:2.1em; height:2.1em; padding:.5em; border-radius:50%;
+  background:var(--texto-acento, #fff); color:var(--pink);
+}
+.hero-cta:hover{background:var(--yellow); color:var(--texto-secundario, #111); transform:translateY(-2px); box-shadow:0 18px 40px -10px rgba(var(--yellow-rgb), .8)}
+.hero-cta:hover .cta-arrow{background:var(--texto-secundario, #111); color:var(--yellow)}
+
+/* ---------- Título del catálogo + contador ---------- */
+.section-title h2{text-transform:var(--titulo-transform, uppercase)}
+.cat-cuenta{
+  align-self:end; padding:6px 12px; border-radius:999px; white-space:nowrap;
+  font-size:.8rem; font-weight:700; color:var(--muted); border:1px solid var(--line);
+}
+.cat-cuenta:empty{display:none}
+
+/* ---------- Botones de categorías ---------- */
+.cat-chips{
+  display:flex; gap:8px; overflow-x:auto; scrollbar-width:none;
+  margin:-14px 0 26px; padding:4px 2px 6px;
+  -webkit-mask-image:linear-gradient(90deg, #000 92%, transparent);
+          mask-image:linear-gradient(90deg, #000 92%, transparent);
+}
+.cat-chips::-webkit-scrollbar{display:none}
+.chip{
+  flex:none; padding:9px 16px; border-radius:999px; cursor:pointer;
+  font:inherit; font-size:.86rem; font-weight:700; white-space:nowrap;
+  color:var(--soft-white); background:var(--card); border:1px solid var(--line);
+  transition:background .2s, color .2s, border-color .2s, transform .2s;
+}
+.chip:hover{border-color:rgba(var(--pink-rgb), .6); color:var(--white); transform:translateY(-1px)}
+.chip.active{background:var(--pink); border-color:var(--pink); color:var(--texto-acento, #fff); box-shadow:0 8px 20px -8px rgba(var(--pink-rgb), .8)}
+
+/* ---------- Tarjetas de productos ---------- */
+.product, html[data-fondo="claro"] .product{
+  background:var(--card); border:1px solid var(--line); border-radius:18px;
+  animation:aparecer .55s cubic-bezier(.2,.7,.2,1) both;
+  animation-delay:calc(var(--i, 0) * 45ms);
+}
+@keyframes aparecer{from{opacity:0; transform:translateY(22px) scale(.98)}}
+.product::before{display:none}
+.product:hover, html[data-fondo="claro"] .product:hover{
+  transform:translateY(-6px);
+  border-color:rgba(var(--pink-rgb), .55);
+  box-shadow:0 22px 44px -18px rgba(var(--pink-rgb), .55);
+}
+.product-media{border-radius:17px 17px 0 0}
+.product-body p{color:var(--muted)}
+.price, html[data-fondo="claro"] .price{color:var(--white)}
+
+/* Insignias sobre la foto */
+.insignias{position:absolute; top:10px; left:10px; z-index:3; display:flex; flex-direction:column; align-items:flex-start; gap:6px; pointer-events:none}
+.insignia{
+  padding:4px 9px; border-radius:999px; font-size:.7rem; font-weight:900; letter-spacing:.04em;
+  box-shadow:0 4px 12px rgba(0,0,0,.25);
+}
+.insignia-oferta{background:var(--yellow); color:var(--texto-secundario, #111)}
+.insignia-nuevo{background:var(--pink); color:var(--texto-acento, #fff); text-transform:uppercase}
+
+/* Selector de opción */
+.talla-select, html[data-fondo="claro"] .talla-select{
+  appearance:none; -webkit-appearance:none;
+  background:var(--black) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2 4.5 6 8.5 10 4.5' fill='none' stroke='%23888' stroke-width='1.8' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat right 10px center/12px;
+  color:var(--white); border:1px solid var(--line); border-radius:10px; padding-right:30px; cursor:pointer;
+}
+
+/* Botón añadir: suave con el color de la tienda, lleno al pasar el mouse */
+.add, html[data-fondo="claro"] .add{
+  display:flex; align-items:center; justify-content:center; gap:8px;
+  background:rgba(var(--pink-rgb), .12); color:var(--acento-texto, var(--pink));
+  border:1px solid rgba(var(--pink-rgb), .35); border-radius:12px;
+}
+.add:hover, html[data-fondo="claro"] .add:hover{background:var(--pink); color:var(--texto-acento, #fff); border-color:var(--pink); transform:translateY(-2px)}
+.add.agregado, .add.agregado:hover{background:#25D366; border-color:#25D366; color:#06150b; transform:none}
+
+/* Tarjetas "fantasma" mientras carga */
+.product.esqueleto{pointer-events:none; animation:none}
+.esqueleto .product-media, .esqueleto .product-body i{
+  background:linear-gradient(100deg, rgba(var(--texto-rgb, 255,255,255), .05) 30%, rgba(var(--texto-rgb, 255,255,255), .12) 50%, rgba(var(--texto-rgb, 255,255,255), .05) 70%) 0 0/300% 100%;
+  animation:brillo 1.3s linear infinite;
+}
+.esqueleto .product-body i{display:block; height:12px; border-radius:6px; margin-bottom:10px}
+.esqueleto .product-body i:nth-child(1){width:80%}
+.esqueleto .product-body i:nth-child(2){width:45%}
+.esqueleto .product-body i:nth-child(3){height:36px; border-radius:12px; margin:8px 0 0}
+@keyframes brillo{to{background-position:-300% 0}}
+
+/* ---------- Barra del pedido ---------- */
+.barra-pedido{
+  position:fixed; left:50%; bottom:18px; z-index:160; transform:translateX(-50%);
+  width:min(460px, calc(100% - 28px));
+  display:flex; align-items:center; gap:12px; padding:8px 8px 8px 10px;
+  border:1px solid rgba(var(--texto-rgb, 255,255,255), .12); border-radius:999px; cursor:pointer;
+  font:inherit; text-align:left; color:var(--white);
+  background:rgba(var(--bg-rgb, 10,10,10), .82);
+  backdrop-filter:blur(16px) saturate(1.4); -webkit-backdrop-filter:blur(16px) saturate(1.4);
+  box-shadow:0 18px 40px -12px rgba(0,0,0,.55), 0 0 0 1px rgba(var(--pink-rgb), .15);
+  animation:barraEntra .4s cubic-bezier(.2,.8,.2,1);
+}
+.barra-pedido[hidden]{display:none}
+.barra-pedido.bump{animation:barraBump .35s}
+@keyframes barraEntra{from{opacity:0; transform:translate(-50%, 30px)}}
+@keyframes barraBump{50%{transform:translateX(-50%) scale(1.04)}}
+.bp-cant{
+  flex:none; min-width:38px; height:38px; padding:0 8px; border-radius:999px;
+  display:grid; place-items:center; font-weight:900;
+  background:var(--pink); color:var(--texto-acento, #fff);
+}
+.bp-texto{flex:1; min-width:0; display:flex; flex-direction:column; line-height:1.15}
+.bp-texto small{font-size:.7rem; color:var(--muted); font-weight:700; letter-spacing:.06em; text-transform:uppercase}
+.bp-texto strong{font-size:1.05rem}
+.bp-ver{
+  flex:none; display:inline-flex; align-items:center; gap:8px; padding:11px 16px; border-radius:999px;
+  font-weight:800; font-size:.88rem; background:var(--white); color:var(--black);
+}
+.bp-ver svg{width:16px; height:16px}
+.barra-pedido:hover .bp-ver{background:var(--pink); color:var(--texto-acento, #fff)}
+/* Con la barra visible, el botón de WhatsApp y los avisos suben */
+body.con-barra .wa-flotante{bottom:92px}
+body.con-barra .toast{bottom:96px}
+body.con-barra .footer{padding-bottom:90px}
+
+/* ---------- Carrito ---------- */
+.modal-card, html[data-fondo="claro"] .modal-card{background:var(--card); border:1px solid var(--line); border-radius:24px}
+#cartModal .modal-card{animation:subir .35s cubic-bezier(.2,.8,.2,1)}
+.cart-row img{border-radius:12px}
+.dc-campo input, .dc-campo textarea, .dc-opcion span{background:var(--black); color:var(--white); border-radius:12px}
+.dc-opcion input:checked + span{color:var(--white)}
+.toast, html[data-fondo="claro"] .toast{background:var(--card); color:var(--white); border-color:rgba(var(--pink-rgb), .6)}
+.empty{background:var(--card); border-color:var(--line); border-radius:18px}
+.cat-menu{background:var(--card)}
+
+/* ---------- Celular ---------- */
+@media (max-width:750px){
+  .hero{min-height:340px; align-items:flex-end; padding:0}
+  .hero::after{
+    background:linear-gradient(0deg, rgba(var(--bg-rgb), .97) 0%, rgba(var(--bg-rgb), .75) 42%, rgba(var(--bg-rgb), .1) 80%, transparent);
+  }
+  .hero-overlay, html[data-fondo] .hero-overlay{padding:0 0 26px; margin:0 16px; max-width:none}
+  .hero-overlay .tag, html[data-fondo] .hero-overlay .tag{font-size:clamp(2rem, 9.5vw, 2.8rem)}
+  .hero-overlay p, html[data-fondo] .hero-overlay p{font-size:.95rem; margin-top:8px}
+  .hero-pill{font-size:.68rem; margin-bottom:10px}
+  .hero-cta, .hero-cta:hover{margin-top:16px; padding:6px 6px 6px 18px; font-size:1rem; box-shadow:0 10px 26px -10px rgba(var(--pink-rgb), .8)}
+
+  .section-title{flex-direction:row; flex-wrap:wrap; align-items:flex-end; justify-content:space-between; gap:10px}
+  .section-title > div:first-child{min-width:0; max-width:100%}
+  .cat-cuenta{font-size:.72rem; padding:4px 10px; margin-left:auto}
+  .cat-chips{margin:-6px -12px 18px; padding:4px 12px 6px}
+  .chip{padding:8px 14px; font-size:.82rem}
+  .product{border-radius:14px}
+  .product-media{border-radius:13px 13px 0 0}
+  .insignias{top:7px; left:7px}
+  .insignia{font-size:.62rem; padding:3px 7px}
+  .add{border-radius:10px}
+
+  /* Carrito como hoja que sube desde abajo */
+  #cartModal{padding:0; align-items:flex-end}
+  #cartModal .modal-card{
+    width:100%; max-height:92vh; border-radius:24px 24px 0 0; padding:26px 18px 22px;
+    animation:hoja .35s cubic-bezier(.2,.8,.2,1);
+  }
+  #cartModal .modal-card::before{
+    content:""; position:absolute; top:9px; left:50%; transform:translateX(-50%);
+    width:42px; height:5px; border-radius:3px; background:var(--line);
+  }
+  .barra-pedido{bottom:12px}
+  .bp-ver{padding:10px 14px}
+  body.con-barra .wa-flotante{bottom:84px}
+}
+@keyframes hoja{from{transform:translateY(100%)}}
+
+/* Quien prefiere menos movimiento (ajuste del celular) no ve animaciones */
+@media (prefers-reduced-motion:reduce){
+  *, *::before, *::after{animation:none !important; transition:none !important}
+}
+.modal-card h2{font-size:clamp(2rem, 6vw, 2.8rem); text-transform:var(--titulo-transform, uppercase)}
