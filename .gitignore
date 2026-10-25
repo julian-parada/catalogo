@@ -1,3 +1,4 @@
 mi_privada*.html
 img/postgres/
 *.zip
+dist/

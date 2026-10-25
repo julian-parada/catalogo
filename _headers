@@ -1,0 +1,22 @@
+# Cabeceras de seguridad para Cloudflare Pages (se aplican a todas las páginas)
+/*
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: DENY
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=()
+  Strict-Transport-Security: max-age=31536000; includeSubDomains
+
+# El panel y las páginas de contraseña no se guardan en caché ni aparecen en Google
+/admin*
+  Cache-Control: no-store
+  X-Robots-Tag: noindex
+/ajustes*
+  Cache-Control: no-store
+  X-Robots-Tag: noindex
+/agregarPrenda*
+  X-Robots-Tag: noindex
+/editarPrenda*
+  X-Robots-Tag: noindex
+/restablecer*
+  Cache-Control: no-store
+  X-Robots-Tag: noindex

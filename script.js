@@ -429,8 +429,8 @@ async function sendWhatsapp(){
   const { data: resumen } = await supabaseClient.rpc("obtener_pedido", { p_codigo: codigoPedido });
   if(resumen && resumen.total != null) totalFinal = Number(resumen.total);
 
-  const base = `${window.location.origin}${window.location.pathname.replace(/index\.html$/, "")}`;
-  const urlPedido = base + linkTienda("pedido.html", { codigo: codigoPedido });
+  // Relativo a la página actual: sirve en /catalogo/index.html, en / y en /index (Cloudflare)
+  const urlPedido = new URL(linkTienda("pedido.html", { codigo: codigoPedido }), location.href).href;
 
   guardarDatosCliente(cliente);   // para que la próxima compra ya salga lleno
 

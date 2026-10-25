@@ -399,7 +399,8 @@ function separarOpciones(texto){
 // Déjalo en "" si prefieres que sin ?t= salga "Tienda no encontrada".
 const TIENDA_POR_DEFECTO = "lookshop";
 
-const ES_PAGINA_ADMIN = /(admin|agregarPrenda|editarPrenda|ajustes)\.html$/i.test(location.pathname);
+// Con o sin ".html": Cloudflare Pages muestra /admin en vez de /admin.html
+const ES_PAGINA_ADMIN = /\/(admin|agregarPrenda|editarPrenda|ajustes)(\.html)?\/?$/i.test(location.pathname);
 
 function limpiarSlug(valor){
   return String(valor || "").trim().toLowerCase().replace(/[^a-z0-9-]/g, "");
