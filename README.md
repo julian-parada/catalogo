@@ -1,11 +1,14 @@
-# Catálogo multi-tienda
+# Exhibe Pro — catálogos multi-tienda
 
 Catálogo web con pedidos por WhatsApp para **cualquier tipo de negocio** (ropa, perfumes, joyas, accesorios…). **Un solo código y una sola base (Supabase) para todas las tiendas.**
 
 Cada cliente tiene:
 
-- Su link público: `https://julian-parada.github.io/catalogo/?t=SLUG`
-- Su panel: `https://julian-parada.github.io/catalogo/admin.html` (entra con su correo y solo ve su tienda)
+- Su link público: `https://exhibepro.pages.dev/?t=SLUG`
+- Su panel: `https://exhibepro.pages.dev/admin.html` (entra con su correo y solo ve su tienda)
+
+Publicado en **Cloudflare Pages** (`exhibepro.pages.dev`): cada cambio que se sube a `main` se publica solo.
+Build command: `sh publicar.sh` · Output: `dist` (publica solo los archivos de la página).
 
 Si una tienda se vence o se suspende, **el servidor deja de entregar su catálogo** y la página muestra "Servicio suspendido".
 
@@ -32,8 +35,8 @@ select crear_tienda(
 ```
 
 **3. Entregarle al cliente** (y pedirle que cambie la contraseña con el botón 🔑 al entrar)
-- Link de su tienda: `https://julian-parada.github.io/catalogo/?t=moda-ana`
-- Panel: `https://julian-parada.github.io/catalogo/admin.html` + su correo y contraseña
+- Link de su tienda: `https://exhibepro.pages.dev/?t=moda-ana`
+- Panel: `https://exhibepro.pages.dev/admin.html` + su correo y contraseña
 
 Él mismo pone nombre, WhatsApp, colores, letra, logo y productos desde **Mi tienda**. Cada producto puede tener opciones libres (ej. "S negro, M negro, XL azul" o "50 ml, 100 ml") y el comprador elige una.
 
@@ -51,7 +54,7 @@ select crear_tienda(
 
 | Dónde | Qué |
 |---|---|
-| Authentication → URL Configuration | **Site URL:** `https://julian-parada.github.io/catalogo/admin.html`<br>**Redirect URLs:** agregar `https://julian-parada.github.io/catalogo/restablecer.html` |
+| Authentication → URL Configuration | **Site URL:** `https://exhibepro.pages.dev/admin.html`<br>**Redirect URLs:** agregar `https://exhibepro.pages.dev/restablecer.html` |
 | Authentication → Sign In / Providers | **Allow new users to sign up:** apagado |
 | Authentication → Sign In / Providers → Email | **Minimum password length:** 10 · **Password requirements:** letras y números |
 | Authentication → Emails → SMTP Settings | Conectar un servicio de correo (Resend o Brevo, gratis). **Sin esto los correos de recuperación no les llegan a los clientes** |
