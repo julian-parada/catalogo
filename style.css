@@ -298,56 +298,75 @@ h2{
   display:flex;
   flex-direction:column;
   gap:2px;
-  background:rgba(16,16,20,.98);
-  border:1px solid rgba(255,255,255,.08);
-  border-radius:18px;
-  box-shadow:0 18px 40px rgba(0,0,0,.55);
+  background:var(--card, #121216);
+  border:1px solid var(--line, rgba(255,255,255,.08));
+  border-radius:16px;
+  box-shadow:0 18px 40px rgba(0,0,0,.45);
   animation:catIn .15s ease;
 }
 @keyframes catIn{
   from{opacity:0; transform:translateY(-6px)}
   to{opacity:1; transform:translateY(0)}
 }
+/* Cada categoría: mismo estilo que el menú de arriba (mayúsculas, letra de títulos) */
 .cat-menu > *{
   display:flex;
   align-items:center;
   justify-content:space-between;
   gap:12px;
   width:100%;
-  padding:12px 14px;
-  font-size:.98rem;
-  font-weight:600;
-  text-transform:capitalize;
-  letter-spacing:.02em;
-  color:#c9c4dc;
+  padding:11px 14px;
+  font-family:var(--font-titulo, "Bebas Neue", Impact, sans-serif);
+  font-weight:var(--font-titulo-peso, 400);
+  font-size:.95rem;
+  text-transform:uppercase;
+  letter-spacing:.05em;
+  text-align:left;
+  color:var(--soft-white, #cfcfcf);
   background:transparent;
   border:0;
-  border-radius:12px;
+  border-radius:10px;
   cursor:pointer;
   transition:background .15s, color .15s;
 }
 .cat-menu > *:hover, .cat-menu > *:focus-visible{
-  background:rgba(139,92,246,.16);
-  color:#fff;
+  background:var(--pink-soft);
+  color:var(--white, #fff);
   outline:none;
 }
+/* Número de productos */
 .cat-menu > * > :last-child:not(:first-child){
   min-width:26px;
   padding:2px 8px;
-  font-size:.8rem;
+  font-family:var(--font-texto, 'Inter', Arial, sans-serif);
+  font-size:.75rem;
+  font-weight:800;
+  letter-spacing:0;
   text-align:center;
-  color:#a78bfa;
-  background:rgba(139,92,246,.15);
+  color:var(--pink-light, var(--pink));
+  background:var(--pink-soft);
   border-radius:999px;
 }
+/* "Ver todo el catálogo" separado del resto */
 .cat-menu > *:first-child{
-  color:#fff;
-  background:rgba(139,92,246,.22);
+  color:var(--white, #fff);
   margin-bottom:6px;
+  border-radius:10px 10px 0 0;
+  box-shadow:0 1px 0 var(--line, rgba(255,255,255,.08));
+}
+/* Categoría que se está viendo */
+.cat-menu > .active{
+  color:var(--white, #fff);
+  background:var(--pink-soft);
+  box-shadow:inset 3px 0 0 var(--pink);
+}
+.cat-menu > .active > :last-child:not(:first-child){
+  color:var(--texto-acento, #fff);
+  background:var(--pink);
 }
 .cat-menu::-webkit-scrollbar{width:6px}
 .cat-menu::-webkit-scrollbar-thumb{
-  background:rgba(255,255,255,.15);
+  background:var(--line, rgba(255,255,255,.15));
   border-radius:99px;
 }
 
@@ -1041,12 +1060,6 @@ html[data-fondo="claro"] .topbar{background:var(--black); background:color-mix(i
 html[data-fondo="claro"] .cat-link:hover,
 html[data-fondo="claro"] .cat-link.active,
 html[data-fondo="claro"] .cat-trigger[aria-expanded="true"]{color:var(--white)}
-html[data-fondo="claro"] .cat-menu{background:var(--card); border-color:var(--line)}
-html[data-fondo="claro"] .cat-menu > *{color:var(--white)}
-html[data-fondo="claro"] .cat-menu > *:hover,
-html[data-fondo="claro"] .cat-menu > *:focus-visible{background:var(--pink-soft); color:var(--white)}
-html[data-fondo="claro"] .cat-menu > * > :last-child:not(:first-child){color:var(--pink); background:var(--pink-soft)}
-html[data-fondo="claro"] .cat-menu > *:first-child{color:var(--white); background:var(--pink-soft)}
 html[data-fondo="claro"] #searchInput{background:var(--card); border-color:var(--line); color:var(--white)}
 html[data-fondo="claro"] #searchInput::placeholder,
 html[data-fondo="claro"] .filters input::placeholder,
