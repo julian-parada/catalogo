@@ -6,6 +6,7 @@
   <meta name="theme-color" content="#0a0a0a">
   <title>Admin — Catálogo</title>
   <link rel="stylesheet" href="admin.css">
+  <link rel="stylesheet" href="admin-nav.css">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabaseConfig.js"></script>
 <script src="utils.js"></script>
@@ -105,7 +106,16 @@
       Cerrar sesión
     </button>
   </div>
-</header>
+    </header>
+
+    <!-- NAVEGACIÓN DEL PANEL (la misma en las 4 páginas; tema.js le agrega ?t= a "Ver mi tienda") -->
+    <nav class="admin-nav" aria-label="Panel">
+      <a href="admin.html" aria-current="page"><span class="nav-ico">▤</span> Mis prendas</a>
+      <a href="agregarPrenda.html"><span class="nav-ico">＋</span> Agregar prenda</a>
+      <a href="ajustes.html"><span class="nav-ico">✎</span> Mi tienda</a>
+      <a href="index.html" class="admin-nav-ext" target="_blank" rel="noopener"><span class="nav-ico">↗</span> Ver mi tienda</a>
+    </nav>
+
 
 
     <section class="admin-intro">
@@ -114,22 +124,6 @@
         <h2>Mis <strong>prendas</strong></h2>
         <p>Administra los productos que aparecen en tu catálogo.</p>
       </div>
-
-      <a href="ajustes.html" class="add-main-btn">
-        <span class="plus">✎</span>
-        <span>Mi tienda</span>
-      </a>
-
-      <a href="agregarPrenda.html" class="add-main-btn">
-        <span class="plus">+</span>
-        <span>Agregar prenda</span>
-      </a>
-
-      <!-- tema.js le agrega ?t=slug de la tienda de este admin -->
-      <a href="index.html" class="add-main-btn" target="_blank" rel="noopener">
-        <span class="plus">↗</span>
-        <span>Ver mi tienda</span>
-      </a>
     </section>
 
 

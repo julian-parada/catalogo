@@ -197,6 +197,11 @@ async function mostrarPanel(){
   document.getElementById("panel").style.display = "block";
   avisoSuscripcion(tienda);
   avisoPrimerosPasos();
+  // Viene del botón 🔑 de otra página del panel
+  if(location.hash === "#cambiar-clave"){
+    history.replaceState(null, "", location.pathname);
+    document.getElementById("cambiarClaveBtn").click();
+  }
   await cargarPrendas();
 }
 

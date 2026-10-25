@@ -1,0 +1,46 @@
+/* =========================================================
+   NAVEGACIÓN DEL PANEL — la misma barra en las 4 páginas
+   (admin, agregarPrenda, editarPrenda, ajustes)
+   Usa las variables de admin.css / agregarPrenda.css
+   ========================================================= */
+.admin-nav{
+  display:flex; align-items:center; gap:10px; flex-wrap:wrap;
+  margin-top:18px;
+}
+.admin-nav a{
+  display:inline-flex; align-items:center; justify-content:center; gap:8px;
+  height:44px; padding:0 18px; border-radius:12px;
+  background:var(--bg-2); border:1px solid var(--line); color:var(--text);
+  font-size:14px; font-weight:700; letter-spacing:.01em; white-space:nowrap;
+  text-decoration:none; transition:border-color .2s, color .2s, background .2s;
+}
+.admin-nav a:hover{border-color:var(--pink); color:var(--pink)}
+.admin-nav a[aria-current="page"]{
+  background:var(--pink-soft); border-color:var(--pink); color:var(--text);
+}
+.admin-nav .nav-ico{font-size:15px; line-height:1; color:var(--pink)}
+.admin-nav .admin-nav-ext{margin-left:auto}
+
+/* Con la barra arriba, los títulos no necesitan tanto espacio */
+.admin-nav + .admin-intro,
+.admin-nav + .page-intro,
+.admin-nav + .aj-intro{padding-top:30px}
+
+/* Celular: 2 x 2, todos del mismo tamaño */
+@media (max-width:640px){
+  .admin-nav{display:grid; grid-template-columns:1fr 1fr; gap:8px}
+  .admin-nav a{width:100%; padding:0 10px; font-size:13.5px}
+  .admin-nav .admin-nav-ext{margin-left:0}
+  .admin-nav + .admin-intro,
+  .admin-nav + .page-intro,
+  .admin-nav + .aj-intro{padding-top:22px}
+}
+
+/* Encabezado: botones iguales en las 4 páginas (🔑 Cambiar contraseña · Cerrar sesión) */
+.logout-btn em{font-style:normal}
+.header-right{display:flex; align-items:center; gap:10px}
+@media (max-width:720px){
+  .txt-largo{display:none}     /* en el celular el botón queda solo con la llave */
+  .header-right{gap:8px}
+}
+.header-right .logout-btn{height:44px; padding-top:0; padding-bottom:0; line-height:1; box-sizing:border-box; text-decoration:none}

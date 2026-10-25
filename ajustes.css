@@ -27,7 +27,7 @@
 }
 .pagina-ajustes .aj-intro h2 strong{font-weight:inherit}
 .pagina-ajustes .aj-card-head h3{font-size:22px; letter-spacing:.01em}
-.pagina-ajustes .admin-shell{width:min(1120px, calc(100% - 40px)); padding-bottom:120px}
+.pagina-ajustes .admin-shell{width:min(1180px, calc(100% - 40px)); padding-bottom:120px}
 
 /* ---------- Encabezado ---------- */
 .pagina-ajustes .admin-header{gap:12px}
@@ -216,7 +216,7 @@
   padding:12px 0 calc(12px + env(safe-area-inset-bottom));
 }
 .aj-barra-in{
-  width:min(1120px, calc(100% - 40px)); margin:0 auto;
+  width:min(1180px, calc(100% - 40px)); margin:0 auto;
   display:flex; align-items:center; justify-content:space-between; gap:14px;
 }
 .aj-barra-estado{display:flex; flex-direction:column; gap:2px; min-width:0; flex:1}
@@ -243,10 +243,9 @@
 
 /* ---------- Celular ---------- */
 @media (max-width:640px){
-  .pagina-ajustes .admin-shell{width:calc(100% - 24px); padding-top:14px}
+  .pagina-ajustes .admin-shell{width:calc(100% - 28px); padding-top:18px}
   .pagina-ajustes .brand-unificado .brand-logo{height:36px; max-width:100px}
   .pagina-ajustes .brand-unificado .brand-nombre{font-size:1.35rem}
-  .pagina-ajustes .logout-btn{padding:10px 12px; font-size:13px}
 
   .aj-intro{flex-direction:column; align-items:stretch; gap:16px; padding:26px 0 18px}
   .aj-intro h2{font-size:52px}
@@ -270,6 +269,6 @@
   .fuente{padding:12px 10px 10px}
   .fuente-muestra{font-size:22px}
 
-  .aj-barra-in{width:calc(100% - 24px)}
+  .aj-barra-in{width:calc(100% - 28px)}
   .aj-barra .submit-btn{padding:13px 18px; font-size:12.5px}
 }
