@@ -76,7 +76,9 @@ document.getElementById("addForm").addEventListener("submit", async (e) => {
 
   if(errorPrenda){ msg.textContent = "Error al guardar: " + errorPrenda.message; msg.className = "form-msg error"; return; }
 
-  const listaTallas = tallasTexto ? tallasTexto.split(",").map(t => t.trim()) : ["Única"];
+  // Sin opciones escritas → una sola opción "Única" (en el catálogo no se muestra)
+  const listaTallas = [...new Set(tallasTexto.split(",").map(t => t.trim()).filter(Boolean))];
+  if(!listaTallas.length) listaTallas.push(OPCION_UNICA);
   const filasTallas = listaTallas.map(talla => ({ prenda_id: prendaNueva.id, talla, disponible: true }));
   await supabaseClient.from("tallas").insert(filasTallas);
 
@@ -89,11 +91,50 @@ document.getElementById("addForm").addEventListener("submit", async (e) => {
     }
   }
 
-  msg.textContent = "¡Prenda agregada! Redirigiendo...";
+  msg.textContent = "¡Producto agregado! Redirigiendo...";
   msg.className = "form-msg ok";
   setTimeout(() => window.location.href = "admin.html", 1200);
 });
 
 
+
+/* ---------- Botones rápidos de opciones (S/M/L, 50 ml/100 ml, colores...) ---------- */
+function pintarOpcionesRapidas(cfg){
+  const cont = document.getElementById("opcionesRapidas");
+  const input = document.getElementById("tallas");
+  if(!cont || !input) return;
+  const op = textoOpcion(cfg);
+  input.placeholder = op.ejemplos.length ? op.ejemplos.slice(0, 3).join(", ") : "Ej: Rojo, Azul, Verde";
+  cont.textContent = "";
+  cont.hidden = !op.ejemplos.length;
+  if(cont.hidden) return;
+
+  const titulo = document.createElement("span");
+  titulo.textContent = op.plural.toUpperCase();
+  cont.appendChild(titulo);
+  op.ejemplos.forEach(valor => {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.textContent = valor;
+    b.dataset.valor = valor;
+    cont.appendChild(b);
+  });
+
+  const marcar = () => {
+    const actuales = input.value.split(",").map(x => x.trim().toLowerCase()).filter(Boolean);
+    cont.querySelectorAll("button").forEach(b => b.classList.toggle("selected", actuales.includes(b.dataset.valor.toLowerCase())));
+  };
+  cont.addEventListener("click", e => {
+    const b = e.target.closest("button[data-valor]");
+    if(!b) return;
+    let lista = input.value.split(",").map(x => x.trim()).filter(Boolean);
+    const ya = lista.some(x => x.toLowerCase() === b.dataset.valor.toLowerCase());
+    lista = ya ? lista.filter(x => x.toLowerCase() !== b.dataset.valor.toLowerCase()) : [...lista, b.dataset.valor];
+    input.value = lista.join(", ");
+    marcar();
+  });
+  input.addEventListener("input", marcar);
+}
+if(window.configTienda) window.configTienda.then(pintarOpcionesRapidas);
 
 revisarSesion();

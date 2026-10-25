@@ -1029,3 +1029,50 @@ button, input, select, textarea{font-family:inherit}
 
 /* Portada sin textos: no se muestra el cuadro ni el botón vacío */
 .hero-cta[hidden], .hero-overlay[hidden]{display:none !important}
+
+/* =========================================================
+   PALETAS DE FONDO CLARO (Marfil, Blanco y negro, Rosa pastel, Menta, Claro)
+   Varias partes tenían negro fijo y con texto oscuro quedaban ilegibles.
+   Solo aplica cuando tema.js marca <html data-fondo="claro">: las tiendas
+   oscuras se ven exactamente igual que antes.
+   ========================================================= */
+html[data-fondo="claro"] ::-webkit-scrollbar-track{background:var(--black-2)}
+html[data-fondo="claro"] .topbar{background:var(--black); background:color-mix(in srgb, var(--black) 92%, transparent)}
+html[data-fondo="claro"] .cat-link:hover,
+html[data-fondo="claro"] .cat-link.active,
+html[data-fondo="claro"] .cat-trigger[aria-expanded="true"]{color:var(--white)}
+html[data-fondo="claro"] .cat-menu{background:var(--card); border-color:var(--line)}
+html[data-fondo="claro"] .cat-menu > *{color:var(--white)}
+html[data-fondo="claro"] .cat-menu > *:hover,
+html[data-fondo="claro"] .cat-menu > *:focus-visible{background:var(--pink-soft); color:var(--white)}
+html[data-fondo="claro"] .cat-menu > * > :last-child:not(:first-child){color:var(--pink); background:var(--pink-soft)}
+html[data-fondo="claro"] .cat-menu > *:first-child{color:var(--white); background:var(--pink-soft)}
+html[data-fondo="claro"] #searchInput{background:var(--card); border-color:var(--line); color:var(--white)}
+html[data-fondo="claro"] #searchInput::placeholder,
+html[data-fondo="claro"] .filters input::placeholder,
+html[data-fondo="claro"] .dc-campo input::placeholder,
+html[data-fondo="claro"] .dc-campo textarea::placeholder{color:var(--muted)}
+html[data-fondo="claro"] .filters input,
+html[data-fondo="claro"] .filters select{background:var(--card); color:var(--white)}
+
+html[data-fondo="claro"] .product{background:var(--card); border-color:var(--line); box-shadow:0 2px 10px rgba(0,0,0,.05)}
+html[data-fondo="claro"] .product:hover{border-color:var(--muted); box-shadow:0 18px 40px rgba(0,0,0,.12)}
+html[data-fondo="claro"] .product-media{background:var(--black-2)}
+html[data-fondo="claro"] .price{color:var(--white)}
+html[data-fondo="claro"] .talla-select{background:var(--black); color:var(--white)}
+html[data-fondo="claro"] .add{background:var(--white); color:var(--black)}          /* botón oscuro sobre tarjeta clara */
+html[data-fondo="claro"] .add:hover{background:var(--pink); color:var(--texto-acento, #fff)}
+html[data-fondo="claro"] .empty{background:var(--card); border-color:var(--line)}
+
+html[data-fondo="claro"] .modal-card{background:var(--card); border-color:var(--line)}
+html[data-fondo="claro"] .close,
+html[data-fondo="claro"] .qty button{color:var(--white)}
+html[data-fondo="claro"] .dc-campo input,
+html[data-fondo="claro"] .dc-campo textarea,
+html[data-fondo="claro"] .dc-opcion span{background:var(--black); color:var(--white)}
+html[data-fondo="claro"] .dc-opcion:hover span{border-color:var(--muted)}
+html[data-fondo="claro"] .dc-opcion input:checked + span{color:var(--white)}
+html[data-fondo="claro"] .dc-domicilio{background:rgba(0,0,0,.03)}
+html[data-fondo="claro"] .toast{background:var(--card); color:var(--white)}
+html[data-fondo="claro"] .footer-name,
+html[data-fondo="claro"] .footer-social a{color:var(--white)}

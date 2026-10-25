@@ -31,7 +31,7 @@
       <div class="login-heading">
         <span class="eyebrow">ADMINISTRACIÓN</span>
         <h1>MI<br><strong>TIENDA</strong></h1>
-        <p>Gestiona tus prendas, precios y tallas desde un solo lugar.</p>
+        <p>Gestiona tus productos, precios y fotos desde un solo lugar.</p>
       </div>
 
       <form id="loginForm" class="login-form">
@@ -110,8 +110,8 @@
 
     <!-- NAVEGACIÓN DEL PANEL (la misma en las 4 páginas; tema.js le agrega ?t= a "Ver mi tienda") -->
     <nav class="admin-nav" aria-label="Panel">
-      <a href="admin.html" aria-current="page"><span class="nav-ico">▤</span> Mis prendas</a>
-      <a href="agregarPrenda.html"><span class="nav-ico">＋</span> Agregar prenda</a>
+      <a href="admin.html" aria-current="page"><span class="nav-ico">▤</span> Mis productos</a>
+      <a href="agregarPrenda.html"><span class="nav-ico">＋</span> Agregar producto</a>
       <a href="ajustes.html"><span class="nav-ico">✎</span> Mi tienda</a>
       <a href="index.html" class="admin-nav-ext" target="_blank" rel="noopener"><span class="nav-ico">↗</span> Ver mi tienda</a>
     </nav>
@@ -121,7 +121,7 @@
     <section class="admin-intro">
       <div>
         <span class="eyebrow">GESTIÓN DEL CATÁLOGO</span>
-        <h2>Mis <strong>prendas</strong></h2>
+        <h2>Mis <strong>productos</strong></h2>
         <p>Administra los productos que aparecen en tu catálogo.</p>
       </div>
     </section>
@@ -133,7 +133,7 @@
     <!-- PESTAÑAS -->
     <nav class="admin-tabs" role="tablist">
       <button type="button" class="admin-tab active" role="tab" data-tab="prendas" aria-selected="true">
-        Prendas <span class="tab-num" id="numPrendas"></span>
+        Productos <span class="tab-num" id="numPrendas"></span>
       </button>
       <button type="button" class="admin-tab" role="tab" data-tab="categorias" aria-selected="false">
         Categorías <span class="tab-num" id="numCategorias"></span>
@@ -144,11 +144,11 @@
     <section class="catalog-section" id="tabPrendas" role="tabpanel">
       <div class="lista-herramientas">
         <div class="filtro-cats" id="filtroCats" aria-label="Filtrar por categoría"></div>
-        <input type="search" id="buscarPrenda" class="buscar-prenda" placeholder="Buscar prenda…" autocomplete="off">
+        <input type="search" id="buscarPrenda" class="buscar-prenda" placeholder="Buscar producto…" autocomplete="off">
       </div>
 
       <div id="listaPrendas" class="admin-products">
-        <!-- admin.js carga aquí las prendas -->
+        <!-- admin.js carga aquí los productos -->
       </div>
     </section>
 
@@ -158,7 +158,7 @@
         <input type="text" id="nuevaCatNombre" maxlength="40" placeholder="Nombre de la nueva categoría">
         <button type="submit" class="add-main-btn">+ Crear</button>
       </form>
-      <p class="cat-ayuda">Cambia el nombre y presiona <strong>Guardar</strong>. Solo puedes eliminar una categoría cuando no tiene prendas.</p>
+      <p class="cat-ayuda">Cambia el nombre y presiona <strong>Guardar</strong>. Solo puedes eliminar una categoría cuando no tiene productos.</p>
 
       <div id="listaCategorias" class="lista-cats">
         <!-- admin.js carga aquí las categorías -->

@@ -5,6 +5,7 @@
 const DIAS_NUEVO = 15; // una prenda cuenta como "nueva" durante estos días desde que se agrega
 
 let products = [];
+let OP = textoOpcion();   // cómo se llaman las opciones en esta tienda (tema.js); se actualiza al cargar
 let categoriasMenu = [];
 let currentCategory = "all"; // "all", "__nuevos__", "__promos__" o el id de una categoría
 
@@ -45,6 +46,7 @@ function esNuevo(p){
    --------------------------------------------------------- */
 async function cargarProductos(){
   const tienda = await window.tiendaActual;
+  OP = textoOpcion(await window.configTienda);
   if(!tienda){ pantallaBloqueo("noExiste"); return; }
   if(!tienda.activa){ pantallaBloqueo("suspendida"); return; }
 
@@ -215,10 +217,10 @@ function renderProducts(){
       </div>
       ${p.sizes.length > 1 ? `
         <select class="talla-select" id="talla-${p.id}">
-          ${p.sizes.map(s => `<option value="${s.id}">Talla ${esc(s.talla)}</option>`).join("")}
+          ${p.sizes.map(s => `<option value="${s.id}">${esc(OP.singular)}: ${esc(s.talla)}</option>`).join("")}
         </select>
       ` : `
-        <p class="talla-unica">Talla: ${esc(p.sizes[0].talla)}</p>
+        ${esOpcionUnica(p.sizes[0].talla) ? "" : `<p class="talla-unica">${esc(OP.singular)}: ${esc(p.sizes[0].talla)}</p>`}
         <input type="hidden" id="talla-${p.id}" value="${p.sizes[0].id}">
       `}
       <button class="add" onclick="addToCart(${p.id})">AÑADIR <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cart4" viewBox="0 0 16 16">
@@ -352,7 +354,7 @@ function renderCart(){
   const form = document.getElementById("datosCliente");
   if(form) form.hidden = !cart.length;
   if(!cart.length){
-    box.innerHTML = '<p class="note">Todavía no has seleccionado ninguna prenda.</p>';
+    box.innerHTML = '<p class="note">Todavía no has seleccionado ningún producto.</p>';
     document.getElementById("cartTotal").textContent = money(0);
     return;
   }
@@ -361,7 +363,7 @@ function renderCart(){
       <img src="${esc(x.img)}" alt="${esc(x.name)}">
       <div class="cart-info">
         <strong>${esc(x.name)}</strong>
-        <small>Talla: ${esc(x.talla)} · ${money(x.price)} c/u</small>
+        <small>${esOpcionUnica(x.talla) ? "" : `${esc(OP.singular)}: ${esc(x.talla)} · `}${money(x.price)} c/u</small>
         <div class="qty">
           <button onclick="changeQty('${esc(x.cartId)}',-1)">−</button>
           <span>${x.qty}</span>
@@ -381,7 +383,7 @@ function updateCount(){
    ENVIAR PEDIDO POR WHATSAPP
    --------------------------------------------------------- */
 async function sendWhatsapp(){
-  if(!cart.length){ alert("Agrega al menos una prenda al pedido."); return; }
+  if(!cart.length){ alert("Agrega al menos un producto al pedido."); return; }
 
   const numero = numeroWhatsapp(window.CFG);   // tienda.js: "" si no hay número real
   if(!numero){ alert("Esta tienda todavía no tiene WhatsApp para recibir pedidos. Intenta más tarde."); return; }
@@ -409,7 +411,7 @@ async function sendWhatsapp(){
     const errorDatos = /nombre|domicilio|dirección|forma de pago|tus datos/i.test(msg);
     if(errorDatos) mostrarErrorCliente(msg);
     else alert(noDisponible
-      ? "Alguna prenda de tu pedido ya no está disponible. Recarga el catálogo y vuelve a intentar."
+      ? "Algún producto de tu pedido ya no está disponible. Recarga el catálogo y vuelve a intentar."
       : "No se pudo generar el pedido, intenta de nuevo.");
     btn.disabled = false;
     btn.textContent = "ENVIAR PEDIDO POR WHATSAPP";

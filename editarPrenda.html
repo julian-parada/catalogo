@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#080808">
 
-  <title>Editar prenda — Admin</title>
+  <title>Editar producto — Admin</title>
 
   <link rel="stylesheet" href="agregarPrenda.css">
   <link rel="stylesheet" href="admin-nav.css">
@@ -45,8 +45,8 @@
 
     <!-- NAVEGACIÓN DEL PANEL (la misma en las 4 páginas; tema.js le agrega ?t= a "Ver mi tienda") -->
     <nav class="admin-nav" aria-label="Panel">
-      <a href="admin.html" aria-current="page"><span class="nav-ico">▤</span> Mis prendas</a>
-      <a href="agregarPrenda.html"><span class="nav-ico">＋</span> Agregar prenda</a>
+      <a href="admin.html" aria-current="page"><span class="nav-ico">▤</span> Mis productos</a>
+      <a href="agregarPrenda.html"><span class="nav-ico">＋</span> Agregar producto</a>
       <a href="ajustes.html"><span class="nav-ico">✎</span> Mi tienda</a>
       <a href="index.html" class="admin-nav-ext" target="_blank" rel="noopener"><span class="nav-ico">↗</span> Ver mi tienda</a>
     </nav>
@@ -65,11 +65,11 @@
         </span>
 
         <h2>
-          Editar <strong>prenda</strong>
+          Editar <strong>producto</strong>
         </h2>
 
         <p>
-          Actualiza la información del producto y sus tallas disponibles.
+          Actualiza la información, las fotos y las opciones del producto.
         </p>
 
       </div>
@@ -100,7 +100,7 @@
             </span>
 
             <h3>
-              Información de la prenda
+              Información del producto
             </h3>
 
           </div>
@@ -122,7 +122,7 @@
             <div class="field field-full">
 
               <label for="nombre">
-                Nombre de la prenda <span>*</span>
+                Nombre del producto <span>*</span>
               </label>
 
               <div class="input-box">
@@ -134,7 +134,7 @@
                 <input
                   type="text"
                   id="nombre"
-                  placeholder="Ej. Camiseta AC Milan 2007"
+                  placeholder="Ej. Reloj clásico dorado"
                   required
                 >
 
@@ -160,7 +160,7 @@
                 <input
                   type="text"
                   id="categoria"
-                  placeholder="Ej. Camiseta de fútbol"
+                  placeholder="Ej. Relojes"
                   required
                   list="categoriasList"
                 >
@@ -332,7 +332,7 @@
             </span>
 
             <p>
-              Imagen de la prenda
+              Imagen del producto
             </p>
 
             <small>
@@ -354,7 +354,7 @@
           </span>
 
           <h3 id="previewName">
-            Nombre de la prenda
+            Nombre del producto
           </h3>
 
           <strong id="previewPrice">
@@ -398,7 +398,7 @@
       <div class="sizes-header">
         <div>
           <span class="section-kicker">GALERÍA</span>
-          <h3>Fotos de la prenda</h3>
+          <h3>Fotos del producto</h3>
           <p>La foto <strong>principal</strong> es la que sale primero en el catálogo. Los cambios se guardan al instante.</p>
         </div>
         <span class="sizes-icon">▣</span>
@@ -427,11 +427,11 @@
           </span>
 
           <h3>
-            Tallas disponibles
+            <span data-opcion="plural">Tallas</span> disponibles
           </h3>
 
           <p>
-            Administra las tallas disponibles para esta prenda.
+            Marca lo que tienes disponible y desmarca lo que se agote. Los clientes solo ven lo marcado.
           </p>
 
         </div>
@@ -463,7 +463,7 @@
           <input
             type="text"
             id="nuevaTalla"
-            placeholder="Nueva talla (ej: XL)"
+            placeholder="Escribe y presiona Agregar"
           >
 
         </div>
@@ -475,7 +475,7 @@
 
           <span>＋</span>
 
-          AGREGAR TALLA
+          AGREGAR
 
           <strong>→</strong>
 
@@ -530,7 +530,7 @@
 
       previewName.textContent =
         nombreInput.value.trim() ||
-        "Nombre de la prenda";
+        "Nombre del producto";
 
 
       previewCategory.textContent =

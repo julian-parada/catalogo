@@ -297,6 +297,11 @@ function aplicarPaleta(clave){
 
   // Compatibilidad con el viejo --orange
   s.setProperty("--orange", p.acento);
+
+  // ¿Fondo claro u oscuro? style.css ajusta las partes que tenían negro fijo
+  const n = parseInt(String(p.bg).slice(1), 16);
+  const luz = 0.299 * ((n >> 16) & 255) + 0.587 * ((n >> 8) & 255) + 0.114 * (n & 255);
+  document.documentElement.dataset.fondo = luz > 150 ? "claro" : "oscuro";
 }
 
 /* =========================================================
@@ -357,6 +362,38 @@ function aplicarFuente(clave){
   raiz.setProperty("--font-titulo", f.titulo);
   raiz.setProperty("--font-texto", f.texto);
   raiz.setProperty("--font-titulo-peso", String(f.peso));
+}
+
+/* =========================================================
+   OPCIONES DE LOS PRODUCTOS
+   Cada tienda elige cómo se llaman (columna configuracion.tipo_opcion):
+   ropa → Talla, perfumes → Presentación, joyas → Tamaño o Color...
+   ========================================================= */
+const OPCIONES = {
+  talla:        { singular: "Talla",        plural: "Tallas",         ejemplos: ["XS", "S", "M", "L", "XL"] },
+  tamano:       { singular: "Tamaño",       plural: "Tamaños",        ejemplos: ["Pequeño", "Mediano", "Grande"] },
+  color:        { singular: "Color",        plural: "Colores",        ejemplos: ["Negro", "Blanco", "Dorado", "Plateado"] },
+  presentacion: { singular: "Presentación", plural: "Presentaciones", ejemplos: ["30 ml", "50 ml", "100 ml"] },
+  modelo:       { singular: "Modelo",       plural: "Modelos",        ejemplos: ["Clásico", "Deportivo"] },
+  opcion:       { singular: "Opción",       plural: "Opciones",       ejemplos: [] }
+};
+const OPCION_UNICA = "Única";   // la que se crea sola si el producto no tiene opciones
+
+// Textos de la opción para una tienda (usa window.CFG si no se pasa la configuración)
+function textoOpcion(cfg){
+  const c = cfg || window.CFG || {};
+  return OPCIONES[c.tipo_opcion] || OPCIONES.talla;
+}
+function esOpcionUnica(valor){ return String(valor || "").trim().toLowerCase() === "única"; }
+
+// Pone la palabra en cualquier elemento con data-opcion="singular|plural|singular-min|plural-min"
+function pintarTextosOpcion(cfg){
+  const t = textoOpcion(cfg);
+  document.querySelectorAll("[data-opcion]").forEach(el => {
+    const [forma, min] = el.dataset.opcion.split("-");
+    const texto = forma === "plural" ? t.plural : t.singular;
+    el.textContent = min === "min" ? texto.toLowerCase() : texto;
+  });
 }
 
 /* =========================================================

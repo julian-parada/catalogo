@@ -252,7 +252,7 @@ let textoBusqueda = "";
 async function cargarPrendas(){
   const cont = document.getElementById("listaPrendas");
   if(!cont) return;
-  if(!prendasCache.length) cont.innerHTML = "<p class='lista-vacia'>Cargando prendas…</p>";
+  if(!prendasCache.length) cont.innerHTML = "<p class='lista-vacia'>Cargando productos…</p>";
 
   const tienda = await window.tiendaActual;
   if(!tienda) return;
@@ -272,7 +272,7 @@ async function cargarPrendas(){
 
   if(rPrendas.error || rCats.error){
     console.error(rPrendas.error || rCats.error);
-    cont.innerHTML = "<p class='lista-vacia error'>No se pudieron cargar las prendas. Recarga la página.</p>";
+    cont.innerHTML = "<p class='lista-vacia error'>No se pudieron cargar los productos. Recarga la página.</p>";
     return;
   }
   prendasCache = rPrendas.data || [];
@@ -326,7 +326,7 @@ function renderPrendas(){
   if(!cont) return;
 
   if(!prendasCache.length){
-    cont.innerHTML = "<p class='lista-vacia'>Todavía no has agregado ninguna prenda.</p>";
+    cont.innerHTML = "<p class='lista-vacia'>Todavía no has agregado ningún producto.</p>";
     registrarListenersLista();
     return;
   }
@@ -361,7 +361,7 @@ function renderPrendas(){
         </div>
       </div>`;
   }).join("")
-  : `<p class='lista-vacia'>No hay prendas ${textoBusqueda ? "que coincidan con la búsqueda" : "en esta categoría"}.</p>`;
+  : `<p class='lista-vacia'>No hay productos ${textoBusqueda ? "que coincidan con la búsqueda" : "en esta categoría"}.</p>`;
 
   registrarListenersLista();
 }
@@ -372,7 +372,7 @@ function renderCategorias(){
   if(!cont) return;
 
   if(!categoriasCache.length){
-    cont.innerHTML = "<p class='lista-vacia'>Aún no tienes categorías. Crea una arriba o al agregar una prenda.</p>";
+    cont.innerHTML = "<p class='lista-vacia'>Aún no tienes categorías. Crea una arriba o al agregar un producto.</p>";
     return;
   }
 
@@ -385,14 +385,14 @@ function renderCategorias(){
           <button type="button" class="cat-guardar" data-accion="guardar" hidden>Guardar</button>
         </div>
         <div class="cat-info">
-          <span class="cat-num">${n} ${n === 1 ? "prenda" : "prendas"}</span>
+          <span class="cat-num">${n} ${n === 1 ? "producto" : "productos"}</span>
           <label class="cat-menu" title="Si la desmarcas, no sale en el menú de categorías de la tienda">
             <input type="checkbox" data-accion="menu" ${c.en_menu ? "checked" : ""}> En el menú
           </label>
         </div>
         <div class="cat-acciones">
-          <button type="button" data-accion="ver" ${n ? "" : "disabled"}>Ver prendas</button>
-          <button type="button" class="cat-borrar" data-accion="borrar" ${n ? `disabled title="Primero mueve o elimina sus ${n} prenda${n === 1 ? "" : "s"}"` : ""}>Eliminar</button>
+          <button type="button" data-accion="ver" ${n ? "" : "disabled"}>Ver productos</button>
+          <button type="button" class="cat-borrar" data-accion="borrar" ${n ? `disabled title="Primero mueve o elimina sus ${n} producto${n === 1 ? "" : "s"}"` : ""}>Eliminar</button>
         </div>
       </div>`;
   }).join("");
@@ -435,14 +435,14 @@ async function cambiarEnMenu(fila, valor){
   }
   const cat = categoriasCache.find(c => c.id === id);
   if(cat) cat.en_menu = valor;
-  avisar(valor ? "Ahora sale en el menú de la tienda." : "Ya no sale en el menú (sus prendas siguen en el catálogo).");
+  avisar(valor ? "Ahora sale en el menú de la tienda." : "Ya no sale en el menú (sus productos siguen en el catálogo).");
 }
 
 async function borrarCategoria(fila){
   const id = Number(fila.dataset.cat);
   const cat = categoriasCache.find(c => c.id === id);
   if(!cat) return;
-  if(prendasDe(id).length){ alert("Esta categoría todavía tiene prendas."); return; }
+  if(prendasDe(id).length){ alert("Esta categoría todavía tiene productos."); return; }
   if(!confirm(`¿Eliminar la categoría "${cat.nombre}"?`)) return;
 
   const { data, error } = await supabaseClient.from("categorias").delete().eq("id", id).select("id");
@@ -519,7 +519,7 @@ function registrarListenersLista(){
   cont.addEventListener("click", async (e) => {
     const btn = e.target.closest("[data-prenda]");
     if(btn){
-      if(!confirm("¿Eliminar esta prenda y todas sus tallas e imágenes?")) return;
+      if(!confirm("¿Eliminar este producto? También se borran sus fotos y sus " + textoOpcion().plural.toLowerCase() + ".")) return;
       const prendaId = btn.dataset.prenda;
 
       // Fotos a borrar del almacenamiento cuando la prenda ya no exista
@@ -537,7 +537,7 @@ function registrarListenersLista(){
       urls.filter(u => !enUso.has(u)).forEach(u => borrarFotoPrenda(u));
       prendasCache = prendasCache.filter(p => String(p.id) !== String(prendaId));
       renderTodo();
-      avisar("Prenda eliminada.");
+      avisar("Producto eliminado.");
     }
   });
 

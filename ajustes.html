@@ -33,8 +33,8 @@
 
     <!-- NAVEGACIÓN DEL PANEL (la misma en las 4 páginas; tema.js le agrega ?t= a "Ver mi tienda") -->
     <nav class="admin-nav" aria-label="Panel">
-      <a href="admin.html"><span class="nav-ico">▤</span> Mis prendas</a>
-      <a href="agregarPrenda.html"><span class="nav-ico">＋</span> Agregar prenda</a>
+      <a href="admin.html"><span class="nav-ico">▤</span> Mis productos</a>
+      <a href="agregarPrenda.html"><span class="nav-ico">＋</span> Agregar producto</a>
       <a href="ajustes.html" aria-current="page"><span class="nav-ico">✎</span> Mi tienda</a>
       <a href="index.html" class="admin-nav-ext" target="_blank" rel="noopener"><span class="nav-ico">↗</span> Ver mi tienda</a>
     </nav>
@@ -170,7 +170,7 @@
                 </label>
                 <label class="check"><input type="checkbox" id="quitar_banner"> Quitar la foto</label>
               </div>
-              <small>Una foto horizontal de tu tienda o de tus prendas, <strong>sin textos encima</strong>: el texto lo pones abajo.</small>
+              <small>Una foto horizontal de tu tienda o de tus productos, <strong>sin textos encima</strong>: el texto lo pones abajo.</small>
             </div>
 
             <div class="aj-campo aj-full">
@@ -191,7 +191,7 @@
 
             <div class="aj-campo">
               <label for="portada_titulo">Título de la pestaña <span class="req">*</span></label>
-              <input type="text" id="portada_titulo" maxlength="60" placeholder="Ej. Ropa para dama">
+              <input type="text" id="portada_titulo" maxlength="60" placeholder="Ej. Perfumes y accesorios">
               <small>No sale en la portada: se ve en la pestaña del navegador y al compartir el link.</small>
             </div>
 
@@ -202,7 +202,7 @@
         <section class="aj-card" id="sec-catalogo">
           <header class="aj-card-head">
             <span class="section-kicker">05 · CATÁLOGO Y PEDIDOS</span>
-            <h3>Sección de prendas y mensaje del pedido</h3>
+            <h3>Sección de productos y mensaje del pedido</h3>
           </header>
           <div class="aj-card-body aj-grid">
 
@@ -214,6 +214,12 @@
             <div class="aj-campo">
               <label for="catalogo_etiqueta">Texto pequeño encima</label>
               <input type="text" id="catalogo_etiqueta" maxlength="40" placeholder="Ej. Lo más nuevo">
+            </div>
+
+            <div class="aj-campo aj-full">
+              <label>¿Cómo se llaman las opciones de tus productos?</label>
+              <div id="tiposOpcion" class="aj-opciones" role="radiogroup"></div>
+              <small>Es lo que el cliente elige antes de añadir al carrito. Ejemplo: una tienda de ropa usa <strong>Talla</strong>; una de perfumes, <strong>Presentación</strong>.</small>
             </div>
 
             <div class="aj-campo aj-full">
@@ -235,7 +241,7 @@
 
             <div class="aj-campo aj-full">
               <label for="footer_texto">Frase sobre tu tienda</label>
-              <textarea id="footer_texto" maxlength="200" rows="2" placeholder="Ej. Ropa de moda a precios justos desde 2020"></textarea>
+              <textarea id="footer_texto" maxlength="200" rows="2" placeholder="Ej. Productos de calidad a precios justos desde 2020"></textarea>
             </div>
 
             <div class="aj-campo">

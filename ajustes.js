@@ -20,6 +20,7 @@ const OPCIONALES_A_NULL = ["footer_texto", "footer_direccion", "footer_horario"]
 let cfg = null;              // la configuración tal como está guardada
 let paletaElegida = "rosa";
 let fuenteElegida = "moderno";
+let opcionElegida = "talla";
 
 const $ = id => document.getElementById(id);
 
@@ -49,6 +50,7 @@ async function iniciar(){
   }
   construirPaletas();
   construirFuentes();
+  construirTiposOpcion();
   llenarFormulario();
   pintarMarca();
   marcarGuardado();
@@ -225,6 +227,41 @@ $("nombre_tienda").addEventListener("input", e => {
 });
 
 /* ---------------------------------------------------------
+   NOMBRE DE LAS OPCIONES (OPCIONES viene de tema.js)
+   --------------------------------------------------------- */
+function construirTiposOpcion(){
+  const cont = $("tiposOpcion");
+  if(!cont || typeof OPCIONES === "undefined") return;
+  cont.textContent = "";
+  Object.entries(OPCIONES).forEach(([clave, o]) => {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "aj-opcion";
+    btn.dataset.tipo = clave;
+    btn.setAttribute("role", "radio");
+    const nombre = document.createElement("b");
+    nombre.textContent = o.singular;
+    const ej = document.createElement("span");
+    ej.textContent = o.ejemplos.length ? o.ejemplos.slice(0, 3).join(" · ") : "Lo que tú escribas";
+    btn.append(nombre, ej);
+    cont.appendChild(btn);
+  });
+  cont.addEventListener("click", e => {
+    const b = e.target.closest("[data-tipo]");
+    if(b){ elegirTipoOpcion(b.dataset.tipo); marcarCambio(); }
+  });
+}
+
+function elegirTipoOpcion(clave){
+  opcionElegida = (typeof OPCIONES !== "undefined" && OPCIONES[clave]) ? clave : "talla";
+  document.querySelectorAll(".aj-opcion").forEach(b => {
+    const sel = b.dataset.tipo === opcionElegida;
+    b.classList.toggle("selected", sel);
+    b.setAttribute("aria-checked", sel ? "true" : "false");
+  });
+}
+
+/* ---------------------------------------------------------
    CAMBIOS SIN GUARDAR
    --------------------------------------------------------- */
 let hayCambios = false;
@@ -272,6 +309,7 @@ function llenarFormulario(){
   $("mostrar_nombre").checked = Boolean(cfg.mostrar_nombre);
   elegirPaleta(cfg.paleta in PALETAS ? cfg.paleta : "rosa");
   elegirFuente(cfg.fuente || "moderno");
+  elegirTipoOpcion(cfg.tipo_opcion || "talla");
   renderMedia("logo", cfg.logo_url);
   renderMedia("banner", cfg.banner_url);
 }
@@ -403,6 +441,7 @@ $("tiendaForm").addEventListener("submit", async e => {
 
     datos.paleta = paletaElegida;
     datos.fuente = fuenteElegida;
+    datos.tipo_opcion = opcionElegida;
     datos.mostrar_nombre = $("mostrar_nombre").checked;
 
     // Logo y banner: archivo nuevo > quitar > dejar como estaba
@@ -453,7 +492,7 @@ $("tiendaForm").addEventListener("submit", async e => {
   }catch(err){
     const texto = err && err.message ? err.message : "No se pudo guardar.";
     if(/column|schema cache/i.test(texto)){
-      mostrarMsg("A la base le falta una columna (¿corriste sql/003_fuente_tienda.sql?).", "error");
+      mostrarMsg("A la base le falta una columna (¿corriste los SQL 003 y 004?).", "error");
     }else{
       mostrarMsg(texto, "error");
     }

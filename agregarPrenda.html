@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#080808">
-  <title>Agregar prenda — Admin</title>
+  <title>Agregar producto — Admin</title>
   <link rel="stylesheet" href="agregarPrenda.css">
   <link rel="stylesheet" href="admin-nav.css">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -44,8 +44,8 @@
 
     <!-- NAVEGACIÓN DEL PANEL (la misma en las 4 páginas; tema.js le agrega ?t= a "Ver mi tienda") -->
     <nav class="admin-nav" aria-label="Panel">
-      <a href="admin.html"><span class="nav-ico">▤</span> Mis prendas</a>
-      <a href="agregarPrenda.html" aria-current="page"><span class="nav-ico">＋</span> Agregar prenda</a>
+      <a href="admin.html"><span class="nav-ico">▤</span> Mis productos</a>
+      <a href="agregarPrenda.html" aria-current="page"><span class="nav-ico">＋</span> Agregar producto</a>
       <a href="ajustes.html"><span class="nav-ico">✎</span> Mi tienda</a>
       <a href="index.html" class="admin-nav-ext" target="_blank" rel="noopener"><span class="nav-ico">↗</span> Ver mi tienda</a>
     </nav>
@@ -56,7 +56,7 @@
     <section class="page-intro">
       <div>
         <span class="eyebrow">GESTIÓN DEL CATÁLOGO</span>
-        <h2>Agregar <strong>prenda</strong></h2>
+        <h2>Agregar <strong>producto</strong></h2>
         <p>Completa la información y publica un nuevo producto en tu catálogo.</p>
         
       </div>
@@ -78,7 +78,7 @@
         <div class="form-card-header">
           <div>
             <span class="section-kicker">NUEVO PRODUCTO</span>
-            <h3>Información de la prenda</h3>
+            <h3>Información del producto</h3>
           </div>
           <span class="required-label">* CAMPOS REQUERIDOS</span>
         </div>
@@ -89,10 +89,10 @@
           <div class="form-grid">
 
             <div class="field field-full">
-              <label for="nombre">Nombre de la prenda <span>*</span></label>
+              <label for="nombre">Nombre del producto <span>*</span></label>
               <div class="input-box">
                 <span class="field-icon">✦</span>
-                <input type="text" id="nombre" placeholder="Ej. Camiseta AC Milan 2007" required>
+                <input type="text" id="nombre" placeholder="Ej. Reloj clásico dorado" required>
               </div>
             </div>
 
@@ -104,7 +104,7 @@
                 <input
                   type="text"
                   id="categoria"
-                  placeholder="Ej. Camiseta de fútbol"
+                  placeholder="Ej. Relojes"
                   required
                   list="categoriasList"
                 >
@@ -152,21 +152,15 @@
 
 
             <div class="field field-full">
-              <label for="tallas">Tallas disponibles</label>
+              <label for="tallas"><span data-opcion="plural">Tallas</span> disponibles</label>
               <div class="input-box">
                 <span class="field-icon">⌁</span>
-                <input type="text" id="tallas" placeholder="S, M, L, XL">
+                <input type="text" id="tallas" placeholder="Separa con comas">
               </div>
+              <small>Separa con comas. Si lo dejas vacío, el producto queda con una sola opción.</small>
 
-              <div class="size-help">
-                <span>TALLAS</span>
-                <button type="button" data-size="S">S</button>
-                <button type="button" data-size="M">M</button>
-                <button type="button" data-size="L">L</button>
-                <button type="button" data-size="XL">XL</button>
-
-                
-              </div>
+              <!-- agregarPrenda.js pone aquí botones rápidos según el tipo de opción de la tienda -->
+              <div class="size-help" id="opcionesRapidas" hidden></div>
             </div>
 
 
@@ -190,7 +184,7 @@
 
             <button type="submit" class="submit-btn">
               <span>＋</span>
-              AGREGAR PRENDA
+              AGREGAR PRODUCTO
               <strong>→</strong>
             </button>
           </div>
@@ -254,7 +248,7 @@
     const imagePreview = document.getElementById("imagePreview");
 
     function updatePreview(){
-      previewName.textContent = nombreInput.value.trim() || "Nombre de la prenda";
+      previewName.textContent = nombreInput.value.trim() || "Nombre del producto";
       previewCategory.textContent = categoriaInput.value.trim().toUpperCase() || "CATEGORÍA";
 
       const price = Number(precioInput.value);
@@ -290,26 +284,6 @@
     });
 
 
-    // Botones rápidos de tallas
-    document.querySelectorAll("[data-size]").forEach(button => {
-      button.addEventListener("click", () => {
-        const size = button.dataset.size;
-        const current = document.getElementById("tallas").value
-          .split(",")
-          .map(x => x.trim())
-          .filter(Boolean);
-
-        if(!current.includes(size)){
-          current.push(size);
-          document.getElementById("tallas").value = current.join(", ");
-        }else{
-          document.getElementById("tallas").value =
-            current.filter(x => x !== size).join(", ");
-        }
-
-        button.classList.toggle("selected");
-      });
-    });
   </script>
 </body>
 </html>

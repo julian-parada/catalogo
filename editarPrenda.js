@@ -45,7 +45,7 @@ async function cargarPrenda(){
     .eq("id", prendaId)
     .single();
 
-  if(error){ alert("No se pudo cargar la prenda: " + error.message); window.location.href = "admin.html"; return; }
+  if(error){ alert("No se pudo cargar el producto: " + error.message); window.location.href = "admin.html"; return; }
 
   document.getElementById("nombre").value = data.nombre;
   document.getElementById("categoria").value = data.categorias ? data.categorias.nombre : "";
@@ -108,12 +108,12 @@ async function cargarTallas(){
       <div class="admin-item-body" style="display:flex;align-items:center;gap:10px">
         <label class="talla-chip" style="margin:0">
           <input type="checkbox" data-talla="${t.id}" ${t.disponible ? "checked" : ""}>
-          Talla ${escapeHtml(t.talla)}
+          ${escapeHtml(t.talla)}
         </label>
       </div>
-      <button class="delete-btn" data-borrar-talla="${t.id}">Eliminar talla</button>
+      <button class="delete-btn" data-borrar-talla="${t.id}">Eliminar</button>
     </div>
-  `).join("") : "<p style='color:var(--muted)'>Esta prenda no tiene tallas. Agrega una abajo.</p>";
+  `).join("") : `<p style='color:var(--muted)'>Este producto no tiene ${textoOpcion(await window.configTienda).plural.toLowerCase()} todavía. Usa el campo de abajo.</p>`;
 }
 
 document.getElementById("listaTallas").addEventListener("change", async (e) => {
@@ -128,7 +128,7 @@ document.getElementById("listaTallas").addEventListener("change", async (e) => {
 
 document.getElementById("listaTallas").addEventListener("click", async (e) => {
   if(e.target.matches("[data-borrar-talla]")){
-    if(!confirm("¿Eliminar esta talla?")) return;
+    if(!confirm(`¿Eliminar "${e.target.closest(".admin-item").querySelector("label").textContent.trim()}"?`)) return;
     const { error } = await supabaseClient.from("tallas").delete().eq("id", e.target.dataset.borrarTalla);
     if(error){ alert("Error al eliminar: " + error.message); return; }
     cargarTallas();
@@ -145,7 +145,7 @@ document.getElementById("addTallaForm").addEventListener("submit", async (e) => 
     .from("tallas")
     .insert({ prenda_id: prendaId, talla, disponible: true });
 
-  if(error){ alert("Error al agregar la talla: " + error.message); return; }
+  if(error){ alert("No se pudo agregar: " + error.message); return; }
 
   input.value = "";
   cargarTallas();
@@ -185,7 +185,7 @@ async function cargarFotos(){
 function renderFotos(){
   const cont = document.getElementById("listaFotos");
   if(!fotos.length){
-    cont.innerHTML = "<p class='fotos-vacio'>Esta prenda no tiene fotos. Agrega al menos una.</p>";
+    cont.innerHTML = "<p class='fotos-vacio'>Este producto no tiene fotos. Agrega al menos una.</p>";
     return;
   }
   const n = fotos.length;
@@ -218,7 +218,7 @@ async function intercambiarFotos(a, b){
 }
 
 async function borrarFoto(i){
-  if(fotos.length === 1){ throw new Error("la prenda necesita al menos una foto; agrega otra antes de borrar esta"); }
+  if(fotos.length === 1){ throw new Error("el producto necesita al menos una foto; agrega otra antes de borrar esta"); }
   if(!confirm(i === 0 ? "¿Eliminar la foto principal? La siguiente pasará a ser la principal." : "¿Eliminar esta foto?")) return "cancelado";
   const url = fotos[i].url;
 
@@ -291,7 +291,7 @@ document.getElementById("fotosNuevas").addEventListener("change", e => {
   const archivos = [...e.target.files];
   e.target.value = "";
   if(!archivos.length) return;
-  if(fotos.length + archivos.length > 10){ msgFotos("Máximo 10 fotos por prenda.", "error"); return; }
+  if(fotos.length + archivos.length > 10){ msgFotos("Máximo 10 fotos por producto.", "error"); return; }
   accionFotos(() => agregarFotos(archivos), n => `✓ ${n} foto${n === 1 ? "" : "s"} agregada${n === 1 ? "" : "s"}.`);
 });
 
