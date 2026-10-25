@@ -215,7 +215,7 @@ function renderProducts(){
       </div>
       ${p.sizes.length > 1 ? `
         <select class="talla-select" id="talla-${p.id}">
-          <option value="" selected disabled>Elige una opción</option>
+          
           ${p.sizes.map(s => `<option value="${s.id}">${esc(s.talla)}</option>`).join("")}
         </select>
       ` : `
