@@ -1076,3 +1076,7 @@ html[data-fondo="claro"] .dc-domicilio{background:rgba(0,0,0,.03)}
 html[data-fondo="claro"] .toast{background:var(--card); color:var(--white)}
 html[data-fondo="claro"] .footer-name,
 html[data-fondo="claro"] .footer-social a{color:var(--white)}
+
+/* Falta elegir una opción antes de añadir */
+.talla-select.falta-opcion{border-color:var(--danger, #ff537d); box-shadow:0 0 0 3px rgba(var(--danger-rgb, 255,83,125), .25); animation:sacudir .35s}
+@keyframes sacudir{25%{transform:translateX(-4px)} 75%{transform:translateX(4px)}}

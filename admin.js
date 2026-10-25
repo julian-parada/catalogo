@@ -350,7 +350,7 @@ function renderPrendas(){
             ${(p.tallas || []).sort((a, b) => a.id - b.id).map(t => `
               <label class="talla-chip" title="Marcada = disponible">
                 <input type="checkbox" data-talla="${t.id}" ${t.disponible ? "checked" : ""}>
-                ${esc(t.talla)}
+                ${esOpcionUnica(t.talla) ? "Disponible" : esc(t.talla)}
               </label>
             `).join("")}
           </div>
@@ -519,7 +519,7 @@ function registrarListenersLista(){
   cont.addEventListener("click", async (e) => {
     const btn = e.target.closest("[data-prenda]");
     if(btn){
-      if(!confirm("¿Eliminar este producto? También se borran sus fotos y sus " + textoOpcion().plural.toLowerCase() + ".")) return;
+      if(!confirm("¿Eliminar este producto? También se borran sus fotos y sus opciones.")) return;
       const prendaId = btn.dataset.prenda;
 
       // Fotos a borrar del almacenamiento cuando la prenda ya no exista

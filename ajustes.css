@@ -272,17 +272,3 @@
   .aj-barra-in{width:calc(100% - 28px)}
   .aj-barra .submit-btn{padding:13px 18px; font-size:12.5px}
 }
-
-/* ---------- Nombre de las opciones de los productos ---------- */
-.aj-opciones{display:grid; grid-template-columns:repeat(auto-fill, minmax(150px, 1fr)); gap:10px}
-.aj-opcion{
-  display:flex; flex-direction:column; gap:3px; padding:12px 14px; text-align:left; min-width:0;
-  background:var(--bg); border:1px solid var(--line); border-radius:12px; color:var(--text);
-  cursor:pointer; transition:border-color .2s, box-shadow .2s;
-}
-.aj-opcion b{font-size:15px; font-weight:800}
-.aj-opcion span{font-size:12px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
-.aj-opcion:hover{border-color:var(--muted)}
-.aj-opcion.selected{border-color:var(--pink); box-shadow:0 0 0 3px var(--pink-soft)}
-.aj-opcion.selected b::after{content:" ✓"; color:var(--pink)}
-@media (max-width:640px){ .aj-opciones{grid-template-columns:repeat(2, minmax(0, 1fr)); gap:8px} }

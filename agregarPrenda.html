@@ -152,15 +152,14 @@
 
 
             <div class="field field-full">
-              <label for="tallas"><span data-opcion="plural">Tallas</span> disponibles</label>
+              <label for="tallas">Opciones <small class="opcional">(opcional)</small></label>
               <div class="input-box">
                 <span class="field-icon">⌁</span>
-                <input type="text" id="tallas" placeholder="Separa con comas">
+                <input type="text" id="tallas" placeholder="Ej: S negro, M negro, XL azul">
               </div>
-              <small>Separa con comas. Si lo dejas vacío, el producto queda con una sola opción.</small>
-
-              <!-- agregarPrenda.js pone aquí botones rápidos según el tipo de opción de la tienda -->
-              <div class="size-help" id="opcionesRapidas" hidden></div>
+              <small>Lo que el comprador elige antes de añadir: tallas, colores, ml, sabores… Sepáralas con comas o guiones.
+                Si lo dejas vacío, el producto se pide tal cual.</small>
+              <div class="opciones-vista" id="opcionesVista" hidden></div>
             </div>
 
 

@@ -35,7 +35,7 @@ select crear_tienda(
 - Link de su tienda: `https://julian-parada.github.io/catalogo/?t=moda-ana`
 - Panel: `https://julian-parada.github.io/catalogo/admin.html` + su correo y contraseña
 
-Él mismo pone nombre, WhatsApp, colores, letra, logo y productos desde **Mi tienda**, y elige cómo se llaman las opciones de sus productos (Talla, Tamaño, Color, Presentación, Modelo u Opción).
+Él mismo pone nombre, WhatsApp, colores, letra, logo y productos desde **Mi tienda**. Cada producto puede tener opciones libres (ej. "S negro, M negro, XL azul" o "50 ml, 100 ml") y el comprador elige una.
 
 ---
 
@@ -97,7 +97,7 @@ Al cliente le aparece un aviso en su panel 5 días antes de vencer.
 | `pedido.js` | Resumen del pedido (`pedido.html?t=...&codigo=...`) |
 | `admin.js`, `agregarPrenda.js`, `editarPrenda.js`, `ajustes.js` | Panel del cliente |
 | `seguridad.js`, `restablecer.html` | Reglas de contraseña, freno de intentos, CAPTCHA y recuperación |
-| `sql/001…004_*.sql` | Migraciones de la base (ya aplicadas, no volver a correr) |
+| `sql/001…004_*.sql` | Migraciones de la base (ya aplicadas, no volver a correr). La columna `tipo_opcion` de la 004 ya no se usa |
 
 ## 🔒 Seguridad
 

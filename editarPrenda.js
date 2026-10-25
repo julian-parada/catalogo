@@ -103,7 +103,23 @@ async function cargarTallas(){
   if(error){ console.error(error); return; }
 
   const cont = document.getElementById("listaTallas");
-  cont.innerHTML = data.length ? data.map(t => `
+  const unica = data.find(t => esOpcionUnica(t.talla));
+  const lista = data.filter(t => !esOpcionUnica(t.talla));
+
+  if(!lista.length){
+    // Producto sin opciones: solo se puede marcar si hay o no hay
+    cont.innerHTML = `
+      <p style='color:var(--muted);margin:0 0 12px'>Este producto no tiene opciones: el comprador lo pide tal cual.
+        Si quieres que elija (ej. talla, color o ml), agrégalas abajo.</p>
+      ${unica ? `<div class="admin-item" style="align-items:center">
+        <label class="talla-chip" style="margin:0">
+          <input type="checkbox" data-talla="${unica.id}" ${unica.disponible ? "checked" : ""}> Disponible (desmárcalo si se agota)
+        </label>
+      </div>` : ""}`;
+    return;
+  }
+
+  cont.innerHTML = lista.map(t => `
     <div class="admin-item" style="align-items:center">
       <div class="admin-item-body" style="display:flex;align-items:center;gap:10px">
         <label class="talla-chip" style="margin:0">
@@ -113,7 +129,7 @@ async function cargarTallas(){
       </div>
       <button class="delete-btn" data-borrar-talla="${t.id}">Eliminar</button>
     </div>
-  `).join("") : `<p style='color:var(--muted)'>Este producto no tiene ${textoOpcion(await window.configTienda).plural.toLowerCase()} todavía. Usa el campo de abajo.</p>`;
+  `).join("");
 }
 
 document.getElementById("listaTallas").addEventListener("change", async (e) => {
@@ -131,6 +147,11 @@ document.getElementById("listaTallas").addEventListener("click", async (e) => {
     if(!confirm(`¿Eliminar "${e.target.closest(".admin-item").querySelector("label").textContent.trim()}"?`)) return;
     const { error } = await supabaseClient.from("tallas").delete().eq("id", e.target.dataset.borrarTalla);
     if(error){ alert("Error al eliminar: " + error.message); return; }
+    // Sin ninguna opción el producto no se podría pedir: vuelve a quedar "sin opciones"
+    const { data: quedan } = await supabaseClient.from("tallas").select("id").eq("prenda_id", prendaId);
+    if(!quedan || !quedan.length){
+      await supabaseClient.from("tallas").insert({ prenda_id: prendaId, talla: OPCION_UNICA, disponible: true });
+    }
     cargarTallas();
   }
 });
@@ -138,14 +159,18 @@ document.getElementById("listaTallas").addEventListener("click", async (e) => {
 document.getElementById("addTallaForm").addEventListener("submit", async (e) => {
   e.preventDefault();
   const input = document.getElementById("nuevaTalla");
-  const talla = input.value.trim();
-  if(!talla) return;
+  // Se pueden escribir varias a la vez: "L negro, L azul"
+  const existentes = [...document.querySelectorAll("#listaTallas label")].map(l => l.textContent.trim().toLowerCase());
+  const nuevas = separarOpciones(input.value).filter(t => !existentes.includes(t.toLowerCase()));
+  if(!nuevas.length){ input.value = ""; return; }
 
   const { error } = await supabaseClient
     .from("tallas")
-    .insert({ prenda_id: prendaId, talla, disponible: true });
+    .insert(nuevas.map(talla => ({ prenda_id: prendaId, talla, disponible: true })));
 
   if(error){ alert("No se pudo agregar: " + error.message); return; }
+  // Si tenía la opción oculta "Única", ya no hace falta
+  await supabaseClient.from("tallas").delete().eq("prenda_id", prendaId).eq("talla", OPCION_UNICA);
 
   input.value = "";
   cargarTallas();

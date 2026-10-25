@@ -109,7 +109,6 @@ function pintarFooter(cfg){
 function aplicarConfiguracion(cfg){
   if(!cfg) return;
   window.CFG = cfg;
-  if(typeof pintarTextosOpcion === "function") pintarTextosOpcion(cfg);
 
   // Textos marcados con data-cfg
   document.querySelectorAll("[data-cfg]").forEach(el => {

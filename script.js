@@ -5,7 +5,6 @@
 const DIAS_NUEVO = 15; // una prenda cuenta como "nueva" durante estos días desde que se agrega
 
 let products = [];
-let OP = textoOpcion();   // cómo se llaman las opciones en esta tienda (tema.js); se actualiza al cargar
 let categoriasMenu = [];
 let currentCategory = "all"; // "all", "__nuevos__", "__promos__" o el id de una categoría
 
@@ -46,7 +45,6 @@ function esNuevo(p){
    --------------------------------------------------------- */
 async function cargarProductos(){
   const tienda = await window.tiendaActual;
-  OP = textoOpcion(await window.configTienda);
   if(!tienda){ pantallaBloqueo("noExiste"); return; }
   if(!tienda.activa){ pantallaBloqueo("suspendida"); return; }
 
@@ -217,10 +215,11 @@ function renderProducts(){
       </div>
       ${p.sizes.length > 1 ? `
         <select class="talla-select" id="talla-${p.id}">
-          ${p.sizes.map(s => `<option value="${s.id}">${esc(OP.singular)}: ${esc(s.talla)}</option>`).join("")}
+          <option value="" selected disabled>Elige una opción</option>
+          ${p.sizes.map(s => `<option value="${s.id}">${esc(s.talla)}</option>`).join("")}
         </select>
       ` : `
-        ${esOpcionUnica(p.sizes[0].talla) ? "" : `<p class="talla-unica">${esc(OP.singular)}: ${esc(p.sizes[0].talla)}</p>`}
+        ${esOpcionUnica(p.sizes[0].talla) ? "" : `<p class="talla-unica">${esc(p.sizes[0].talla)}</p>`}
         <input type="hidden" id="talla-${p.id}" value="${p.sizes[0].id}">
       `}
       <button class="add" onclick="addToCart(${p.id})">AÑADIR <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cart4" viewBox="0 0 16 16">
@@ -313,7 +312,14 @@ function addToCart(id){
   const campoTalla = document.getElementById(`talla-${id}`);
   const tallaId = campoTalla.value;
   const tallaObj = p.sizes.find(s => String(s.id) === String(tallaId));
-  if(!tallaObj) return;
+  if(!tallaObj){
+    // Tiene varias opciones y no ha elegido ninguna
+    campoTalla.classList.add("falta-opcion");
+    campoTalla.focus();
+    showToast("Elige una opción antes de añadir");
+    return;
+  }
+  campoTalla.classList.remove("falta-opcion");
 
   const cartId = `${id}_${tallaId}`;
   const found = cart.find(x => x.cartId === cartId);
@@ -363,7 +369,7 @@ function renderCart(){
       <img src="${esc(x.img)}" alt="${esc(x.name)}">
       <div class="cart-info">
         <strong>${esc(x.name)}</strong>
-        <small>${esOpcionUnica(x.talla) ? "" : `${esc(OP.singular)}: ${esc(x.talla)} · `}${money(x.price)} c/u</small>
+        <small>${esOpcionUnica(x.talla) ? "" : `${esc(x.talla)} · `}${money(x.price)} c/u</small>
         <div class="qty">
           <button onclick="changeQty('${esc(x.cartId)}',-1)">−</button>
           <span>${x.qty}</span>
@@ -720,3 +726,8 @@ function pantallaBloqueo(motivo){
 
 cargarProductos();
 renderCart();
+
+// Al elegir una opción se quita el aviso rojo
+document.getElementById("products").addEventListener("change", e => {
+  if(e.target.matches(".talla-select")) e.target.classList.remove("falta-opcion");
+});

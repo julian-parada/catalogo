@@ -518,3 +518,10 @@ body{
 @media (max-width:640px){
   .form-grid{grid-template-columns:minmax(0, 1fr)}
 }
+
+/* Opciones del producto: vista previa mientras se escriben */
+.field label .opcional{display:inline; margin:0; font-size:12px; font-weight:500; color:var(--muted)}
+.opciones-vista{display:flex; flex-wrap:wrap; align-items:center; gap:6px; margin-top:10px}
+.opciones-vista[hidden]{display:none}
+.opciones-vista span{font-size:12px; font-weight:700; color:var(--muted); margin-right:4px}
+.opciones-vista b{padding:5px 11px; border-radius:999px; background:var(--pink-soft); border:1px solid var(--pink); font-size:13px; font-weight:700}

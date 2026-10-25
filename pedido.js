@@ -40,7 +40,6 @@ async function cargarPedido(){
   }
 
   const items = pedido.items || [];
-  const op = textoOpcion(await window.configTienda);   // tema.js
 
   // La fecha llega sin zona horaria (UTC): se marca como UTC para mostrarla en tu hora local
   const creado = String(pedido.creado_en || "");
@@ -56,7 +55,7 @@ async function cargarPedido(){
         <img src="${safeUrl(item.imagen)}" alt="${escapeHtml(item.nombre)}">
         <div class="pedido-item-body">
           <h3>${escapeHtml(item.nombre)}</h3>
-          <p>${esOpcionUnica(item.talla) ? "" : `${escapeHtml(op.singular)}: ${escapeHtml(item.talla)} · `}Cantidad: ${Number(item.cantidad) || 0}</p>
+          <p>${esOpcionUnica(item.talla) ? "" : `${escapeHtml(item.talla)} · `}Cantidad: ${Number(item.cantidad) || 0}</p>
           <p>${money(Number(item.precio_unitario) || 0)} c/u</p>
         </div>
       </div>
