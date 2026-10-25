@@ -68,66 +68,258 @@ function avisoSuscripcion(tienda){
   panel.prepend(aviso);
 }
 
-// ---------- CARGAR PRENDAS ----------
+// ---------- DATOS ----------
+const esc = s => (typeof escapeHtml === "function" ? escapeHtml(s) : String(s ?? ""));
+const pesos = n => "$" + Number(n || 0).toLocaleString("es-CO");
+let filtroCategoria = "todas";   // "todas", "sin" o el id de la categoría
+let textoBusqueda = "";
+
+// Carga prendas y categorías de la tienda (las dos listas se usan en ambas pestañas)
 async function cargarPrendas(){
   const cont = document.getElementById("listaPrendas");
   if(!cont) return;
-  cont.innerHTML = "<p style='color:var(--muted)'>Cargando prendas...</p>";
+  if(!prendasCache.length) cont.innerHTML = "<p class='lista-vacia'>Cargando prendas…</p>";
 
   const tienda = await window.tiendaActual;
   if(!tienda) return;
 
-  const { data, error } = await supabaseClient
-    .from("prendas")
-    .select(`id, nombre, precio, imagen, categorias(nombre), tallas(id, talla, disponible)`)
-    .eq("tienda_id", tienda.id)
-    .order("creado_en", { ascending: false });
+  const [rPrendas, rCats] = await Promise.all([
+    supabaseClient
+      .from("prendas")
+      .select(`id, nombre, precio, precio_oferta, imagen, categoria_id, tallas(id, talla, disponible)`)
+      .eq("tienda_id", tienda.id)
+      .order("creado_en", { ascending: false }),
+    supabaseClient
+      .from("categorias")
+      .select("id, nombre, en_menu, orden")
+      .eq("tienda_id", tienda.id)
+      .order("orden").order("nombre")
+  ]);
 
-  if(error){
-    console.error(error);
-    cont.innerHTML = "<p style='color:#ff5c7a'>No se pudieron cargar las prendas.</p>";
+  if(rPrendas.error || rCats.error){
+    console.error(rPrendas.error || rCats.error);
+    cont.innerHTML = "<p class='lista-vacia error'>No se pudieron cargar las prendas. Recarga la página.</p>";
     return;
   }
-  prendasCache = data || [];
-  renderPrendas();
+  prendasCache = rPrendas.data || [];
+  categoriasCache = rCats.data || [];
+
+  // Si se borró la categoría que estaba filtrada, vuelve a "Todas"
+  if(filtroCategoria !== "todas" && filtroCategoria !== "sin" &&
+     !categoriasCache.some(c => String(c.id) === filtroCategoria)) filtroCategoria = "todas";
+
+  renderTodo();
 }
 
-// ---------- RENDER ----------
+function renderTodo(){
+  document.getElementById("numPrendas").textContent = prendasCache.length;
+  document.getElementById("numCategorias").textContent = categoriasCache.length;
+  renderFiltros();
+  renderPrendas();
+  renderCategorias();
+}
+
+const nombreCategoria = id => (categoriasCache.find(c => c.id === id) || {}).nombre;
+const prendasDe = idCat => prendasCache.filter(p => p.categoria_id === idCat);
+const sinCategoria = () => prendasCache.filter(p => !p.categoria_id || !nombreCategoria(p.categoria_id));
+
+// ---------- PRENDAS: filtros ----------
+function renderFiltros(){
+  const cont = document.getElementById("filtroCats");
+  const chips = [["todas", "Todas", prendasCache.length]];
+  categoriasCache.forEach(c => chips.push([String(c.id), c.nombre, prendasDe(c.id).length]));
+  const sinCat = sinCategoria().length;
+  if(sinCat) chips.push(["sin", "Sin categoría", sinCat]);
+
+  cont.innerHTML = chips.map(([valor, texto, n]) => `
+    <button type="button" class="chip-cat ${filtroCategoria === valor ? "activo" : ""}" data-filtro="${esc(valor)}">
+      ${esc(texto)} <span>${n}</span>
+    </button>`).join("");
+}
+
+// ---------- PRENDAS: lista ----------
+function prendasVisibles(){
+  const q = textoBusqueda.trim().toLowerCase();
+  return prendasCache.filter(p => {
+    const okCat = filtroCategoria === "todas" ||
+      (filtroCategoria === "sin" ? (!p.categoria_id || !nombreCategoria(p.categoria_id)) : String(p.categoria_id) === filtroCategoria);
+    return okCat && (!q || p.nombre.toLowerCase().includes(q));
+  });
+}
+
 function renderPrendas(){
   const cont = document.getElementById("listaPrendas");
   if(!cont) return;
 
-  cont.innerHTML = prendasCache.length
-    ? prendasCache.map(p => `
+  if(!prendasCache.length){
+    cont.innerHTML = "<p class='lista-vacia'>Todavía no has agregado ninguna prenda.</p>";
+    registrarListenersLista();
+    return;
+  }
+
+  const lista = prendasVisibles();
+  cont.innerHTML = lista.length ? lista.map(p => {
+    const cat = nombreCategoria(p.categoria_id);
+    const precio = p.precio_oferta
+      ? `<s>${pesos(p.precio)}</s> ${pesos(p.precio_oferta)} <em class="tag-oferta">OFERTA</em>`
+      : pesos(p.precio);
+    return `
       <div class="admin-item">
-        <img src="${typeof safeUrl === "function" ? safeUrl(p.imagen) : p.imagen}"
-             alt="${typeof escapeHtml === "function" ? escapeHtml(p.nombre) : p.nombre}">
+        <img src="${safeUrl(p.imagen) || "img/placeholder.jpg"}" alt="${esc(p.nombre)}" loading="lazy" onerror="this.src='img/placeholder.jpg'">
         <div class="admin-item-body">
-          <h3>${typeof escapeHtml === "function" ? escapeHtml(p.nombre) : p.nombre} —
-              $${Number(p.precio).toLocaleString("es-CO")}</h3>
-          <p style="color:var(--muted);margin:0 0 6px">
-            ${typeof escapeHtml === "function"
-              ? escapeHtml(p.categorias ? p.categorias.nombre : "Sin categoría")
-              : (p.categorias ? p.categorias.nombre : "Sin categoría")}
-          </p>
-          <div>
-            ${(p.tallas || []).map(t => `
-              <label class="talla-chip">
+          <h3>${esc(p.nombre)}</h3>
+          <div class="item-meta">
+            <span class="item-precio">${precio}</span>
+            <span class="item-cat ${cat ? "" : "sin"}">${esc(cat || "Sin categoría")}</span>
+          </div>
+          <div class="item-tallas">
+            ${(p.tallas || []).sort((a, b) => a.id - b.id).map(t => `
+              <label class="talla-chip" title="Marcada = disponible">
                 <input type="checkbox" data-talla="${t.id}" ${t.disponible ? "checked" : ""}>
-                ${typeof escapeHtml === "function" ? escapeHtml(t.talla) : t.talla}
+                ${esc(t.talla)}
               </label>
             `).join("")}
           </div>
         </div>
         <div class="item-actions">
           <a href="editarPrenda.html?id=${p.id}" class="edit-link">Editar</a>
-          <button class="delete-btn" data-prenda="${p.id}">Eliminar</button>
+          <button type="button" class="delete-btn" data-prenda="${p.id}">Eliminar</button>
         </div>
-      </div>
-    `).join("")
-    : "<p style='color:var(--muted)'>Todavía no has agregado ninguna prenda.</p>";
+      </div>`;
+  }).join("")
+  : `<p class='lista-vacia'>No hay prendas ${textoBusqueda ? "que coincidan con la búsqueda" : "en esta categoría"}.</p>`;
 
   registrarListenersLista();
+}
+
+// ---------- CATEGORÍAS ----------
+function renderCategorias(){
+  const cont = document.getElementById("listaCategorias");
+  if(!cont) return;
+
+  if(!categoriasCache.length){
+    cont.innerHTML = "<p class='lista-vacia'>Aún no tienes categorías. Crea una arriba o al agregar una prenda.</p>";
+    return;
+  }
+
+  cont.innerHTML = categoriasCache.map(c => {
+    const n = prendasDe(c.id).length;
+    return `
+      <div class="cat-fila" data-cat="${c.id}">
+        <div class="cat-nombre">
+          <input type="text" value="${esc(c.nombre)}" maxlength="40" aria-label="Nombre de la categoría" data-original="${esc(c.nombre)}">
+          <button type="button" class="cat-guardar" data-accion="guardar" hidden>Guardar</button>
+        </div>
+        <div class="cat-info">
+          <span class="cat-num">${n} ${n === 1 ? "prenda" : "prendas"}</span>
+          <label class="cat-menu" title="Si la desmarcas, no sale en el menú de categorías de la tienda">
+            <input type="checkbox" data-accion="menu" ${c.en_menu ? "checked" : ""}> En el menú
+          </label>
+        </div>
+        <div class="cat-acciones">
+          <button type="button" data-accion="ver" ${n ? "" : "disabled"}>Ver prendas</button>
+          <button type="button" class="cat-borrar" data-accion="borrar" ${n ? `disabled title="Primero mueve o elimina sus ${n} prenda${n === 1 ? "" : "s"}"` : ""}>Eliminar</button>
+        </div>
+      </div>`;
+  }).join("");
+}
+
+// Nombre válido: no vacío y sin repetir otra categoría de la tienda
+function validarNombreCategoria(nombre, idActual){
+  if(!nombre) return "Escribe un nombre.";
+  if(nombre.length > 40) return "Máximo 40 letras.";
+  const repetida = categoriasCache.some(c => c.id !== idActual && c.nombre.trim().toLowerCase() === nombre.toLowerCase());
+  return repetida ? `Ya tienes una categoría llamada "${nombre}".` : "";
+}
+
+async function renombrarCategoria(fila){
+  const id = Number(fila.dataset.cat);
+  const input = fila.querySelector(".cat-nombre input");
+  const nombre = input.value.trim().replace(/\s+/g, " ");
+  const error = validarNombreCategoria(nombre, id);
+  if(error){ alert(error); input.focus(); return; }
+
+  const boton = fila.querySelector("[data-accion='guardar']");
+  boton.disabled = true;
+  const { data, error: err } = await supabaseClient.from("categorias").update({ nombre }).eq("id", id).select("id");
+  boton.disabled = false;
+  if(err || !data || !data.length){ alert("No se pudo cambiar el nombre" + (err ? ": " + err.message : ".")); return; }
+
+  const cat = categoriasCache.find(c => c.id === id);
+  if(cat) cat.nombre = nombre;
+  renderTodo();
+  avisar(`Categoría renombrada a "${nombre}".`);
+}
+
+async function cambiarEnMenu(fila, valor){
+  const id = Number(fila.dataset.cat);
+  const { data, error } = await supabaseClient.from("categorias").update({ en_menu: valor }).eq("id", id).select("id");
+  if(error || !data || !data.length){
+    alert("No se pudo guardar" + (error ? ": " + error.message : "."));
+    fila.querySelector("[data-accion='menu']").checked = !valor;
+    return;
+  }
+  const cat = categoriasCache.find(c => c.id === id);
+  if(cat) cat.en_menu = valor;
+  avisar(valor ? "Ahora sale en el menú de la tienda." : "Ya no sale en el menú (sus prendas siguen en el catálogo).");
+}
+
+async function borrarCategoria(fila){
+  const id = Number(fila.dataset.cat);
+  const cat = categoriasCache.find(c => c.id === id);
+  if(!cat) return;
+  if(prendasDe(id).length){ alert("Esta categoría todavía tiene prendas."); return; }
+  if(!confirm(`¿Eliminar la categoría "${cat.nombre}"?`)) return;
+
+  const { data, error } = await supabaseClient.from("categorias").delete().eq("id", id).select("id");
+  if(error || !data || !data.length){ alert("No se pudo eliminar" + (error ? ": " + error.message : ".")); return; }
+  categoriasCache = categoriasCache.filter(c => c.id !== id);
+  renderTodo();
+  avisar(`Categoría "${cat.nombre}" eliminada.`);
+}
+
+async function crearCategoria(e){
+  e.preventDefault();
+  const input = document.getElementById("nuevaCatNombre");
+  const nombre = input.value.trim().replace(/\s+/g, " ");
+  const error = validarNombreCategoria(nombre, null);
+  if(error){ alert(error); input.focus(); return; }
+
+  const { data, error: err } = await supabaseClient
+    .from("categorias").insert({ nombre, en_menu: true }).select("id, nombre, en_menu, orden").single();
+  if(err){ alert("No se pudo crear: " + err.message); return; }
+  categoriasCache.push(data);
+  input.value = "";
+  renderTodo();
+  avisar(`Categoría "${nombre}" creada.`);
+}
+
+// ---------- PESTAÑAS ----------
+function mostrarPestana(cual){
+  document.querySelectorAll(".admin-tab").forEach(t => {
+    const on = t.dataset.tab === cual;
+    t.classList.toggle("active", on);
+    t.setAttribute("aria-selected", on ? "true" : "false");
+  });
+  document.getElementById("tabPrendas").hidden = cual !== "prendas";
+  document.getElementById("tabCategorias").hidden = cual !== "categorias";
+}
+
+// Aviso corto abajo de la pantalla
+let avisoTimer;
+function avisar(texto){
+  let el = document.getElementById("avisoPanel");
+  if(!el){
+    el = document.createElement("div");
+    el.id = "avisoPanel";
+    el.className = "aviso-panel";
+    el.setAttribute("role", "status");
+    document.body.appendChild(el);
+  }
+  el.textContent = texto;
+  el.classList.add("visible");
+  clearTimeout(avisoTimer);
+  avisoTimer = setTimeout(() => el.classList.remove("visible"), 2600);
 }
 
 // ---------- LISTENERS (una sola vez) ----------
@@ -151,18 +343,77 @@ function registrarListenersLista(){
   });
 
   cont.addEventListener("click", async (e) => {
-    if(e.target.matches("[data-prenda]")){
+    const btn = e.target.closest("[data-prenda]");
+    if(btn){
       if(!confirm("¿Eliminar esta prenda y todas sus tallas e imágenes?")) return;
-      const prendaId = e.target.dataset.prenda;
+      const prendaId = btn.dataset.prenda;
 
       await supabaseClient.from("imagenes_prenda").delete().eq("prenda_id", prendaId);
       await supabaseClient.from("tallas").delete().eq("prenda_id", prendaId);
 
       const { error } = await supabaseClient.from("prendas").delete().eq("id", prendaId);
       if(error){ alert("Error al eliminar: " + error.message); return; }
-      cargarPrendas();
+      prendasCache = prendasCache.filter(p => String(p.id) !== String(prendaId));
+      renderTodo();
+      avisar("Prenda eliminada.");
     }
   });
+
+  // Filtro por categoría
+  document.getElementById("filtroCats").addEventListener("click", e => {
+    const chip = e.target.closest("[data-filtro]");
+    if(!chip) return;
+    filtroCategoria = chip.dataset.filtro;
+    renderFiltros();
+    renderPrendas();
+  });
+
+  // Buscador
+  document.getElementById("buscarPrenda").addEventListener("input", e => {
+    textoBusqueda = e.target.value;
+    renderPrendas();
+  });
+
+  // Pestañas
+  document.querySelectorAll(".admin-tab").forEach(t =>
+    t.addEventListener("click", () => mostrarPestana(t.dataset.tab)));
+
+  // Categorías
+  const cats = document.getElementById("listaCategorias");
+  cats.addEventListener("input", e => {
+    // El botón Guardar aparece solo si el nombre cambió
+    const input = e.target.closest(".cat-nombre input");
+    if(!input) return;
+    const cambio = input.value.trim() !== input.dataset.original;
+    input.closest(".cat-fila").querySelector("[data-accion='guardar']").hidden = !cambio;
+  });
+  cats.addEventListener("keydown", e => {
+    if(e.key === "Enter" && e.target.closest(".cat-nombre input")){
+      e.preventDefault();
+      renombrarCategoria(e.target.closest(".cat-fila"));
+    }
+  });
+  cats.addEventListener("change", e => {
+    if(e.target.matches("[data-accion='menu']")) cambiarEnMenu(e.target.closest(".cat-fila"), e.target.checked);
+  });
+  cats.addEventListener("click", e => {
+    const btn = e.target.closest("button[data-accion]");
+    if(!btn || btn.disabled) return;
+    const fila = btn.closest(".cat-fila");
+    if(btn.dataset.accion === "guardar") renombrarCategoria(fila);
+    if(btn.dataset.accion === "borrar") borrarCategoria(fila);
+    if(btn.dataset.accion === "ver"){
+      filtroCategoria = fila.dataset.cat;
+      textoBusqueda = "";
+      document.getElementById("buscarPrenda").value = "";
+      renderFiltros();
+      renderPrendas();
+      mostrarPestana("prendas");
+      document.querySelector(".admin-tabs").scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  });
+
+  document.getElementById("nuevaCatForm").addEventListener("submit", crearCategoria);
 }
 
 // ---------- BRAND ----------

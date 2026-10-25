@@ -89,8 +89,8 @@
       </div>
 
       <a href="ajustes.html" class="add-main-btn">
-        <span class="plus">+</span>
-        <span>personalizar pagina</span>
+        <span class="plus">✎</span>
+        <span>Mi tienda</span>
       </a>
 
       <a href="agregarPrenda.html" class="add-main-btn">
@@ -109,18 +109,38 @@
    
 
 
-    <section class="catalog-section">
-      <div class="section-heading">
-        <div>
-          <span class="section-kicker">INVENTARIO</span>
-          <h3>Productos publicados</h3>
-        </div>
+    <!-- PESTAÑAS -->
+    <nav class="admin-tabs" role="tablist">
+      <button type="button" class="admin-tab active" role="tab" data-tab="prendas" aria-selected="true">
+        Prendas <span class="tab-num" id="numPrendas"></span>
+      </button>
+      <button type="button" class="admin-tab" role="tab" data-tab="categorias" aria-selected="false">
+        Categorías <span class="tab-num" id="numCategorias"></span>
+      </button>
+    </nav>
 
-        <span class="catalog-badge">CATÁLOGO ACTIVO</span>
+    <!-- PESTAÑA: PRENDAS -->
+    <section class="catalog-section" id="tabPrendas" role="tabpanel">
+      <div class="lista-herramientas">
+        <div class="filtro-cats" id="filtroCats" aria-label="Filtrar por categoría"></div>
+        <input type="search" id="buscarPrenda" class="buscar-prenda" placeholder="Buscar prenda…" autocomplete="off">
       </div>
 
       <div id="listaPrendas" class="admin-products">
         <!-- admin.js carga aquí las prendas -->
+      </div>
+    </section>
+
+    <!-- PESTAÑA: CATEGORÍAS -->
+    <section class="catalog-section" id="tabCategorias" role="tabpanel" hidden>
+      <form class="nueva-cat" id="nuevaCatForm" autocomplete="off">
+        <input type="text" id="nuevaCatNombre" maxlength="40" placeholder="Nombre de la nueva categoría">
+        <button type="submit" class="add-main-btn">+ Crear</button>
+      </form>
+      <p class="cat-ayuda">Cambia el nombre y presiona <strong>Guardar</strong>. Solo puedes eliminar una categoría cuando no tiene prendas.</p>
+
+      <div id="listaCategorias" class="lista-cats">
+        <!-- admin.js carga aquí las categorías -->
       </div>
     </section>
 

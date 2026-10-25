@@ -444,3 +444,10 @@ h1{ color: var(--white); }
   .brand-unificado .brand-logo{ height: 44px; max-width: 140px; }
   .brand-unificado .brand-nombre{ font-size: 1.5rem; }
 }
+/* El panel usa TODOS los colores de la paleta de la tienda (tema.js pone --black, --white…):
+   así las paletas claras no quedan con texto blanco sobre fondo blanco */
+body{
+  --bg:var(--black, #0a0a0c);
+  --bg-2:var(--black-2, #111114);
+  --text:var(--white, #fff);
+}

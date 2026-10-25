@@ -306,3 +306,128 @@ button{font-family:inherit;cursor:pointer}
   .brand-unificado .brand-logo{ height: 44px; max-width: 140px; }
   .brand-unificado .brand-nombre{ font-size: 1.5rem; }
 }
+/* =========================================================
+   PESTAÑAS PRENDAS / CATEGORÍAS
+   ========================================================= */
+.admin-tabs{margin-bottom:24px}
+button.admin-tab{background:none; border:0; border-bottom:2px solid transparent; font:inherit; font-size:15px; font-weight:700}
+.tab-num{
+  display:inline-grid; place-items:center; min-width:24px; height:22px; padding:0 7px;
+  border-radius:999px; background:var(--bg-2); border:1px solid var(--line);
+  font-size:12px; font-weight:800; color:var(--muted);
+}
+.tab-num:empty{display:none}
+.admin-tab.active .tab-num{background:var(--pink-soft); border-color:var(--pink); color:var(--text)}
+
+/* ---------- Filtros y buscador ---------- */
+.lista-herramientas{display:flex; align-items:center; gap:14px; margin-bottom:18px; flex-wrap:wrap}
+.filtro-cats{display:flex; gap:8px; flex-wrap:wrap; flex:1; min-width:0}
+.chip-cat{
+  display:inline-flex; align-items:center; gap:8px;
+  padding:8px 14px; border-radius:999px;
+  background:var(--bg-2); border:1px solid var(--line); color:var(--muted);
+  font-size:13.5px; font-weight:700; cursor:pointer; white-space:nowrap;
+  transition:border-color .2s, color .2s, background .2s;
+}
+.chip-cat span{font-size:12px; opacity:.75}
+.chip-cat:hover{border-color:var(--muted); color:var(--text)}
+.chip-cat.activo{background:var(--pink-soft); border-color:var(--pink); color:var(--text)}
+.buscar-prenda{
+  width:240px; max-width:100%; height:42px; padding:0 16px; border-radius:999px;
+  background:var(--bg-2); border:1px solid var(--line); color:var(--text);
+  font:inherit; font-size:15px; outline:0;
+}
+.buscar-prenda:focus{border-color:var(--pink); box-shadow:0 0 0 3px var(--pink-soft)}
+.lista-vacia{padding:34px 20px; text-align:center; color:var(--muted); border:1px dashed var(--line); border-radius:16px}
+.lista-vacia.error{color:var(--danger)}
+
+/* ---------- Tarjeta de prenda ---------- */
+.admin-item-body{min-width:0; flex:1}
+.admin-item-body h3{margin-bottom:6px}
+.item-meta{display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin-bottom:10px}
+.item-precio{font-weight:800; font-size:16px}
+.item-precio s{color:var(--muted); font-weight:500; font-size:13px; margin-right:4px}
+.tag-oferta{font-style:normal; font-size:10px; font-weight:900; letter-spacing:.06em; padding:3px 7px; border-radius:5px; background:var(--pink); color:#fff; margin-left:4px}
+.item-cat{padding:4px 10px; border-radius:999px; background:var(--bg-2); border:1px solid var(--line); font-size:12px; font-weight:700; color:var(--muted)}
+.item-cat.sin{border-style:dashed}
+.item-actions{display:flex; flex-direction:column; gap:8px}
+
+/* ---------- Categorías ---------- */
+.nueva-cat{display:flex; gap:10px; margin-bottom:10px}
+.nueva-cat input{
+  flex:1; min-width:0; height:50px; padding:0 16px; border-radius:12px;
+  background:var(--bg-2); border:1px solid var(--line); color:var(--text);
+  font:inherit; font-size:16px; outline:0;
+}
+.nueva-cat input:focus{border-color:var(--pink); box-shadow:0 0 0 3px var(--pink-soft)}
+.nueva-cat .add-main-btn{padding:0 22px; height:50px; width:auto}
+.cat-ayuda{color:var(--muted); font-size:13px; margin-bottom:18px}
+.cat-ayuda strong{color:var(--text)}
+
+.lista-cats{display:flex; flex-direction:column; gap:10px}
+.cat-fila{
+  display:grid; grid-template-columns:minmax(0, 1.4fr) auto auto; align-items:center; gap:18px;
+  padding:14px 16px; border-radius:16px;
+  background:var(--card); border:1px solid var(--line);
+  transition:border-color .2s;
+}
+.cat-fila:hover{border-color:rgba(var(--pink-rgb), .4)}
+.cat-nombre{display:flex; gap:8px; min-width:0}
+.cat-nombre input{
+  flex:1; min-width:0; height:44px; padding:0 14px; border-radius:10px;
+  background:var(--bg); border:1px solid var(--line); color:var(--text);
+  font:inherit; font-size:16px; font-weight:700; outline:0;
+}
+.cat-nombre input:focus{border-color:var(--pink); box-shadow:0 0 0 3px var(--pink-soft)}
+.cat-guardar{
+  padding:0 16px; height:44px; border-radius:10px; border:0;
+  background:var(--grad); color:#fff; font-weight:800; font-size:13px; cursor:pointer;
+}
+.cat-guardar[hidden]{display:none}
+.cat-info{display:flex; align-items:center; gap:16px; white-space:nowrap}
+.cat-num{font-size:13px; font-weight:800; color:var(--muted)}
+.cat-menu{display:inline-flex; align-items:center; gap:7px; font-size:13px; font-weight:600; cursor:pointer}
+.cat-menu input{width:16px; height:16px; accent-color:var(--pink)}
+.cat-acciones{display:flex; gap:8px}
+.cat-acciones button{
+  padding:10px 14px; border-radius:10px; white-space:nowrap;
+  background:var(--bg); border:1px solid var(--line); color:var(--text);
+  font-size:13px; font-weight:700; cursor:pointer; transition:border-color .2s, color .2s, background .2s;
+}
+.cat-acciones button:hover:not(:disabled){border-color:var(--pink); color:var(--pink)}
+.cat-acciones .cat-borrar{color:var(--danger); border-color:rgba(var(--danger-rgb), .35)}
+.cat-acciones .cat-borrar:hover:not(:disabled){background:rgba(var(--danger-rgb), .12); border-color:var(--danger); color:var(--danger)}
+.cat-acciones button:disabled{opacity:.4; cursor:not-allowed}
+
+/* Aviso corto */
+.aviso-panel{
+  position:fixed; left:50%; bottom:22px; z-index:100;
+  transform:translate(-50%, 20px); opacity:0; pointer-events:none;
+  max-width:calc(100% - 32px); padding:12px 20px; border-radius:12px;
+  background:var(--card); border:1px solid var(--pink); color:var(--text);
+  font-size:14px; font-weight:700; box-shadow:0 12px 30px rgba(0,0,0,.4);
+  transition:opacity .2s, transform .2s;
+}
+.aviso-panel.visible{opacity:1; transform:translate(-50%, 0)}
+
+@media (max-width:720px){
+  .lista-herramientas{flex-direction:column; align-items:stretch}
+  .filtro-cats{flex-wrap:nowrap; overflow-x:auto; padding-bottom:4px; scrollbar-width:none; width:100%; max-width:100%; flex:none}
+  .filtro-cats::-webkit-scrollbar{display:none}
+  .buscar-prenda{width:100%}
+  .item-actions{flex-direction:row; width:100%}
+  .item-actions > *{flex:1}
+  .cat-fila{grid-template-columns:1fr; gap:12px}
+  .cat-info{justify-content:space-between}
+  .cat-acciones button{flex:1}
+  .admin-products h3{font-size:16px}
+  .admin-products img{width:72px; height:72px}
+}
+
+/* El panel usa TODOS los colores de la paleta de la tienda (tema.js pone --black, --white…):
+   así las paletas claras no quedan con texto blanco sobre fondo blanco */
+body{
+  --bg:var(--black, #0a0a0c);
+  --bg-2:var(--black-2, #111114);
+  --text:var(--white, #fff);
+}
