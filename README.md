@@ -97,6 +97,7 @@ Al cliente le aparece un aviso en su panel 5 días antes de vencer.
 | `pedido.js` | Resumen del pedido (`pedido.html?t=...&codigo=...`) |
 | `admin.js`, `agregarPrenda.js`, `editarPrenda.js`, `ajustes.js` | Panel del cliente |
 | `seguridad.js`, `restablecer.html` | Reglas de contraseña, freno de intentos, CAPTCHA y recuperación |
+| `privacidad.html` | Política de datos de cada tienda (Ley 1581), enlazada desde el carrito |
 | `sql/001…004_*.sql` | Migraciones de la base (ya aplicadas, no volver a correr). La columna `tipo_opcion` de la 004 ya no se usa |
 
 ## 🔒 Seguridad

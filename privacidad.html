@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Política de tratamiento de datos</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .legal{max-width:760px;margin:0 auto;padding:40px 20px 90px;line-height:1.65}
+    .legal h1{font-family:var(--font-titulo, "Bebas Neue", Impact, sans-serif);font-weight:var(--font-titulo-peso, 400);font-size:2.4rem;line-height:1.1;margin:0 0 6px}
+    .legal h2{font-size:1.05rem;margin:30px 0 8px}
+    .legal p, .legal li{color:var(--soft-white, #d6d6d6);font-size:.95rem}
+    .legal ul{padding-left:20px;margin:6px 0}
+    .legal .fecha{color:var(--muted);font-size:.85rem;margin-bottom:26px}
+    .legal .caja{background:var(--card, #141414);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin:18px 0}
+    .legal a{color:var(--pink);font-weight:700}
+    .legal .volver{display:inline-block;margin-bottom:24px;color:var(--muted);font-weight:700;text-decoration:none}
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabaseConfig.js"></script>
+  <script src="utils.js"></script>
+  <script src="tema.js"></script>
+</head>
+<body>
+  <main class="legal">
+    <!-- tema.js le agrega ?t=slug -->
+    <a href="index.html" class="volver">← Volver a la tienda</a>
+
+    <h1>Política de tratamiento de datos personales</h1>
+    <p class="fecha">Última actualización: octubre de 2026</p>
+
+    <div class="caja">
+      <p><strong>Responsable:</strong> <span data-tienda="nombre">la tienda</span>.<br>
+        <strong>Contacto:</strong> <span data-tienda="contacto">por WhatsApp desde la tienda</span>.</p>
+    </div>
+
+    <h2>1. Qué datos pedimos</h2>
+    <p>Cuando haces un pedido te pedimos:</p>
+    <ul>
+      <li>Tu nombre.</li>
+      <li>Si lo recibes a domicilio: dirección, barrio y un punto de referencia (opcional).</li>
+      <li>La forma de pago que prefieres.</li>
+      <li>Una nota para la tienda (opcional).</li>
+    </ul>
+    <p>No pedimos documento de identidad, datos de tarjetas ni contraseñas.</p>
+
+    <h2>2. Para qué los usamos</h2>
+    <p>Solo para preparar, confirmar y entregar tu pedido, y para comunicarnos contigo sobre él por WhatsApp.
+      No los vendemos ni los compartimos con terceros para publicidad.</p>
+
+    <h2>3. Dónde se guardan</h2>
+    <ul>
+      <li>En el servidor de la plataforma de catálogos que usa la tienda, protegido para que solo la tienda pueda verlos.</li>
+      <li>En el mensaje de WhatsApp que tú mismo envías a la tienda.</li>
+      <li>En <strong>tu navegador</strong>, para que la próxima vez el formulario ya salga lleno.
+        Puedes borrarlos cuando quieras con el botón «Borrar mis datos guardados» del carrito.</li>
+    </ul>
+
+    <h2>4. Por cuánto tiempo</h2>
+    <p>El tiempo necesario para gestionar tu pedido, atender cambios o garantías y cumplir las obligaciones legales de la tienda.</p>
+
+    <h2>5. Tus derechos</h2>
+    <p>De acuerdo con la Ley 1581 de 2012 de Colombia puedes, en cualquier momento:</p>
+    <ul>
+      <li>Conocer qué datos tuyos tiene la tienda.</li>
+      <li>Pedir que los actualicen o corrijan.</li>
+      <li>Pedir que los eliminen, si ya no son necesarios.</li>
+      <li>Revocar tu autorización.</li>
+      <li>Presentar quejas ante la Superintendencia de Industria y Comercio (SIC).</li>
+    </ul>
+    <p>Para hacerlo, escríbele a la tienda <span data-tienda="contacto">por WhatsApp</span>.</p>
+
+    <h2>6. Tu autorización</h2>
+    <p>Al enviar tu pedido autorizas a la tienda a tratar tus datos para los fines descritos en esta política.</p>
+  </main>
+
+<script>
+(async function(){
+  const cfg = await window.configTienda;
+  if(!cfg) return;
+  const nombre = cfg.nombre_tienda || "la tienda";
+  document.title = `Política de datos | ${nombre}`;
+  document.querySelectorAll('[data-tienda="nombre"]').forEach(el => { el.textContent = nombre; });
+
+  // WhatsApp real de la tienda (el de relleno no cuenta)
+  const n = String(cfg.whatsapp || "").replace(/\D/g, "");
+  if(n.length >= 10 && n !== "573000000000"){
+    document.querySelectorAll('[data-tienda="contacto"]').forEach(el => {
+      el.textContent = "";
+      const a = document.createElement("a");
+      a.href = enlaceWhatsapp(n, `Hola ${nombre}, quiero hacer una consulta sobre mis datos personales.`);
+      a.target = "_blank"; a.rel = "noopener";
+      a.textContent = `por WhatsApp al +${n}`;
+      el.appendChild(a);
+    });
+  }
+})();
+</script>
+</body>
+</html>

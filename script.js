@@ -544,12 +544,31 @@ function llenarDatosCliente(){
   actualizarEntrega();
 }
 
+// Link a la política de datos de ESTA tienda (privacidad.html?t=slug)
+if($dc("linkPrivacidad")) $dc("linkPrivacidad").setAttribute("href", linkTienda("privacidad.html"));
+
+// El comprador puede borrar los datos que este navegador recuerda
+function actualizarBotonOlvidar(){
+  const b = $dc("olvidarDatos");
+  if(b) b.hidden = !Object.keys(cargarDatosGuardados()).length;
+}
+if($dc("olvidarDatos")){
+  $dc("olvidarDatos").addEventListener("click", () => {
+    try{ localStorage.removeItem(DATOS_KEY); }catch(e){}
+    $dc("datosCliente").reset();
+    actualizarEntrega();
+    actualizarBotonOlvidar();
+    showToast("Listo, borramos tus datos de este navegador");
+  });
+}
+
 if($dc("datosCliente")){
   document.querySelectorAll('input[name="dcEntrega"]').forEach(r => r.addEventListener("change", actualizarEntrega));
   // Al corregir un campo se quita el aviso de error
   $dc("datosCliente").addEventListener("input", () => mostrarErrorCliente(""));
   $dc("datosCliente").addEventListener("submit", e => e.preventDefault());
   llenarDatosCliente();
+  actualizarBotonOlvidar();
   // La dirección de la tienda llega después: se refresca el aviso de "recoger"
   if(window.configTienda) window.configTienda.then(actualizarEntrega);
 }

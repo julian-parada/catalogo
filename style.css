@@ -1093,3 +1093,10 @@ html[data-fondo="claro"] .footer-social a{color:var(--white)}
 /* Falta elegir una opción antes de añadir */
 .talla-select.falta-opcion{border-color:var(--danger, #ff537d); box-shadow:0 0 0 3px rgba(var(--danger-rgb, 255,83,125), .25); animation:sacudir .35s}
 @keyframes sacudir{25%{transform:translateX(-4px)} 75%{transform:translateX(4px)}}
+
+/* Aviso de privacidad en el formulario del pedido */
+.dc-privacidad{margin:10px 0 0; font-size:.76rem; line-height:1.5; color:var(--muted)}
+.dc-privacidad a{color:var(--soft-white, var(--white)); text-decoration:underline; text-underline-offset:2px}
+.dc-olvidar{display:block; margin-top:6px; padding:0; background:none; border:0; color:var(--muted); font:inherit; font-size:.74rem; text-decoration:underline; cursor:pointer}
+.dc-olvidar[hidden]{display:none}
+.dc-olvidar:hover{color:var(--danger, #ff537d)}
