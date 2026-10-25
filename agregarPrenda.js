@@ -52,7 +52,7 @@ document.getElementById("addForm").addEventListener("submit", async (e) => {
   const descripcion = document.getElementById("descripcion").value;
   const tallasTexto = document.getElementById("tallas").value.trim();
   const archivoPrincipal = document.getElementById("imagenArchivo").files[0];
-  const archivosExtra = document.getElementById("fotosExtraArchivos").files;
+  const archivosExtra = fotosExtra.slice();
 
   const errPrecio = errorPrecios(precio, precioOferta);
   if(errPrecio){ msg.textContent = errPrecio; msg.className = "form-msg error"; return; }
@@ -95,6 +95,57 @@ document.getElementById("addForm").addEventListener("submit", async (e) => {
   msg.className = "form-msg ok";
   setTimeout(() => window.location.href = "admin.html", 1200);
 });
+
+
+
+/* ---------- Fotos adicionales: se van sumando (el navegador reemplaza la selección anterior) ---------- */
+const MAX_FOTOS_EXTRA = 10;
+const fotosExtra = [];
+(function(){
+  const input = document.getElementById("fotosExtraArchivos");
+  const lista = document.getElementById("fotosExtraLista");
+  if(!input || !lista) return;
+
+  function pintar(){
+    lista.querySelectorAll("img").forEach(img => URL.revokeObjectURL(img.src));
+    lista.textContent = "";
+    lista.hidden = !fotosExtra.length;
+    fotosExtra.forEach((archivo, i) => {
+      const item = document.createElement("div");
+      item.className = "foto-extra";
+      const img = document.createElement("img");
+      img.src = URL.createObjectURL(archivo);
+      img.alt = `Foto adicional ${i + 1}`;
+      const quitar = document.createElement("button");
+      quitar.type = "button";
+      quitar.className = "foto-extra-quitar";
+      quitar.setAttribute("aria-label", "Quitar foto");
+      quitar.textContent = "✕";
+      quitar.addEventListener("click", () => { fotosExtra.splice(i, 1); pintar(); });
+      item.append(img, quitar);
+      lista.appendChild(item);
+    });
+    if(fotosExtra.length){
+      const cuenta = document.createElement("span");
+      cuenta.className = "fotos-extra-cuenta";
+      cuenta.textContent = `${fotosExtra.length} de ${MAX_FOTOS_EXTRA}`;
+      lista.appendChild(cuenta);
+    }
+  }
+
+  input.addEventListener("change", () => {
+    const nuevas = Array.from(input.files || []).filter(f => f.type.startsWith("image/"));
+    const espacio = MAX_FOTOS_EXTRA - fotosExtra.length;
+    fotosExtra.push(...nuevas.slice(0, Math.max(0, espacio)));
+    if(nuevas.length > espacio){
+      const msg = document.getElementById("formMsg");
+      msg.textContent = `Máximo ${MAX_FOTOS_EXTRA} fotos adicionales. Algunas no se agregaron.`;
+      msg.className = "form-msg error";
+    }
+    input.value = "";   // así se puede volver a elegir (incluso la misma foto)
+    pintar();
+  });
+})();
 
 
 
