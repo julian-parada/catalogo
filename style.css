@@ -1401,3 +1401,25 @@ body.con-barra .footer{padding-bottom:90px}
   *, *::before, *::after{animation:none !important; transition:none !important}
 }
 .modal-card h2{font-size:clamp(2rem, 6vw, 2.8rem); text-transform:var(--titulo-transform, uppercase)}
+
+/* ---------- Crédito "Hecho con Exhibe Pro" ---------- */
+.hecho-con{
+  display:flex; align-items:center; justify-content:center; flex-wrap:wrap; gap:6px;
+  width:fit-content; margin:0 auto 22px; padding:8px 14px; border-radius:999px;
+  font-size:.76rem; color:var(--muted); text-decoration:none;
+  border:1px solid var(--line); background:rgba(var(--texto-rgb, 255,255,255), .03);
+  transition:border-color .2s, color .2s, transform .2s;
+}
+.hecho-con b{display:inline-flex; align-items:center; gap:6px; color:var(--white); font-weight:800; letter-spacing:.02em}
+.hecho-con em{font-style:normal; color:var(--acento-texto, var(--pink)); font-weight:700}
+.hecho-con:hover{border-color:rgba(var(--pink-rgb), .55); color:var(--white); transform:translateY(-1px)}
+/* Ícono provisional (se reemplaza por el logo de Exhibe Pro) */
+.ep-icono{
+  width:16px; height:16px; border-radius:5px; flex:none;
+  background:
+    linear-gradient(var(--texto-acento, #fff), var(--texto-acento, #fff)) 4px 4px/8px 2px no-repeat,
+    linear-gradient(var(--texto-acento, #fff), var(--texto-acento, #fff)) 4px 7px/6px 2px no-repeat,
+    linear-gradient(var(--texto-acento, #fff), var(--texto-acento, #fff)) 4px 10px/8px 2px no-repeat,
+    linear-gradient(var(--texto-acento, #fff), var(--texto-acento, #fff)) 4px 4px/2px 8px no-repeat,
+    var(--pink);
+}

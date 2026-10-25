@@ -41,6 +41,7 @@
     .pedido-wa svg{width:20px;height:20px}
     .pedido-nota{color:var(--muted);font-size:.8rem;text-align:center;margin-top:16px}
     .pedido-error{text-align:center;padding:80px 20px;color:var(--muted)}
+    .pedido-pie{padding:0 18px 30px}
     @media (max-width:420px){ .pedido-item img{width:62px;height:62px} .pedido-item{align-items:flex-start} .pedido-item-precio{display:none} }
   </style>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -52,6 +53,14 @@
   <div class="pedido-wrap" id="pedidoWrap">
     <p style="color:var(--muted)">Cargando pedido...</p>
   </div>
+
+  <footer class="pedido-pie">
+  <a class="hecho-con" data-exhibe href="#" aria-label="Hecho con Exhibe Pro: crea tu catálogo">
+    <span>Hecho con</span>
+    <b><i class="ep-icono" aria-hidden="true"></i> Exhibe Pro</b>
+    <em>· Crea el tuyo</em>
+  </a>
+  </footer>
 
   <script src="pedido.js"></script>
 </body>

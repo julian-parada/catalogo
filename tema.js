@@ -681,3 +681,25 @@ window.tiendaActual.then(() => {
   if(document.readyState === "loading") document.addEventListener("DOMContentLoaded", ajustarLinks);
   else ajustarLinks();
 });
+
+
+/* =========================================================
+   CRÉDITO "Hecho con Exhibe Pro" (pie de las tiendas y del pedido)
+   Cambia aquí el WhatsApp donde te escriben los interesados.
+   ========================================================= */
+const EXHIBE_PRO = {
+  nombre: "Exhibe Pro",
+  whatsapp: "573247348475"
+};
+
+function pintarCreditoExhibe(){
+  document.querySelectorAll("[data-exhibe]").forEach(a => {
+    const tienda = SLUG_ACTUAL ? ` (vi la tienda "${SLUG_ACTUAL}")` : "";
+    const texto = `Hola ${EXHIBE_PRO.nombre}, quiero un catálogo como este para mi negocio${tienda}.`;
+    a.href = `https://api.whatsapp.com/send?phone=${EXHIBE_PRO.whatsapp}&text=${encodeURIComponent(texto)}`;
+    a.target = "_blank";
+    a.rel = "noopener";
+  });
+}
+if(document.readyState === "loading") document.addEventListener("DOMContentLoaded", pintarCreditoExhibe);
+else pintarCreditoExhibe();
