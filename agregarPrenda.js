@@ -7,26 +7,9 @@ async function revisarSesion(){
   cargarCategorias();
 }
 
+// Comprime y sube a la carpeta de la tienda (utils.js)
 async function subirImagen(archivo){
-  if(!archivo || !archivo.type.startsWith("image/")) throw new Error("El archivo debe ser una imagen.");
-  archivo = await comprimirImagen(archivo, 1200);   // de varios MB a ~200 KB (utils.js)
-  const tienda = await window.tiendaActual;
-  if(!tienda) throw new Error("No se encontró tu tienda. Vuelve a iniciar sesión.");
-  // Cada tienda sube a su propia carpeta (lo exige el servidor). Sin tildes ni espacios en el nombre.
-  const limpio = archivo.name.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-zA-Z0-9._-]/g, "_");
-  const nombreArchivo = `${tienda.id}/${Date.now()}_${limpio}`;
-
-  const { error } = await supabaseClient.storage
-    .from("imagenes-prendas")
-    .upload(nombreArchivo, archivo);
-
-  if(error) throw error;
-
-  const { data } = supabaseClient.storage
-    .from("imagenes-prendas")
-    .getPublicUrl(nombreArchivo);
-
-  return data.publicUrl;
+  return subirFotoPrenda(archivo);
 }
 
 

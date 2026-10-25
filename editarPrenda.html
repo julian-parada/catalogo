@@ -62,8 +62,8 @@
       </div>
 
       <a href="admin.html" class="add-main-btn">
-        <span class="plus">+</span>
-        <span>principal</span>
+        <span class="plus">←</span>
+        <span>Mis prendas</span>
       </a>
 
       <a href="agregarPrenda.html" class="add-main-btn">
@@ -230,33 +230,12 @@
             </div>
 
 
-            <!-- IMAGEN -->
+            <!-- La foto principal se maneja en la sección "Fotos" de abajo -->
+            <input type="hidden" id="imagen">
 
             <div class="field field-full">
-
-              <label for="imagen">
-                Imagen principal <span>*</span>
-              </label>
-
-              <div class="input-box">
-
-                <span class="field-icon">
-                  ▣
-                </span>
-
-                <input
-                  type="text"
-                  id="imagen"
-                  placeholder="URL de la imagen"
-                  required
-                >
-
-              </div>
-
-              <small>
-                Puedes conservar la imagen actual o reemplazar su URL.
-              </small>
-
+              <label>Fotos</label>
+              <a href="#fotosCard" class="ir-fotos">▣ Cambiar o agregar fotos ↓</a>
             </div>
 
 
@@ -407,6 +386,28 @@
 
       </aside>
 
+    </section>
+
+
+    <!-- ================= FOTOS ================= -->
+
+    <section class="sizes-card fotos-card" id="fotosCard">
+      <div class="sizes-header">
+        <div>
+          <span class="section-kicker">GALERÍA</span>
+          <h3>Fotos de la prenda</h3>
+          <p>La foto <strong>principal</strong> es la que sale primero en el catálogo. Los cambios se guardan al instante.</p>
+        </div>
+        <span class="sizes-icon">▣</span>
+      </div>
+
+      <div id="listaFotos" class="fotos-grid"></div>
+
+      <label class="fotos-subir">
+        <input type="file" id="fotosNuevas" accept="image/*" multiple>
+        <span>＋ Agregar fotos</span>
+      </label>
+      <p class="fotos-msg" id="fotosMsg" role="status"></p>
     </section>
 
 

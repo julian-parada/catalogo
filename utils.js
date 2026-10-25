@@ -82,3 +82,35 @@ async function comprimirImagen(archivo, maxLado = 1200, calidad = 0.82){
     return archivo;
   }
 }
+
+
+/* ---------------------------------------------------------
+   FOTOS DE PRENDAS EN EL ALMACENAMIENTO (bucket imagenes-prendas)
+   Necesitan supabaseClient y window.tiendaActual (tema.js)
+   --------------------------------------------------------- */
+const BUCKET_FOTOS = "imagenes-prendas";
+
+// Comprime y sube una foto a la carpeta de la tienda. Devuelve la URL pública.
+async function subirFotoPrenda(archivo){
+  if(!archivo || !archivo.type || !archivo.type.startsWith("image/")) throw new Error("El archivo debe ser una imagen.");
+  archivo = await comprimirImagen(archivo, 1200);
+  const tienda = await window.tiendaActual;
+  if(!tienda) throw new Error("No se encontró tu tienda. Vuelve a iniciar sesión.");
+  const limpio = (archivo.name || "foto").normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^a-zA-Z0-9._-]/g, "_");
+  const ruta = `${tienda.id}/${Date.now()}_${Math.random().toString(36).slice(2, 7)}_${limpio}`;
+  const { error } = await supabaseClient.storage.from(BUCKET_FOTOS).upload(ruta, archivo);
+  if(error) throw error;
+  return supabaseClient.storage.from(BUCKET_FOTOS).getPublicUrl(ruta).data.publicUrl;
+}
+
+// Borra del almacenamiento una foto que ya no se usa (solo si es de este bucket).
+// Si falla no pasa nada: la prenda igual queda bien.
+async function borrarFotoPrenda(url){
+  try{
+    const marca = `/object/public/${BUCKET_FOTOS}/`;
+    const i = String(url || "").indexOf(marca);
+    if(i === -1) return;
+    const ruta = decodeURIComponent(url.slice(i + marca.length).split("?")[0]);
+    await supabaseClient.storage.from(BUCKET_FOTOS).remove([ruta]);
+  }catch(e){ console.warn("No se pudo borrar la foto del almacenamiento:", e); }
+}

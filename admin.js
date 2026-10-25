@@ -517,11 +517,19 @@ function registrarListenersLista(){
       if(!confirm("¿Eliminar esta prenda y todas sus tallas e imágenes?")) return;
       const prendaId = btn.dataset.prenda;
 
+      // Fotos a borrar del almacenamiento cuando la prenda ya no exista
+      const prenda = prendasCache.find(p => String(p.id) === String(prendaId));
+      const { data: extras } = await supabaseClient.from("imagenes_prenda").select("url").eq("prenda_id", prendaId);
+      const urls = [...new Set([prenda && prenda.imagen, ...(extras || []).map(x => x.url)].filter(Boolean))];
+
       await supabaseClient.from("imagenes_prenda").delete().eq("prenda_id", prendaId);
       await supabaseClient.from("tallas").delete().eq("prenda_id", prendaId);
 
       const { error } = await supabaseClient.from("prendas").delete().eq("id", prendaId);
       if(error){ alert("Error al eliminar: " + error.message); return; }
+      // Solo se borran las que ninguna otra prenda usa
+      const enUso = new Set(prendasCache.filter(p => String(p.id) !== String(prendaId)).map(p => p.imagen));
+      urls.filter(u => !enUso.has(u)).forEach(u => borrarFotoPrenda(u));
       prendasCache = prendasCache.filter(p => String(p.id) !== String(prendaId));
       renderTodo();
       avisar("Prenda eliminada.");
