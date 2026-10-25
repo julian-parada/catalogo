@@ -196,6 +196,7 @@ async function mostrarPanel(){
   document.getElementById("loginBox").style.display = "none";
   document.getElementById("panel").style.display = "block";
   avisoSuscripcion(tienda);
+  avisoPrimerosPasos();
   await cargarPrendas();
 }
 
@@ -218,6 +219,22 @@ function avisoSuscripcion(tienda){
   aviso.textContent = texto;
   aviso.style.cssText = "background:rgba(255,92,122,.12);border:1px solid #ff5c7a;color:#ff5c7a;padding:12px 16px;border-radius:10px;margin:0 0 18px";
   panel.prepend(aviso);
+}
+
+// Tienda recién creada: le recuerda lo que falta para empezar a recibir pedidos
+async function avisoPrimerosPasos(){
+  const cfg = await window.configTienda;
+  const panel = document.getElementById("panel");
+  if(!cfg || !panel || document.getElementById("avisoPasos")) return;
+  if(typeof numeroWhatsapp === "function" && numeroWhatsapp(cfg)) return;
+
+  const aviso = document.createElement("div");
+  aviso.id = "avisoPasos";
+  aviso.className = "aviso-pasos";
+  aviso.innerHTML = `<strong>Falta tu WhatsApp:</strong> sin él tus clientes no pueden enviarte pedidos.
+    <a href="ajustes.html#sec-contacto">Configurarlo ahora →</a>`;
+  const intro = panel.querySelector(".admin-intro");
+  if(intro) intro.after(aviso); else panel.prepend(aviso);
 }
 
 // ---------- DATOS ----------

@@ -20,6 +20,15 @@ function enlaceWhatsapp(numero, texto){
   return `https://api.whatsapp.com/send?phone=${n}&text=${encodeURIComponent(texto || "")}`;
 }
 
+// Precio y precio de oferta de una prenda: devuelve el error o "" si están bien
+function errorPrecios(precio, oferta){
+  const p = Number(precio), o = String(oferta || "").trim() === "" ? null : Number(oferta);
+  if(!Number.isFinite(p) || p <= 0) return "Escribe un precio mayor que cero.";
+  if(o !== null && (!Number.isFinite(o) || o <= 0)) return "El precio de oferta debe ser mayor que cero, o déjalo vacío.";
+  if(o !== null && o >= p) return "El precio de oferta debe ser MENOR que el precio normal.";
+  return "";
+}
+
 function safeUrl(url){
   if(!url) return "";
   const u = String(url).trim();

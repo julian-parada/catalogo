@@ -71,6 +71,9 @@ document.getElementById("addForm").addEventListener("submit", async (e) => {
   const archivoPrincipal = document.getElementById("imagenArchivo").files[0];
   const archivosExtra = document.getElementById("fotosExtraArchivos").files;
 
+  const errPrecio = errorPrecios(precio, precioOferta);
+  if(errPrecio){ msg.textContent = errPrecio; msg.className = "form-msg error"; return; }
+
   let categoria;
   try { categoria = await resolverCategoria(categoriaTexto); }
   catch(err){ msg.textContent = "Error con la categoría: " + err.message; msg.className = "form-msg error"; return; }

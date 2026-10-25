@@ -77,7 +77,7 @@ function pintarFooter(cfg){
   const contacto = document.getElementById("footerContacto");
   if(contacto){
     const items = [];
-    if(cfg.whatsapp)         items.push(`<li><span class="label">WhatsApp</span>+${escapeHtml(cfg.whatsapp)}</li>`);
+    if(numeroWhatsapp(cfg))  items.push(`<li><span class="label">WhatsApp</span>+${escapeHtml(numeroWhatsapp(cfg))}</li>`);
     if(cfg.footer_direccion){
       // Si la tienda puso su link de Google Maps, la dirección abre el mapa
       const mapa = safeUrl(cfg.footer_mapa_url);
@@ -137,14 +137,35 @@ function aplicarConfiguracion(cfg){
 
   pintarFooter(cfg);
   pintarWhatsappFlotante(cfg);
+  pintarPortadaVacia(cfg);
+
+  // Descripción de la página con los textos de la tienda
+  const desc = document.querySelector('meta[name="description"]');
+  const texto = cfg.portada_subtitulo || cfg.footer_texto;
+  if(desc && texto) desc.setAttribute("content", texto);
+}
+
+// Si la tienda no puso frase, subtítulo ni botón, no se muestra el cuadro vacío
+function pintarPortadaVacia(cfg){
+  const cta = document.querySelector(".hero-cta");
+  if(cta) cta.hidden = !String(cfg.portada_boton || "").trim();
+  const caja = document.querySelector(".hero-overlay");
+  if(caja) caja.hidden = !["portada_frase", "portada_subtitulo", "portada_boton"].some(c => String(cfg[c] || "").trim());
+}
+
+// Número de WhatsApp real de la tienda, o "" si no lo ha puesto
+// (573000000000 es el valor de relleno con el que se crea una tienda nueva)
+function numeroWhatsapp(cfg){
+  const n = String((cfg && cfg.whatsapp) || "").replace(/\D/g, "");
+  return n.length >= 10 && n !== "573000000000" ? n : "";
 }
 
 // Botón flotante de WhatsApp (solo si la tienda tiene número)
 function pintarWhatsappFlotante(cfg){
   const btn = porId("waFlotante");
   if(!btn) return;
-  const numero = String(cfg.whatsapp || "").replace(/\D/g, "");
-  if(numero.length < 10 || numero === "573000000000"){ btn.hidden = true; return; }
+  const numero = numeroWhatsapp(cfg);
+  if(!numero){ btn.hidden = true; return; }
   const texto = `Hola${cfg.nombre_tienda ? " " + cfg.nombre_tienda : ""}, vi su catálogo y tengo una pregunta.`;
   btn.href = enlaceWhatsapp(numero, texto);
   btn.hidden = false;

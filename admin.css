@@ -499,3 +499,11 @@ body{
 /* Títulos largos del login (ej. "NUEVA CONTRASEÑA") sin desbordar en el celular */
 .titulo-largo h1{font-size:clamp(46px, 12vw, 88px); overflow-wrap:anywhere}
 .login-card{min-width:0; max-width:100%}
+
+/* Aviso de primeros pasos (tienda nueva sin WhatsApp) */
+.aviso-pasos{
+  display:flex; flex-wrap:wrap; align-items:center; gap:8px 14px; margin:0 0 22px;
+  padding:14px 18px; border-radius:14px;
+  background:rgba(var(--yellow-rgb), .1); border:1px solid var(--yellow); color:var(--text); font-size:14.5px;
+}
+.aviso-pasos a{font-weight:800; color:var(--yellow); text-decoration:underline; text-underline-offset:3px}

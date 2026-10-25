@@ -35,7 +35,8 @@
   --danger:#ff537d;
   --danger-rgb:255,83,125;
 
-  --hero-img:url("img/fondo.jpg");
+  /* Portada por defecto: degradado con el color de la tienda (cada tienda sube su foto en "Mi tienda") */
+  --hero-img:radial-gradient(120% 140% at 85% 0%, rgba(var(--pink-rgb, 255,20,147), .42), var(--black-2, #111) 55%, var(--black, #070707));
 }
 
 [hidden]{display:none!important}
@@ -1025,3 +1026,6 @@ button, input, select, textarea{font-family:inherit}
   .price{font-size:1.1rem}
   .add{font-size:.82rem}
 }
+
+/* Portada sin textos: no se muestra el cuadro ni el botón vacío */
+.hero-cta[hidden], .hero-overlay[hidden]{display:none !important}

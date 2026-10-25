@@ -68,12 +68,14 @@ document.getElementById("editForm").addEventListener("submit", async (e) => {
   const precio = document.getElementById("precio").value;
   const imagen = document.getElementById("imagen").value;
   const descripcion = document.getElementById("descripcion").value;
+  const precioOferta = document.getElementById("precioOferta").value.trim();
+
+  const errPrecio = errorPrecios(precio, precioOferta);
+  if(errPrecio){ msg.textContent = errPrecio; msg.classList.add("error"); return; }
 
   let categoria;
   try { categoria = await resolverCategoria(categoriaTexto); }
   catch(err){ msg.textContent = "Error con la categoría: " + err.message; msg.classList.add("error"); return; }
-
-  const precioOferta = document.getElementById("precioOferta").value.trim();
 
 const { error } = await supabaseClient
   .from("prendas")

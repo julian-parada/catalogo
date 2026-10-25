@@ -226,7 +226,10 @@ function renderProducts(){
       </svg></button>
     </div>
   </article>
-  `).join("") : `<div class="empty">No encontramos productos con esa búsqueda.</div>`;
+  `).join("") : `<div class="empty">${
+    !products.length ? "Muy pronto encontrarás aquí nuestros productos ✨"
+    : term ? "No encontramos productos con esa búsqueda."
+    : "No hay productos en esta sección por ahora."}</div>`;
 
   activarCarruseles(container);
 }
@@ -380,8 +383,8 @@ function updateCount(){
 async function sendWhatsapp(){
   if(!cart.length){ alert("Agrega al menos una prenda al pedido."); return; }
 
-  const numero = window.CFG && window.CFG.whatsapp;
-  if(!numero){ alert("La tienda todavía no tiene un número de WhatsApp configurado."); return; }
+  const numero = numeroWhatsapp(window.CFG);   // tienda.js: "" si no hay número real
+  if(!numero){ alert("Esta tienda todavía no tiene WhatsApp para recibir pedidos. Intenta más tarde."); return; }
   const saludo = window.CFG.mensaje_saludo || "Hola, quiero hacer este pedido:";
 
   const cliente = leerDatosCliente();
