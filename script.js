@@ -147,8 +147,8 @@ function renderChips(items, hayPromos, hayNuevos){
   if(!cont) return;
   cont.textContent = "";
   const opciones = [["all", "Todo"]];
-  if(hayNuevos) opciones.push(["__nuevos__", "✨ Nuevos"]);
-  if(hayPromos) opciones.push(["__promos__", "🔥 Promociones"]);
+  if(hayNuevos) opciones.push(["__nuevos__", "Nuevos"]);
+  if(hayPromos) opciones.push(["__promos__", "Promociones"]);
   items.forEach(c => opciones.push([String(c.id), c.nombre]));
   // Con una sola opción ("Todo") no vale la pena mostrarlos
   cont.hidden = opciones.length < 2;
