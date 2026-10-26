@@ -228,9 +228,6 @@ function renderProducts(){
     return coincideCategoria && coincideTexto;
   });
 
-  const cuenta = document.getElementById("catCuenta");
-  if(cuenta) cuenta.textContent = products.length ? `${filtered.length} ${filtered.length === 1 ? "producto" : "productos"}` : "";
-
   const container = document.getElementById("products");
   container.innerHTML = filtered.length ? filtered.map((p, i) => `
   <article class="product" style="--i:${Math.min(i, 11)}">
