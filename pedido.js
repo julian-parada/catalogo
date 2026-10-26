@@ -85,7 +85,7 @@ async function cargarPedido(){
 
     <div class="pedido-total">
       <span>Total</span>
-      <span>${money(Number(pedido.total) || 0)}</span>
+      <span>${money(Number(pedido.total) || 0)}${pedido.entrega === "domicilio" ? `<small class="mas-domicilio">+ domicilio</small>` : ""}</span>
     </div>
 
     <div class="pedido-acciones">

@@ -1423,3 +1423,7 @@ body.con-barra .footer{padding-bottom:90px}
     linear-gradient(var(--texto-acento, #fff), var(--texto-acento, #fff)) 4px 4px/2px 8px no-repeat,
     var(--pink);
 }
+
+/* "+ domicilio" junto al total: el envío lo confirma la tienda */
+.mas-domicilio{display:block; text-align:right; font-family:var(--font-texto, 'Inter', sans-serif); font-size:.8rem; font-weight:700; letter-spacing:.02em; color:var(--muted); margin-top:2px}
+.nota-domicilio{margin:-10px 0 16px; font-size:.8rem; color:var(--muted); text-align:right}

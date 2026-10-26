@@ -405,7 +405,7 @@ function renderCart(){
   if(form) form.hidden = !cart.length;
   if(!cart.length){
     box.innerHTML = '<p class="note">Todavía no has seleccionado ningún producto.</p>';
-    document.getElementById("cartTotal").textContent = money(0);
+    pintarTotal();
     return;
   }
   box.innerHTML = cart.map(x => `
@@ -422,7 +422,23 @@ function renderCart(){
       </div>
       <button class="remove" onclick="removeFromCart('${esc(x.cartId)}')">Eliminar</button>
     </div>`).join("");
-  document.getElementById("cartTotal").textContent = money(cart.reduce((a,x) => a + x.price * x.qty, 0));
+  pintarTotal();
+}
+
+// Total del carrito: si es a domicilio se aclara que el envío va aparte (lo confirma la tienda)
+function pintarTotal(){
+  const total = cart.reduce((a,x) => a + x.price * x.qty, 0);
+  const domicilio = cart.length && radioMarcado("dcEntrega") === "domicilio";
+  const el = document.getElementById("cartTotal");
+  el.textContent = money(total);
+  if(domicilio){
+    const extra = document.createElement("small");
+    extra.className = "mas-domicilio";
+    extra.textContent = "+ domicilio";
+    el.appendChild(extra);
+  }
+  const nota = document.getElementById("notaDomicilio");
+  if(nota) nota.hidden = !domicilio;
 }
 
 function updateCount(){
@@ -500,7 +516,7 @@ async function sendWhatsapp(){
   }
   lineas.push(`*Pago:* ${NOMBRES_PAGO[cliente.pago]}`);
   if(cliente.nota) lineas.push(`*Nota:* ${cliente.nota}`);
-  lineas.push("", `*Ver pedido:* ${urlPedido}`, `*Total:* ${money(totalFinal)}`, "", "¿Me confirman disponibilidad? Gracias.");
+  lineas.push("", `*Ver pedido:* ${urlPedido}`, `*Total:* ${money(totalFinal)}${cliente.entrega === "domicilio" ? " + domicilio" : ""}`, "", "¿Me confirman disponibilidad? Gracias.");
 
   const urlWhatsapp = enlaceWhatsapp(numero, lineas.join("\n"));
   // Algunos celulares bloquean la ventana nueva: en ese caso se abre en la misma pestaña
@@ -572,6 +588,7 @@ function actualizarEntrega(){
   const dirTienda = window.CFG && window.CFG.footer_direccion;
   info.hidden = !(entrega === "recoger" && dirTienda);
   if(!info.hidden) info.textContent = `📍 Lo recoges en: ${dirTienda}`;
+  pintarTotal();
 }
 
 function guardarDatosCliente(d){
