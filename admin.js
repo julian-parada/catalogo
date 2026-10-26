@@ -205,25 +205,60 @@ async function mostrarPanel(){
   await cargarPrendas();
 }
 
-// Aviso dentro del panel si la tienda está vencida o por vencer
+// Aviso grande arriba solo si la tienda está apagada (vencida o suspendida)
 function avisoSuscripcion(tienda){
+  pintarPlan(tienda);
   const panel = document.getElementById("panel");
-  if(!panel || document.getElementById("avisoSuscripcion")) return;
-
-  const hoy = new Date(); hoy.setHours(0, 0, 0, 0);
-  const vence = tienda.vence ? new Date(tienda.vence + "T00:00:00") : null;
-  const dias = vence ? Math.round((vence - hoy) / 86400000) : null;
-
-  let texto = "";
-  if(!tienda.activa) texto = "Tu tienda está suspendida o vencida: los clientes no pueden verla. Comunícate con tu proveedor para reactivarla.";
-  else if(dias !== null && dias <= 5) texto = dias === 0 ? "Tu suscripción vence hoy." : `Tu suscripción vence en ${dias} día${dias === 1 ? "" : "s"}.`;
-  if(!texto) return;
-
+  if(!panel || tienda.activa || document.getElementById("avisoSuscripcion")) return;
   const aviso = document.createElement("p");
   aviso.id = "avisoSuscripcion";
-  aviso.textContent = texto;
-  aviso.style.cssText = "background:rgba(255,92,122,.12);border:1px solid #ff5c7a;color:#ff5c7a;padding:12px 16px;border-radius:10px;margin:0 0 18px";
+  aviso.className = "aviso-suscripcion";
+  aviso.textContent = tienda.estado === "suspendido"
+    ? "Tu tienda está pausada: tus clientes no pueden verla. Escríbenos para reactivarla."
+    : "Tu plan venció: tus clientes ya no pueden ver tu tienda. Renuévalo y se activa de inmediato.";
   panel.prepend(aviso);
+}
+
+// Cuenta regresiva del plan: días que quedan, fecha y barra (cambia de color al acercarse)
+function pintarPlan(tienda){
+  const caja = document.getElementById("planBox");
+  if(!caja || !tienda) return;
+  let dias = Number.isInteger(tienda.dias) ? tienda.dias : null;
+  if(dias === null && tienda.vence){
+    // Por si el servidor todavía no manda "dias": se calcula con la fecha de Colombia
+    const hoy = new Date(new Date().toLocaleDateString("en-CA", { timeZone: "America/Bogota" }) + "T00:00:00");
+    dias = Math.round((new Date(tienda.vence + "T00:00:00") - hoy) / 86400000);
+  }
+  if(dias === null) return;
+
+  const pausada = tienda.estado === "suspendido";
+  const vencida = !pausada && (dias < 0 || !tienda.activa);
+  const nivel = pausada || vencida ? "mal" : dias <= 3 ? "mal" : dias <= 7 ? "aviso" : "ok";
+  const fecha = new Date(tienda.vence + "T12:00:00").toLocaleDateString("es-CO", { day: "numeric", month: "long", year: "numeric" });
+  const grande = pausada ? "Pausada" : vencida ? "Vencido" : dias === 0 ? "Vence hoy" : `${dias} día${dias === 1 ? "" : "s"}`;
+  const chico = pausada ? "Tu tienda no se está mostrando" : vencida ? `Venció el ${fecha}` : `Tu plan vence el ${fecha}`;
+  const pct = pausada || vencida ? 0 : Math.max(3, Math.min(100, Math.round(dias / 30 * 100)));
+
+  caja.className = "plan-box plan-" + nivel;
+  caja.textContent = "";
+  const k = document.createElement("span"); k.className = "plan-k"; k.textContent = "TU PLAN";
+  const g = document.createElement("strong"); g.textContent = grande;
+  if(!pausada && !vencida && dias > 0){ const q = document.createElement("small"); q.textContent = dias === 1 ? " restante" : " restantes"; g.appendChild(q); }
+  const c = document.createElement("span"); c.className = "plan-fecha"; c.textContent = chico;
+  const barra = document.createElement("div"); barra.className = "plan-barra";
+  const i = document.createElement("i"); i.style.width = pct + "%"; barra.appendChild(i);
+  caja.append(k, g, c, barra);
+
+  // Cuando falta poco (o ya venció), botón para renovar por WhatsApp
+  if(nivel !== "ok" && typeof EXHIBE_PRO !== "undefined"){
+    const a = document.createElement("a");
+    a.className = "plan-renovar";
+    a.target = "_blank"; a.rel = "noopener";
+    a.href = enlaceWhatsapp(EXHIBE_PRO.whatsapp, `Hola ${EXHIBE_PRO.nombre}, quiero renovar el plan de mi tienda "${tienda.nombre || tienda.slug}".`);
+    a.textContent = pausada ? "Reactivar mi tienda" : "Renovar por WhatsApp";
+    caja.appendChild(a);
+  }
+  caja.hidden = false;
 }
 
 // Tienda recién creada: le recuerda lo que falta para empezar a recibir pedidos

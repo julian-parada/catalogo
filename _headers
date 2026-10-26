@@ -20,3 +20,6 @@
 /restablecer*
   Cache-Control: no-store
   X-Robots-Tag: noindex
+/plataforma*
+  Cache-Control: no-store
+  X-Robots-Tag: noindex

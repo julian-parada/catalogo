@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#0b0b10">
+  <title>Plataforma · Exhibe Pro</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800;900&display=swap">
+  <link rel="stylesheet" href="plataforma.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabaseConfig.js"></script>
+  <script src="utils.js"></script>
+  <script src="seguridad.js"></script>
+</head>
+<body>
+
+  <!-- ================= INICIO DE SESIÓN ================= -->
+  <main class="pl-login" id="vistaLogin" hidden>
+    <form class="pl-login-card" id="loginForm" novalidate>
+      <div class="pl-marca"><span class="pl-e" aria-hidden="true"></span> Exhibe Pro</div>
+      <h1>Panel de la <em>plataforma</em></h1>
+      <p class="pl-sub">Acceso solo para el administrador de Exhibe Pro.</p>
+      <label class="pl-campo"><span>Correo</span>
+        <input type="email" id="email" autocomplete="email" required>
+      </label>
+      <label class="pl-campo"><span>Contraseña</span>
+        <span class="pl-clave">
+          <input type="password" id="password" autocomplete="current-password" required>
+          <button type="button" class="pl-ojo" data-ojo="password" aria-label="Mostrar contraseña">Ver</button>
+        </span>
+      </label>
+      <p class="pl-error" id="loginError" role="alert"></p>
+      <button type="submit" class="pl-btn pl-btn-pri pl-btn-full" id="loginBtn">Entrar</button>
+    </form>
+  </main>
+
+  <!-- ================= SIN PERMISO ================= -->
+  <main class="pl-login" id="vistaNoAutorizado" hidden>
+    <div class="pl-login-card">
+      <div class="pl-marca"><span class="pl-e" aria-hidden="true"></span> Exhibe Pro</div>
+      <h1>Sin <em>permiso</em></h1>
+      <p class="pl-sub">Esta cuenta no administra la plataforma. Si tienes una tienda, entra a tu panel.</p>
+      <a class="pl-btn pl-btn-pri pl-btn-full" href="admin.html">Ir a mi panel</a>
+      <button type="button" class="pl-btn pl-btn-full" data-salir style="margin-top:10px">Cerrar sesión</button>
+    </div>
+  </main>
+
+  <!-- ================= PANEL ================= -->
+  <main class="pl-app" id="vistaPanel" hidden>
+    <header class="pl-top">
+      <div class="pl-marca"><span class="pl-e" aria-hidden="true"></span> Exhibe Pro <small>Plataforma</small></div>
+      <div class="pl-top-acciones">
+        <button type="button" class="pl-btn pl-btn-pri" id="btnNueva">＋ Nueva tienda</button>
+        <button type="button" class="pl-btn" data-salir>Salir</button>
+      </div>
+    </header>
+
+    <section class="pl-resumen" id="resumen" aria-label="Resumen"></section>
+
+    <div class="pl-barra">
+      <div class="pl-filtros" id="filtros" role="toolbar" aria-label="Filtrar tiendas"></div>
+      <input type="search" id="buscar" class="pl-buscar" placeholder="Buscar tienda, contacto o correo…" autocomplete="off">
+    </div>
+
+    <p class="pl-msg" id="msg" role="status" hidden></p>
+    <section class="pl-tiendas" id="tiendas" aria-live="polite">
+      <p class="pl-vacio">Cargando tiendas…</p>
+    </section>
+  </main>
+
+  <!-- ================= DIÁLOGO: RENOVAR / REGISTRAR PAGO ================= -->
+  <dialog class="pl-dialogo" id="dlgRenovar">
+    <form method="dialog" id="formRenovar" novalidate>
+      <button type="button" class="pl-cerrar" data-cerrar aria-label="Cerrar">✕</button>
+      <span class="pl-kicker">Registrar pago</span>
+      <h2 id="renTitulo">Renovar</h2>
+      <p class="pl-ayuda" id="renActual"></p>
+
+      <p class="pl-etq">¿Cuántos meses pagó?</p>
+      <div class="pl-opciones" id="renMeses">
+        <label><input type="radio" name="meses" value="1" checked><span>1 mes</span></label>
+        <label><input type="radio" name="meses" value="3"><span>3 meses</span></label>
+        <label><input type="radio" name="meses" value="6"><span>6 meses</span></label>
+        <label><input type="radio" name="meses" value="12"><span>1 año</span></label>
+      </div>
+
+      <div class="pl-fila">
+        <label class="pl-campo"><span>Valor recibido</span>
+          <input type="number" id="renMonto" min="0" step="100" inputmode="numeric">
+        </label>
+        <label class="pl-campo"><span>Medio de pago</span>
+          <select id="renMetodo">
+            <option>Nequi</option><option>Daviplata</option><option>Transferencia</option><option>Efectivo</option><option>Otro</option>
+          </select>
+        </label>
+      </div>
+      <p class="pl-ayuda">Pon <b>0</b> si es una cortesía o prueba gratis: se suma el tiempo pero no se registra pago.</p>
+
+      <div class="pl-nueva-fecha" id="renNueva"></div>
+      <p class="pl-error" id="renError" role="alert"></p>
+      <div class="pl-dlg-acciones">
+        <button type="button" class="pl-btn" data-cerrar>Cancelar</button>
+        <button type="submit" class="pl-btn pl-btn-pri" id="renGuardar">Guardar pago y renovar</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- ================= DIÁLOGO: EDITAR ================= -->
+  <dialog class="pl-dialogo" id="dlgEditar">
+    <form method="dialog" id="formEditar" novalidate>
+      <button type="button" class="pl-cerrar" data-cerrar aria-label="Cerrar">✕</button>
+      <span class="pl-kicker">Editar tienda</span>
+      <h2 id="edTitulo">Editar</h2>
+      <label class="pl-campo"><span>Nombre del negocio</span><input type="text" id="edNombre" maxlength="80"></label>
+      <div class="pl-fila">
+        <label class="pl-campo"><span>Contacto</span><input type="text" id="edContacto" maxlength="80"></label>
+        <label class="pl-campo"><span>Teléfono</span><input type="tel" id="edTelefono" maxlength="20" inputmode="tel"></label>
+      </div>
+      <label class="pl-campo"><span>Pagada hasta</span><input type="date" id="edVence"></label>
+      <p class="pl-ayuda">Cambia la fecha solo para corregir un error. Para cobrar usa <b>Registrar pago</b>, así queda en el historial.</p>
+      <p class="pl-error" id="edError" role="alert"></p>
+      <div class="pl-dlg-acciones">
+        <button type="button" class="pl-btn" data-cerrar>Cancelar</button>
+        <button type="submit" class="pl-btn pl-btn-pri" id="edGuardar">Guardar cambios</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- ================= DIÁLOGO: HISTORIAL DE PAGOS ================= -->
+  <dialog class="pl-dialogo" id="dlgPagos">
+    <div>
+      <button type="button" class="pl-cerrar" data-cerrar aria-label="Cerrar">✕</button>
+      <span class="pl-kicker">Historial</span>
+      <h2 id="pagTitulo">Pagos</h2>
+      <div id="pagLista" class="pl-pagos"></div>
+    </div>
+  </dialog>
+
+  <!-- ================= DIÁLOGO: NUEVA TIENDA ================= -->
+  <dialog class="pl-dialogo" id="dlgNueva">
+    <form method="dialog" id="formNueva" novalidate>
+      <button type="button" class="pl-cerrar" data-cerrar aria-label="Cerrar">✕</button>
+      <span class="pl-kicker">Nueva tienda</span>
+      <h2>Dar de alta un cliente</h2>
+      <ol class="pl-pasos">
+        <li>Crea su usuario en <a href="https://supabase.com/dashboard/project/txnvsigmwshwduhearvz/auth/users" target="_blank" rel="noopener">Supabase → Authentication → Users</a> → <b>Add user</b>, con <b>Auto Confirm User</b> marcado.</li>
+        <li>Llena estos datos con el <b>mismo correo</b>.</li>
+      </ol>
+      <label class="pl-campo"><span>Nombre del negocio</span><input type="text" id="nvNombre" maxlength="80" placeholder="Ej. AS Store"></label>
+      <label class="pl-campo"><span>Link de la tienda</span>
+        <span class="pl-slug"><em>exhibepro.pages.dev/?t=</em><input type="text" id="nvSlug" maxlength="40" placeholder="as-store" autocapitalize="off" spellcheck="false"></span>
+      </label>
+      <div class="pl-fila">
+        <label class="pl-campo"><span>Contacto</span><input type="text" id="nvContacto" maxlength="80" placeholder="Ej. Andrés Suárez"></label>
+        <label class="pl-campo"><span>Teléfono</span><input type="tel" id="nvTelefono" maxlength="20" inputmode="tel" placeholder="3001234567"></label>
+      </div>
+      <div class="pl-fila">
+        <label class="pl-campo"><span>Correo del usuario</span><input type="email" id="nvEmail" autocapitalize="off" placeholder="cliente@correo.com"></label>
+        <label class="pl-campo"><span>Pagada hasta</span><input type="date" id="nvVence"></label>
+      </div>
+      <p class="pl-error" id="nvError" role="alert"></p>
+      <div class="pl-dlg-acciones">
+        <button type="button" class="pl-btn" data-cerrar>Cancelar</button>
+        <button type="submit" class="pl-btn pl-btn-pri" id="nvGuardar">Crear tienda</button>
+      </div>
+    </form>
+    <!-- Después de crearla: mensaje listo para enviarle al cliente -->
+    <div id="nvListo" hidden>
+      <button type="button" class="pl-cerrar" data-cerrar aria-label="Cerrar">✕</button>
+      <span class="pl-kicker">¡Lista!</span>
+      <h2>Tienda creada 🎉</h2>
+      <p class="pl-ayuda">Envíale este mensaje a tu cliente (agrégale la contraseña temporal):</p>
+      <textarea id="nvMensaje" class="pl-mensaje" rows="9" readonly></textarea>
+      <div class="pl-dlg-acciones">
+        <button type="button" class="pl-btn" id="nvCopiar">Copiar</button>
+        <a class="pl-btn pl-btn-wa" id="nvEnviar" target="_blank" rel="noopener">Enviar por WhatsApp</a>
+      </div>
+    </div>
+  </dialog>
+
+  <div class="pl-toast" id="toast" role="status"></div>
+
+  <script src="plataforma.js"></script>
+</body>
+</html>

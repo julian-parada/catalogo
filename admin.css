@@ -507,3 +507,19 @@ body{
   background:rgba(var(--yellow-rgb), .1); border:1px solid var(--yellow); color:var(--text); font-size:14.5px;
 }
 .aviso-pasos a{font-weight:800; color:var(--yellow); text-decoration:underline; text-underline-offset:3px}
+
+/* ---------- Cuenta regresiva del plan ---------- */
+.plan-box{--c:#22c55e; flex:none; width:min(300px, 100%); padding:16px 18px; border-radius:18px;
+  background:var(--card); border:1px solid var(--line); position:relative; overflow:hidden}
+.plan-box::before{content:""; position:absolute; inset:0 0 auto 0; height:3px; background:var(--c)}
+.plan-aviso{--c:#f59e0b} .plan-mal{--c:#ff4d6d}
+.plan-k{font-size:11px; font-weight:800; letter-spacing:.18em; color:var(--muted)}
+.plan-box strong{display:block; font-size:30px; font-weight:900; line-height:1.15; color:var(--c); margin-top:2px}
+.plan-box strong small{font-size:14px; font-weight:700; color:var(--muted)}
+.plan-fecha{display:block; font-size:13px; color:var(--muted)}
+.plan-barra{height:6px; border-radius:99px; background:rgba(127,127,127,.18); margin-top:10px; overflow:hidden}
+.plan-barra i{display:block; height:100%; border-radius:99px; background:var(--c)}
+.plan-renovar{display:block; margin-top:12px; padding:9px 12px; border-radius:10px; text-align:center; font-size:13px; font-weight:800;
+  text-decoration:none; color:#06150b; background:#25d366}
+.aviso-suscripcion{background:rgba(255,77,109,.12); border:1px solid #ff4d6d; color:#ff6b85; padding:12px 16px; border-radius:12px; margin:0 0 18px; font-weight:600}
+@media (max-width:760px){ .plan-box{width:100%} }

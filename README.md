@@ -76,7 +76,14 @@ Authentication → Attack Protection. Hazlo el mismo día en los dos lados.
 
 ## 💰 Cobros
 
-Todo está en la tabla `clientes` (Supabase → Table Editor):
+**Lo fácil: tu panel `https://exhibepro.pages.dev/plataforma.html`** (solo entra tu usuario).
+Ahí ves todas las tiendas con los días que les quedan, registras pagos (suma los meses solo),
+suspendes/reactivas, editas datos, ves el historial de pagos, mandas recordatorios por WhatsApp
+y creas tiendas nuevas. Precios en `plataforma.js` (`PRECIOS`). Necesita `sql/006_panel_plataforma.sql`.
+
+Cada cliente ve en su panel la cuenta regresiva de su plan y un botón para renovar por WhatsApp.
+
+También se puede a mano en la tabla `clientes` (Supabase → Table Editor):
 
 | Quiero… | Hago… |
 |---|---|
@@ -101,7 +108,8 @@ Al cliente le aparece un aviso en su panel 5 días antes de vencer.
 | `admin.js`, `agregarPrenda.js`, `editarPrenda.js`, `ajustes.js` | Panel del cliente |
 | `seguridad.js`, `restablecer.html` | Reglas de contraseña, freno de intentos, CAPTCHA y recuperación |
 | `privacidad.html` | Política de datos de cada tienda (Ley 1581), enlazada desde el carrito |
-| `sql/001…005_*.sql` | Migraciones de la base (ya aplicadas). La columna `tipo_opcion` de la 004 ya no se usa. La 005 se puede repetir sin problema |
+| `plataforma.html/js/css` | Tu panel de dueño: tiendas, pagos, suspensiones |
+| `sql/001…006_*.sql` | Migraciones de la base. La columna `tipo_opcion` de la 004 ya no se usa. La 005 y la 006 se pueden repetir sin problema |
 
 ## 🔒 Seguridad
 
