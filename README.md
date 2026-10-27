@@ -4,7 +4,7 @@ Catálogo web con pedidos por WhatsApp para **cualquier tipo de negocio** (ropa,
 
 Cada cliente tiene:
 
-- Su link público: `https://exhibepro.pages.dev/?t=SLUG`
+- Su link público: `https://exhibepro.pages.dev/SLUG` (también sirve el viejo `/?t=SLUG`)
 - Su panel: `https://exhibepro.pages.dev/admin.html` (entra con su correo y solo ve su tienda)
 
 Publicado en **Cloudflare Pages** (`exhibepro.pages.dev`): cada cambio que se sube a `main` se publica solo.
@@ -35,7 +35,7 @@ select crear_tienda(
 ```
 
 **3. Entregarle al cliente** (y pedirle que cambie la contraseña con el botón 🔑 al entrar)
-- Link de su tienda: `https://exhibepro.pages.dev/?t=moda-ana`
+- Link de su tienda: `https://exhibepro.pages.dev/moda-ana`
 - Panel: `https://exhibepro.pages.dev/admin.html` + su correo y contraseña
 
 Él mismo pone nombre, WhatsApp, colores, letra, logo y productos desde **Mi tienda**. Cada producto puede tener opciones libres (ej. "S negro, M negro, XL azul" o "50 ml, 100 ml") y el comprador elige una.
@@ -109,7 +109,17 @@ Al cliente le aparece un aviso en su panel 5 días antes de vencer.
 | `seguridad.js`, `restablecer.html` | Reglas de contraseña, freno de intentos, CAPTCHA y recuperación |
 | `privacidad.html` | Política de datos de cada tienda (Ley 1581), enlazada desde el carrito |
 | `plataforma.html/js/css` | Tu panel de dueño: tiendas, pagos, suspensiones |
-| `sql/001…006_*.sql` | Migraciones de la base. La columna `tipo_opcion` de la 004 ya no se usa. La 005 y la 006 se pueden repetir sin problema |
+| `functions/`, `funciones-lib/seo.js`, `robots.txt` | Links limpios, títulos para Google/WhatsApp y sitemap |
+| `sql/001…007_*.sql` | Migraciones de la base. La columna `tipo_opcion` de la 004 ya no se usa. De la 005 en adelante se pueden repetir sin problema |
+
+## 🔎 Google (SEO)
+
+- `functions/` (Cloudflare Pages Functions): `/slug` y `/?t=slug` salen del servidor con el título,
+  la descripción, la foto y datos para Google de cada tienda. También las vistas previas de WhatsApp.
+- `/sitemap.xml` lista las tiendas activas (necesita `sql/007_sitemap.sql`). `robots.txt` deja fuera el panel.
+- `publicar.sh` arma `dist/_routes.json`: el servidor solo corre en `/`, en las tiendas y en el sitemap
+  (css, js e imágenes van directo y no gastan el límite gratis).
+- Si Supabase no responde, la página carga igual (nunca un 404 falso).
 
 ## 🔒 Seguridad
 

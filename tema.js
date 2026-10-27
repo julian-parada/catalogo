@@ -585,7 +585,8 @@ function limpiarSlug(valor){
   return String(valor || "").trim().toLowerCase().replace(/[^a-z0-9-]/g, "");
 }
 
-const SLUG_URL = limpiarSlug(new URLSearchParams(location.search).get("t"));
+// La tienda sale de ?t=slug (links de siempre) o de /slug (links limpios: el servidor deja window.TIENDA_SLUG)
+const SLUG_URL = limpiarSlug(new URLSearchParams(location.search).get("t") || window.TIENDA_SLUG);
 
 // localStorage es compartido por TODAS las tiendas (mismo dominio): cada clave lleva el slug
 function leerLocal(clave){ try{ return localStorage.getItem(clave); }catch(e){ return null; } }

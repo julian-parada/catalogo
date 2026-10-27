@@ -1,0 +1,12 @@
+# Exhibe Pro — qué puede leer Google
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /ajustes
+Disallow: /agregarPrenda
+Disallow: /editarPrenda
+Disallow: /plataforma
+Disallow: /restablecer
+Disallow: /pedido
+
+Sitemap: https://exhibepro.pages.dev/sitemap.xml

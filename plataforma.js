@@ -176,7 +176,7 @@ function pintarTiendas(){
       <header>
         <div class="pl-t-nombre">
           <h3>${esc(t.nombre)}</h3>
-          <a href="${esc(URL_BASE + "/?t=" + encodeURIComponent(t.slug))}" target="_blank" rel="noopener">?t=${esc(t.slug)} ↗</a>
+          <a href="${esc(URL_BASE + "/" + encodeURIComponent(t.slug))}" target="_blank" rel="noopener">/${esc(t.slug)} ↗</a>
         </div>
         <span class="pl-estado">${NOMBRE_SIT[t.situacion]}</span>
       </header>
@@ -366,7 +366,7 @@ $("formNueva").addEventListener("submit", async e => {
   }
   const texto = `¡Hola ${d.p_contacto.split(" ")[0]}! Tu catálogo ${d.p_nombre} ya está listo 🎉
 
-🛍️ Tu tienda: ${URL_BASE}/?t=${d.p_slug}
+🛍️ Tu tienda: ${URL_BASE}/${d.p_slug}
 ⚙️ Tu panel: ${URL_BASE}/admin.html
 
 Correo: ${d.p_email}
