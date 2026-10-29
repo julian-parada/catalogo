@@ -109,7 +109,8 @@ Al cliente le aparece un aviso en su panel 5 días antes de vencer.
 | `seguridad.js`, `restablecer.html` | Reglas de contraseña, freno de intentos, CAPTCHA y recuperación |
 | `privacidad.html` | Política de datos de cada tienda (Ley 1581), enlazada desde el carrito |
 | `plataforma.html/js/css` | Tu panel de dueño: tiendas, pagos, suspensiones |
-| `functions/`, `funciones-lib/seo.js`, `robots.txt` | Links limpios, títulos para Google/WhatsApp y sitemap |
+| `functions/`, `funciones-lib/seo.js`, `robots.txt` | Links limpios, vista previa de tiendas y productos, sitemap |
+| `compartir.js`, `compartir.css` | Compartir productos e imagen para historias |
 | `sql/001…007_*.sql` | Migraciones de la base. La columna `tipo_opcion` de la 004 ya no se usa. De la 005 en adelante se pueden repetir sin problema |
 
 ## 🔎 Google (SEO)
@@ -120,6 +121,17 @@ Al cliente le aparece un aviso en su panel 5 días antes de vencer.
 - `publicar.sh` arma `dist/_routes.json`: el servidor solo corre en `/`, en las tiendas y en el sitemap
   (css, js e imágenes van directo y no gastan el límite gratis).
 - Si Supabase no responde, la página carga igual (nunca un 404 falso).
+
+## 🔗 Compartir productos
+
+- Cada producto tiene su link: `https://exhibepro.pages.dev/SLUG?p=ID`. El servidor arma la vista previa
+  (foto, nombre, precio) para WhatsApp/Facebook y los datos de producto para Google (precio, disponibilidad).
+- Al abrir el link, el catálogo muestra la **ficha del producto** (fotos, descripción, opciones, añadir).
+  Tocar un producto en el catálogo también abre su ficha; el botón "atrás" la cierra.
+- `compartir.js` + `compartir.css`: ventana para compartir (WhatsApp, Facebook, copiar enlace, menú del
+  teléfono e **imagen para historias** 1080×1920 con los colores y la letra de la tienda). Se usa en el
+  catálogo (botón sobre cada foto y en la ficha) y en el panel (botón "Compartir" de cada producto).
+- Instagram no permite links en publicaciones: la imagen para historias + sticker "Enlace" (el link queda copiado).
 
 ## 🔒 Seguridad
 

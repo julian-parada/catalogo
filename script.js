@@ -50,7 +50,7 @@ async function cargarProductos(){
 
   const { data, error } = await supabaseClient
     .from("prendas")
-    .select(`id, nombre, precio, precio_oferta, imagen, creado_en, categoria_id, categorias(nombre), tallas(id, talla, disponible), imagenes_prenda(url, orden)`)
+    .select(`id, nombre, precio, precio_oferta, imagen, descripcion, creado_en, categoria_id, categorias(nombre), tallas(id, talla, disponible), imagenes_prenda(url, orden)`)
     .eq("tienda_id", tienda.id)
     .order("creado_en", { ascending: false });
 
@@ -65,6 +65,7 @@ async function cargarProductos(){
       price: p.precio_oferta ? p.precio_oferta : p.precio,
       originalPrice: p.precio_oferta ? p.precio : null,
       img: p.imagen,
+      description: p.descripcion || "",
       creado: p.creado_en,
       gallery: [...new Set([p.imagen, ...p.imagenes_prenda.sort((a,b)=>a.orden-b.orden).map(i=>i.url)].filter(Boolean))],
       sizes: p.tallas.filter(t => t.disponible)
@@ -86,6 +87,7 @@ async function cargarProductos(){
   renderNav();
   renderProducts();
   updateCount();
+  abrirFichaDelLink();
 }
 
 /* ---------------------------------------------------------
@@ -233,7 +235,7 @@ function renderProducts(){
   <article class="product" style="--i:${Math.min(i, 11)}">
     ${htmlFotos(p)}
     <div class="product-body">
-      <h3>${esc(p.name)}</h3>
+      <h3 data-ficha="${p.id}" tabindex="0" role="button" aria-label="Ver ${esc(p.name)}">${esc(p.name)}</h3>
       <p>${esc(p.category)}</p>
       <div class="price">
         ${p.originalPrice ? `<span class="price-old">${money(p.originalPrice)}</span>` : ""}
@@ -267,6 +269,7 @@ function renderProducts(){
      se rellena con la misma foto desenfocada
    · Varias fotos: flechas + puntitos; en el celular se desliza con el dedo
    --------------------------------------------------------- */
+const ICONO_COMPARTIR = `<svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M12 3v12M7 8l5-5 5 5M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"/></svg>`;
 const fotosDe = p => (p.gallery && p.gallery.length ? p.gallery : [p.img || "img/placeholder.jpg"]);
 // Para usar la URL dentro de url("...") en CSS sin romperlo
 const urlCss = u => String(u).replace(/["'()\\\s]/g, c => "%" + c.charCodeAt(0).toString(16).padStart(2, "0"));
@@ -295,6 +298,7 @@ function htmlFotos(p){
     <div class="product-media" data-id="${p.id}">
       <div class="media-track">${slides}</div>${controles}
       ${insignias ? `<div class="insignias">${insignias}</div>` : ""}
+      <button type="button" class="card-compartir" data-compartir="${p.id}" aria-label="Compartir ${esc(p.name)}" title="Compartir">${ICONO_COMPARTIR}</button>
     </div>`;
 }
 
@@ -320,6 +324,8 @@ function activarCarruseles(contenedor){
     }
 
     media.addEventListener("click", e => {
+      const boton = e.target.closest("[data-compartir]");
+      if(boton){ e.stopPropagation(); compartirProducto(Number(boton.dataset.compartir)); return; }
       const flecha = e.target.closest(".media-nav");
       const total = track.children.length;
       if(flecha){
@@ -329,7 +335,7 @@ function activarCarruseles(contenedor){
         track.scrollTo({ left: siguiente * track.clientWidth, behavior: "smooth" });
         return;
       }
-      if(e.target.closest(".media-slide")) openGallery(Number(media.dataset.id), indiceFoto(track));
+      if(e.target.closest(".media-slide")) abrirFicha(Number(media.dataset.id), indiceFoto(track));
     });
   });
 }
@@ -339,21 +345,23 @@ function activarCarruseles(contenedor){
    --------------------------------------------------------- */
 function save(){ try{ localStorage.setItem(CART_KEY, JSON.stringify(cart)); }catch(e){} updateCount(); }
 
-function addToCart(id){
+// tallaElegida: la opción que se marcó en la ficha (si no viene, se lee la de la tarjeta)
+function addToCart(id, tallaElegida){
   const p = products.find(x => x.id === id);
-  if(!p) return;
+  if(!p) return false;
 
   const campoTalla = document.getElementById(`talla-${id}`);
-  const tallaId = campoTalla.value;
+  const tallaId = tallaElegida != null ? tallaElegida : (campoTalla ? campoTalla.value : "");
   const tallaObj = p.sizes.find(s => String(s.id) === String(tallaId));
   if(!tallaObj){
+    if(!campoTalla){ showToast("Elige una opción antes de añadir"); return false; }
     // Tiene varias opciones y no ha elegido ninguna
     campoTalla.classList.add("falta-opcion");
     campoTalla.focus();
     showToast("Elige una opción antes de añadir");
-    return;
+    return false;
   }
-  campoTalla.classList.remove("falta-opcion");
+  if(campoTalla) campoTalla.classList.remove("falta-opcion");
 
   const cartId = `${id}_${tallaId}`;
   const found = cart.find(x => x.cartId === cartId);
@@ -383,6 +391,7 @@ function addToCart(id){
     clearTimeout(boton._t);
     boton._t = setTimeout(() => { boton.classList.remove("agregado"); if(texto) texto.textContent = "AÑADIR"; }, 1400);
   }
+  return true;
 }
 
 function removeFromCart(cartId){
@@ -705,6 +714,211 @@ function selectThumb(i){
 }
 
 /* ---------------------------------------------------------
+   FICHA DEL PRODUCTO
+   · Se abre al tocar la foto o el nombre de un producto, o al entrar por su link (/tienda?p=ID)
+   · La dirección cambia a ?p=ID: así el link se puede copiar y el botón "atrás" la cierra
+   · Desde la ficha: ver fotos en grande, elegir opción, añadir al pedido y compartir
+   --------------------------------------------------------- */
+let fichaActual = null;          // id del producto abierto
+let fichaConHistorial = false;   // true si la abrimos nosotros (hay que "volver" al cerrar)
+let tituloSinFicha = "";
+
+const nombreTienda = () => (window.CFG && window.CFG.nombre_tienda) || "la tienda";
+
+function urlConProducto(id){
+  const u = new URL(location.href);
+  if(id != null) u.searchParams.set("p", id); else u.searchParams.delete("p");
+  return u.pathname + u.search + u.hash;
+}
+
+function compartirProducto(id){
+  const p = products.find(x => x.id === Number(id));
+  if(!p || typeof Compartir === "undefined") return;
+  Compartir.abrir({
+    url: Compartir.urlProducto(SLUG_ACTUAL, p.id),
+    nombre: p.name, precio: p.price, precioAntes: p.originalPrice || 0,
+    imagen: p.img, tienda: nombreTienda()
+  });
+}
+
+function pintarFicha(p, foto){
+  const fotos = fotosDe(p);
+  const track = document.getElementById("fichaTrack");
+  track.innerHTML = fotos.map((u, i) => `
+    <div class="ficha-slide" style="--bg:url('${esc(urlCss(u))}')" data-foto="${i}">
+      <img src="${esc(u)}" alt="${esc(p.name)}${fotos.length > 1 ? ` (foto ${i + 1} de ${fotos.length})` : ""}" onerror="this.src='img/placeholder.jpg'">
+    </div>`).join("");
+  const varias = fotos.length > 1;
+  document.getElementById("fichaPrev").hidden = !varias;
+  document.getElementById("fichaNext").hidden = !varias;
+  document.getElementById("fichaThumbs").innerHTML = varias ? fotos.map((u, i) => `
+    <button type="button" class="ficha-thumb${i === foto ? " on" : ""}" data-foto="${i}" aria-label="Ver foto ${i + 1}">
+      <img src="${esc(u)}" alt="" loading="lazy">
+    </button>`).join("") : "";
+  document.getElementById("fichaThumbs").hidden = !varias;
+
+  const descuento = p.originalPrice ? Math.round((1 - p.price / p.originalPrice) * 100) : 0;
+  document.getElementById("fichaInsignias").innerHTML = [
+    descuento > 0 ? `<span class="insignia insignia-oferta">-${descuento}%</span>` : "",
+    esNuevo(p) ? `<span class="insignia insignia-nuevo">Nuevo</span>` : ""
+  ].join("");
+
+  document.getElementById("fichaCat").textContent = p.category;
+  document.getElementById("fichaNombre").textContent = p.name;
+  document.getElementById("fichaPrecio").innerHTML = p.originalPrice
+    ? `<span class="ficha-antes">${money(p.originalPrice)}</span> ${money(p.price)} <span class="ficha-ahorro">Ahorras ${money(p.originalPrice - p.price)}</span>`
+    : money(p.price);
+  const desc = document.getElementById("fichaDesc");
+  desc.textContent = p.description;
+  desc.hidden = !p.description.trim();
+
+  // Opciones como botones (la primera queda marcada)
+  const box = document.getElementById("fichaOpcionesBox");
+  const unica = p.sizes.length === 1 && esOpcionUnica(p.sizes[0].talla);
+  box.hidden = unica;
+  document.getElementById("fichaOpciones").innerHTML = unica ? "" : p.sizes.map((t, i) => `
+    <label class="ficha-chip"><input type="radio" name="fichaOpcion" value="${t.id}" ${i === 0 ? "checked" : ""}><span>${esc(t.talla)}</span></label>`).join("");
+
+  const add = document.getElementById("fichaAdd");
+  add.classList.remove("agregado");
+  add.querySelector("span").textContent = "AÑADIR AL PEDIDO";
+  document.getElementById("fichaVerPedido").hidden = true;
+
+  requestAnimationFrame(() => { track.scrollLeft = foto * track.clientWidth; });
+}
+
+function abrirFicha(id, foto = 0, { desdeHistorial = false } = {}){
+  const p = products.find(x => x.id === Number(id));
+  if(!p) return false;
+  const fotos = fotosDe(p);
+  pintarFicha(p, Math.min(Math.max(0, foto), fotos.length - 1));
+
+  const modal = document.getElementById("fichaModal");
+  if(fichaActual === null) tituloSinFicha = document.title;
+  modal.classList.add("show");
+  modal.setAttribute("aria-hidden", "false");
+  document.documentElement.classList.add("ficha-abierta");
+  document.title = `${p.name} | ${nombreTienda()}`;
+
+  if(!desdeHistorial){
+    if(fichaActual === null){ history.pushState({ ficha: p.id }, "", urlConProducto(p.id)); fichaConHistorial = true; }
+    else history.replaceState({ ficha: p.id }, "", urlConProducto(p.id));
+  }
+  fichaActual = p.id;
+  // El foco va a la ventana (lectores de pantalla y teclado), sin marcar ningún botón
+  setTimeout(() => modal.querySelector(".ficha").focus({ preventScroll: true }), 60);
+  return true;
+}
+
+function cerrarFicha({ desdeHistorial = false } = {}){
+  if(fichaActual === null) return;
+  const id = fichaActual;
+  fichaActual = null;
+  const modal = document.getElementById("fichaModal");
+  modal.classList.remove("show");
+  modal.setAttribute("aria-hidden", "true");
+  document.documentElement.classList.remove("ficha-abierta");
+  if(tituloSinFicha) document.title = tituloSinFicha;
+
+  if(!desdeHistorial){
+    if(fichaConHistorial && history.state && history.state.ficha){ fichaConHistorial = false; history.back(); }
+    else history.replaceState(null, "", urlConProducto(null));
+  }
+  fichaConHistorial = false;
+  // El foco vuelve al producto en el catálogo
+  const tarjeta = document.querySelector(`.product h3[data-ficha="${id}"]`);
+  if(tarjeta) tarjeta.focus({ preventScroll: true });
+}
+
+// Link con producto (/tienda?p=ID): al cargar se abre su ficha
+function abrirFichaDelLink(){
+  const id = new URLSearchParams(location.search).get("p") || window.PRODUCTO_ID;
+  if(!id) return;
+  if(abrirFicha(id, 0, { desdeHistorial: true })){
+    fichaConHistorial = false;
+    history.replaceState({ ficha: Number(id) }, "", urlConProducto(id));
+  }else{
+    history.replaceState(null, "", urlConProducto(null));
+    showToast("Ese producto ya no está disponible. Mira el resto del catálogo 👇");
+  }
+}
+
+// Botón "atrás" del celular o del navegador
+window.addEventListener("popstate", () => {
+  const id = new URLSearchParams(location.search).get("p");
+  if(id && products.some(x => String(x.id) === id)) abrirFicha(id, 0, { desdeHistorial: true });
+  else cerrarFicha({ desdeHistorial: true });
+});
+
+(function(){
+  const modal = document.getElementById("fichaModal");
+  const track = document.getElementById("fichaTrack");
+  const fotoVisible = () => Math.round(track.scrollLeft / Math.max(1, track.clientWidth));
+  const irAFoto = i => {
+    const total = track.children.length;
+    track.scrollTo({ left: ((i + total) % total) * track.clientWidth, behavior: "smooth" });
+  };
+
+  modal.addEventListener("click", e => {
+    if(e.target === modal || e.target.closest("#fichaCerrar")) return cerrarFicha();
+    const thumb = e.target.closest(".ficha-thumb");
+    if(thumb) return irAFoto(Number(thumb.dataset.foto));
+    if(e.target.closest("#fichaPrev")) return irAFoto(fotoVisible() - 1);
+    if(e.target.closest("#fichaNext")) return irAFoto(fotoVisible() + 1);
+    const slide = e.target.closest(".ficha-slide");
+    if(slide && fichaActual !== null) return openGallery(fichaActual, Number(slide.dataset.foto));
+  });
+
+  // Miniatura marcada = foto visible
+  let pendiente = false;
+  track.addEventListener("scroll", () => {
+    if(pendiente) return;
+    pendiente = true;
+    requestAnimationFrame(() => {
+      pendiente = false;
+      const i = fotoVisible();
+      document.querySelectorAll("#fichaThumbs .ficha-thumb").forEach((b, j) => b.classList.toggle("on", j === i));
+    });
+  }, { passive: true });
+
+  // Flechas del teclado dentro de la ficha
+  track.addEventListener("keydown", e => {
+    if(e.key === "ArrowRight"){ e.preventDefault(); irAFoto(fotoVisible() + 1); }
+    if(e.key === "ArrowLeft"){ e.preventDefault(); irAFoto(fotoVisible() - 1); }
+  });
+
+  document.getElementById("fichaAdd").addEventListener("click", () => {
+    const p = products.find(x => x.id === fichaActual);
+    if(!p) return;
+    const marcada = document.querySelector('input[name="fichaOpcion"]:checked');
+    const tallaId = marcada ? marcada.value : (p.sizes[0] && p.sizes[0].id);
+    if(!addToCart(p.id, tallaId)) return;
+    const add = document.getElementById("fichaAdd");
+    add.classList.add("agregado");
+    add.querySelector("span").textContent = "✓ AÑADIDO AL PEDIDO";
+    document.getElementById("fichaVerPedido").hidden = false;
+    clearTimeout(add._t);
+    add._t = setTimeout(() => { add.classList.remove("agregado"); add.querySelector("span").textContent = "AÑADIR OTRO"; }, 1600);
+  });
+
+  document.getElementById("fichaVerPedido").addEventListener("click", () => {
+    cerrarFicha();
+    setTimeout(abrirCarrito, 120);
+  });
+  document.getElementById("fichaCompartir").addEventListener("click", () => compartirProducto(fichaActual));
+})();
+
+// Nombre del producto en la tarjeta: abre la ficha (también con Enter)
+document.getElementById("products").addEventListener("click", e => {
+  const nombre = e.target.closest("h3[data-ficha]");
+  if(nombre) abrirFicha(Number(nombre.dataset.ficha));
+});
+document.getElementById("products").addEventListener("keydown", e => {
+  const nombre = e.target.closest("h3[data-ficha]");
+  if(nombre && (e.key === "Enter" || e.key === " ")){ e.preventDefault(); abrirFicha(Number(nombre.dataset.ficha)); }
+});
+
+/* ---------------------------------------------------------
    EVENTOS
    --------------------------------------------------------- */
 document.getElementById("imgModal").addEventListener("click", e => {
@@ -737,7 +951,9 @@ document.addEventListener("click", e => {
   if(!e.target.closest("#catDropdown")) cerrarMenuCategorias();
 });
 document.addEventListener("keydown", e => {
-  if(e.key === "Escape") cerrarMenuCategorias();
+  if(e.key !== "Escape") return;
+  cerrarMenuCategorias();
+  if(!document.getElementById("imgModal").classList.contains("show") && fichaActual !== null) cerrarFicha();
 });
 
 // Categorías, Nuevos y Promociones (barra de arriba y pie de página)

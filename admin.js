@@ -391,6 +391,10 @@ function renderPrendas(){
           </div>
         </div>
         <div class="item-actions">
+          <button type="button" class="compartir-btn" data-compartir="${p.id}" title="Compartir en WhatsApp, Facebook o Instagram">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M12 3v12M7 8l5-5 5 5M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"/></svg>
+            Compartir
+          </button>
           <a href="editarPrenda.html?id=${p.id}" class="edit-link">Editar</a>
           <button type="button" class="delete-btn" data-prenda="${p.id}">Eliminar</button>
         </div>
@@ -552,6 +556,23 @@ function registrarListenersLista(){
   });
 
   cont.addEventListener("click", async (e) => {
+    // Compartir: link del producto con su foto y precio (WhatsApp, Facebook, historia de Instagram)
+    const compartir = e.target.closest("[data-compartir]");
+    if(compartir){
+      const p = prendasCache.find(x => String(x.id) === compartir.dataset.compartir);
+      const tienda = await window.tiendaActual;
+      const cfg = await window.configTienda;
+      if(!p || !tienda || typeof Compartir === "undefined") return;
+      Compartir.abrir({
+        url: Compartir.urlProducto(tienda.slug, p.id),
+        nombre: p.nombre,
+        precio: p.precio_oferta || p.precio,
+        precioAntes: p.precio_oferta ? p.precio : 0,
+        imagen: /^https?:\/\//i.test(p.imagen || "") ? p.imagen : "",
+        tienda: (cfg && cfg.nombre_tienda) || tienda.nombre || "mi tienda"
+      });
+      return;
+    }
     const btn = e.target.closest("[data-prenda]");
     if(btn){
       if(!confirm("¿Eliminar este producto? También se borran sus fotos y sus opciones.")) return;

@@ -1,6 +1,7 @@
 // /nombre-tienda → catálogo de esa tienda, con su nombre y foto para Google y WhatsApp.
+// /nombre-tienda?p=ID → lo mismo, pero la vista previa es la del producto (y se abre su ficha).
 // Cualquier otra dirección de una sola parte (ej. /admin) sigue como siempre.
-import { RESERVADOS, slugValido, paginaTienda } from "../funciones-lib/seo.js";
+import { RESERVADOS, slugValido, idProductoValido, paginaTienda } from "../funciones-lib/seo.js";
 
 export async function onRequestGet(context){
   const url = new URL(context.request.url);
@@ -13,5 +14,7 @@ export async function onRequestGet(context){
   if(original !== slug || url.pathname.endsWith("/")){
     return Response.redirect(`${url.origin}/${slug}${url.search}`, 301);
   }
-  return paginaTienda(context, slug, { inyectarSlug: true });
+  // /nombre-tienda?p=25 → vista previa del producto 25 (foto, nombre y precio)
+  const p = url.searchParams.get("p");
+  return paginaTienda(context, slug, { inyectarSlug: true, productoId: idProductoValido(p) ? p : null });
 }

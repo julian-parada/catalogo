@@ -1,0 +1,74 @@
+/* compartir.css — ventana "Compartir producto" (catálogo y panel). Usa los colores de la tienda. */
+.cp-fondo{
+  position:fixed; inset:0; z-index:400; display:flex; align-items:center; justify-content:center; padding:20px;
+  background:rgba(0,0,0,.6); backdrop-filter:blur(6px); -webkit-backdrop-filter:blur(6px);
+  opacity:0; transition:opacity .18s ease;
+}
+.cp-fondo[hidden]{display:none}
+.cp-fondo.ver{opacity:1}
+html.cp-abierto{overflow:hidden}
+.cp-hoja{
+  position:relative; width:min(440px, 100%); max-height:calc(100vh - 40px); overflow:auto;
+  padding:24px 22px 20px; border-radius:24px;
+  background:var(--card, #15151c); color:var(--white, #fff); border:1px solid var(--line, rgba(255,255,255,.1));
+  box-shadow:0 30px 70px rgba(0,0,0,.55);
+  font-family:var(--font-texto, 'Inter', system-ui, sans-serif);
+  transform:translateY(12px) scale(.98); transition:transform .22s cubic-bezier(.2,.8,.2,1);
+}
+.cp-fondo.ver .cp-hoja{transform:none}
+.cp-tirador{display:none}
+.cp-titulo{margin:0 40px 16px 0; font-size:1.15rem; font-weight:800; letter-spacing:-.01em; font-family:inherit; line-height:1.3; text-transform:none}
+.cp-cerrar{
+  position:absolute; top:14px; right:14px; width:36px; height:36px; border-radius:50%;
+  display:grid; place-items:center; padding:0; cursor:pointer;
+  background:var(--black, #0b0b10); border:1px solid var(--line, rgba(255,255,255,.1)); color:var(--white, #fff);
+}
+.cp-cerrar svg{width:16px; height:16px}
+.cp-cerrar:hover{border-color:var(--pink, #ff1493)}
+
+.cp-producto{display:flex; gap:14px; align-items:center; padding:12px; border-radius:16px; background:var(--black, #0b0b10); border:1px solid var(--line, rgba(255,255,255,.1)); margin-bottom:18px}
+.cp-foto{width:64px; height:80px; object-fit:cover; border-radius:10px; background:#f2f0ec; flex:none}
+.cp-info{display:flex; flex-direction:column; gap:4px; min-width:0}
+.cp-nombre{font-size:.98rem; font-weight:700; line-height:1.3; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden}
+.cp-precio{font-weight:800; color:var(--acento-texto, var(--pink, #ff1493))}
+.cp-precio s{color:var(--muted, #999); font-weight:500; margin-right:6px; font-size:.88em}
+
+.cp-opciones{display:grid; grid-template-columns:repeat(auto-fit, minmax(84px, 1fr)); gap:10px; margin-bottom:16px}
+.cp-op{
+  display:flex; flex-direction:column; align-items:center; gap:8px; padding:14px 6px 12px; border-radius:16px; cursor:pointer;
+  background:var(--black, #0b0b10); border:1px solid var(--line, rgba(255,255,255,.1)); color:var(--white, #fff);
+  font:inherit; font-size:.8rem; font-weight:700; transition:transform .15s, border-color .15s;
+}
+.cp-op:hover{transform:translateY(-2px); border-color:var(--muted, #888)}
+.cp-op:focus-visible, .cp-copiar:focus-visible, .cp-cerrar:focus-visible{outline:2px solid var(--pink, #ff1493); outline-offset:2px}
+.cp-op[hidden]{display:none}
+.cp-ico{width:46px; height:46px; border-radius:50%; display:grid; place-items:center; color:#fff}
+.cp-ico svg{width:24px; height:24px}
+.cp-wa .cp-ico{background:#25d366}
+.cp-fb .cp-ico{background:#1877f2}
+.cp-ig .cp-ico{background:radial-gradient(circle at 30% 107%, #fdf497 0%, #fd5949 45%, #d6249f 60%, #285aeb 90%)}
+.cp-mas .cp-ico{background:var(--card, #222); border:1px solid var(--line, rgba(255,255,255,.15)); color:var(--white, #fff)}
+.cp-op.cargando{opacity:.6; cursor:wait}
+.cp-op.cargando .cp-ico{animation:cpGira 1s linear infinite}
+@keyframes cpGira{to{transform:rotate(360deg)}}
+
+.cp-enlace{display:flex; gap:8px; align-items:center; padding:6px 6px 6px 14px; border-radius:14px; background:var(--black, #0b0b10); border:1px solid var(--line, rgba(255,255,255,.1))}
+.cp-url{flex:1; min-width:0; border:0; background:none; color:var(--muted, #aaa); font:inherit; font-size:.85rem; outline:none; text-overflow:ellipsis}
+.cp-copiar{
+  display:inline-flex; align-items:center; gap:6px; flex:none; padding:9px 14px; border-radius:10px; border:0; cursor:pointer;
+  background:var(--pink, #ff1493); color:var(--texto-acento, #fff); font:inherit; font-size:.84rem; font-weight:800;
+}
+.cp-copiar svg{width:16px; height:16px}
+.cp-copiar.ok{background:#22c55e; color:#06150b}
+.cp-ayuda{margin:14px 2px 0; font-size:.78rem; line-height:1.5; color:var(--muted, #999)}
+.cp-aviso{margin:12px 0 0; padding:10px 12px; border-radius:12px; font-size:.82rem; font-weight:600; background:rgba(34,197,94,.12); border:1px solid rgba(34,197,94,.35); color:var(--white, #fff)}
+
+@media (max-width:600px){
+  .cp-fondo{align-items:flex-end; padding:0}
+  .cp-hoja{width:100%; max-height:92vh; border-radius:24px 24px 0 0; padding:26px 18px calc(18px + env(safe-area-inset-bottom)); transform:translateY(100%)}
+  .cp-tirador{display:block; position:absolute; top:9px; left:50%; transform:translateX(-50%); width:42px; height:5px; border-radius:3px; background:var(--line, rgba(255,255,255,.2))}
+  .cp-opciones{grid-template-columns:repeat(auto-fit, minmax(70px, 1fr)); gap:8px}
+  .cp-op{padding:12px 4px 10px; font-size:.74rem}
+  .cp-ico{width:44px; height:44px}
+}
+@media (prefers-reduced-motion:reduce){ .cp-fondo, .cp-hoja{transition:none} }
