@@ -215,10 +215,16 @@ function irAlCatalogo(){
 /* ---------------------------------------------------------
    TARJETAS DE PRODUCTOS
    --------------------------------------------------------- */
-function renderProducts(){
-  const term = document.getElementById("searchInput").value.toLowerCase();
+// "Ver más": se muestran de a 12 tarjetas (12 cuadra en 2, 3 y 4 columnas).
+// Así la tienda abre rápido aunque tenga cientos de productos: las fotos de abajo
+// no se descargan hasta que el comprador las pide.
+const POR_PAGINA = 12;
+let filtrados = [];
+let visibles = POR_PAGINA;
 
-  const filtered = products.filter(p => {
+function filtrarProductos(){
+  const term = document.getElementById("searchInput").value.toLowerCase();
+  return products.filter(p => {
     const coincideCategoria =
       currentCategory === "all" ? true :
       currentCategory === "__nuevos__" ? esNuevo(p) :
@@ -229,11 +235,14 @@ function renderProducts(){
       p.category.toLowerCase().includes(term);
     return coincideCategoria && coincideTexto;
   });
+}
 
-  const container = document.getElementById("products");
-  container.innerHTML = filtered.length ? filtered.map((p, i) => `
-  <article class="product" style="--i:${Math.min(i, 11)}">
-    ${htmlFotos(p)}
+// i: posición en la lista (las primeras fotos cargan de una, las demás cuando se acercan)
+// paso: orden de la animación de entrada dentro del grupo que aparece
+function tarjetaProducto(p, i, paso){
+  return `
+  <article class="product" style="--i:${Math.min(paso, 11)}">
+    ${htmlFotos(p, i)}
     <div class="product-body">
       <h3 data-ficha="${p.id}" tabindex="0" role="button" aria-label="Ver ${esc(p.name)}">${esc(p.name)}</h3>
       <p>${esc(p.category)}</p>
@@ -255,12 +264,49 @@ function renderProducts(){
       </svg></button>
     </div>
   </article>
-  `).join("") : `<div class="empty">${
-    !products.length ? "Muy pronto encontrarás aquí nuestros productos ✨"
-    : term ? "No encontramos productos con esa búsqueda."
-    : "No hay productos en esta sección por ahora."}</div>`;
+  `;
+}
+
+// Cambió la categoría o la búsqueda: vuelve a empezar desde las primeras 12
+function renderProducts(){
+  const term = document.getElementById("searchInput").value.trim();
+  filtrados = filtrarProductos();
+  visibles = POR_PAGINA;
+
+  const container = document.getElementById("products");
+  container.innerHTML = filtrados.length
+    ? filtrados.slice(0, visibles).map((p, i) => tarjetaProducto(p, i, i)).join("")
+    : `<div class="empty">${
+      !products.length ? "Muy pronto encontrarás aquí nuestros productos ✨"
+      : term ? "No encontramos productos con esa búsqueda."
+      : "No hay productos en esta sección por ahora."}</div>`;
 
   activarCarruseles(container);
+  pintarVerMas();
+}
+
+// Botón "Ver más": agrega las siguientes 12 debajo, sin mover lo que ya se ve
+function verMasProductos(){
+  const container = document.getElementById("products");
+  const desde = visibles;
+  visibles = Math.min(visibles + POR_PAGINA, filtrados.length);
+  container.insertAdjacentHTML("beforeend",
+    filtrados.slice(desde, visibles).map((p, k) => tarjetaProducto(p, desde + k, k)).join(""));
+  activarCarruseles(container);
+  pintarVerMas();
+  // Teclado / lector de pantalla: sigue en el primer producto nuevo
+  const primero = container.children[desde]?.querySelector("h3[data-ficha]");
+  if(primero) primero.focus({ preventScroll: true });
+}
+
+function pintarVerMas(){
+  const caja = document.getElementById("verMasBox");
+  if(!caja) return;
+  const faltan = filtrados.length - visibles;
+  caja.hidden = faltan <= 0;
+  if(faltan <= 0) return;
+  document.getElementById("verMasCuenta").textContent = `${visibles} de ${filtrados.length}`;
+  document.getElementById("verMasBarra").style.width = `${Math.round(visibles / filtrados.length * 100)}%`;
 }
 
 /* ---------------------------------------------------------
@@ -274,12 +320,12 @@ const fotosDe = p => (p.gallery && p.gallery.length ? p.gallery : [p.img || "img
 // Para usar la URL dentro de url("...") en CSS sin romperlo
 const urlCss = u => String(u).replace(/["'()\\\s]/g, c => "%" + c.charCodeAt(0).toString(16).padStart(2, "0"));
 
-function htmlFotos(p){
+function htmlFotos(p, pos = 0){
   const fotos = fotosDe(p);
   const slides = fotos.map((u, i) => `
       <div class="media-slide" style="--bg:url('${esc(urlCss(u))}')">
         <img class="product-img" src="${esc(u)}" alt="${esc(p.name)}${fotos.length > 1 ? ` (foto ${i + 1})` : ""}"
-             loading="${i === 0 ? "eager" : "lazy"}" onerror="this.src='img/placeholder.jpg'">
+             loading="${i === 0 && pos < 8 ? "eager" : "lazy"}" onerror="this.src='img/placeholder.jpg'">
       </div>`).join("");
 
   const controles = fotos.length > 1 ? `
@@ -306,6 +352,8 @@ const indiceFoto = track => Math.round(track.scrollLeft / Math.max(1, track.clie
 
 function activarCarruseles(contenedor){
   contenedor.querySelectorAll(".product-media").forEach(media => {
+    if(media.dataset.listo) return;          // "Ver más" vuelve a llamar: no repetir eventos
+    media.dataset.listo = "1";
     const track = media.querySelector(".media-track");
     const puntos = media.querySelectorAll(".media-dots i");
 
@@ -969,6 +1017,8 @@ document.getElementById("footerCats").addEventListener("click", e => {
   const btn = e.target.closest("[data-cat]");
   if(btn) seleccionarCategoria(btn.dataset.cat);
 });
+
+document.getElementById("verMas")?.addEventListener("click", verMasProductos);
 
 // Buscador
 document.getElementById("searchInput").addEventListener("input", e => {

@@ -1608,3 +1608,30 @@ html.ficha-abierta{overflow:hidden}
   .card-compartir{top:7px; right:7px; width:30px; height:30px}
   .card-compartir svg{width:14px; height:14px}
 }
+
+/* =========================================================
+   VER MÁS PRODUCTOS (de a 12)
+   ========================================================= */
+.ver-mas-box{display:flex; flex-direction:column; align-items:center; gap:12px; margin:38px auto 8px; max-width:340px; text-align:center}
+.ver-mas-box[hidden]{display:none}
+.ver-mas-info{margin:0; color:var(--muted); font-size:.85rem}
+.ver-mas-info strong{color:var(--white); font-weight:700}
+.ver-mas-progreso{width:100%; max-width:220px; height:3px; border-radius:99px; background:rgba(var(--texto-rgb, 255,255,255), .12); overflow:hidden}
+.ver-mas-progreso span{display:block; height:100%; width:0; border-radius:inherit; background:var(--acento-texto, var(--pink)); transition:width .45s ease}
+.ver-mas{
+  display:inline-flex; align-items:center; justify-content:center; gap:10px;
+  min-width:240px; padding:14px 28px; border-radius:999px; cursor:pointer;
+  background:transparent; color:var(--white); border:1.5px solid rgba(var(--texto-rgb, 255,255,255), .28);
+  font-family:var(--font-titulo, "Bebas Neue", Impact, sans-serif); font-weight:var(--font-titulo-peso, 400);
+  text-transform:var(--titulo-transform, uppercase); letter-spacing:.08em; font-size:1rem;
+  transition:background .25s ease, color .25s ease, border-color .25s ease, transform .25s ease;
+}
+.ver-mas svg{width:18px; height:18px; flex:none; transition:transform .25s ease}
+.ver-mas:hover{background:var(--pink); border-color:var(--pink); color:var(--texto-acento, #fff); transform:translateY(-2px)}
+.ver-mas:hover svg{transform:translateY(2px)}
+.ver-mas:focus-visible{outline:2px solid var(--acento-texto, var(--pink)); outline-offset:3px}
+@media (max-width:750px){
+  .ver-mas-box{margin-top:28px}
+  .ver-mas{width:100%; min-width:0}
+}
+@media (prefers-reduced-motion:reduce){ .ver-mas, .ver-mas svg, .ver-mas-progreso span{transition:none} }
