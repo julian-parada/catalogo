@@ -37,8 +37,10 @@ function mostrar(vista){
   ["vistaLogin", "vistaNoAutorizado", "vistaPanel"].forEach(v => { $(v).hidden = v !== vista; });
 }
 
+let usuarioActual = null;
 async function iniciar(){
   const { data: { session } } = await supabaseClient.auth.getSession();
+  usuarioActual = session ? session.user.id : null;
   if(!session){ mostrar("vistaLogin"); $("email").focus(); return; }
   const { data: esDueno, error } = await supabaseClient.rpc("es_superadmin");
   if(error || !esDueno){ mostrar("vistaNoAutorizado"); return; }
@@ -67,7 +69,29 @@ $("loginForm").addEventListener("submit", async e => {
     return;
   }
   limpiarIntentos();
-  iniciar();
+  // Si en otra pestaña entras con otra cuenta (ej. el panel de un cliente), este panel se entera
+// y deja de mostrar la lista vieja: así nunca intentas cambios con la cuenta equivocada.
+supabaseClient.auth.onAuthStateChange((evento, session) => {
+  const nuevo = session ? session.user.id : null;
+  if(usuarioActual !== null && nuevo !== usuarioActual) iniciar();
+});
+window.addEventListener("focus", async () => {
+  if($("vistaPanel").hidden) return;
+  const { data: { session } } = await supabaseClient.auth.getSession();
+  if((session ? session.user.id : null) !== usuarioActual) iniciar();
+});
+
+// Si el servidor dice "No autorizado", la sesión ya no es la tuya: se vuelve a revisar
+function revisarAutorizacion(error){
+  if(error && /no autorizado/i.test(error.message || "")){
+    toast("Tu sesión cambió a otra cuenta. Vuelve a entrar con la tuya.");
+    iniciar();
+    return true;
+  }
+  return false;
+}
+
+iniciar();
 });
 
 document.querySelectorAll("[data-salir]").forEach(b => b.addEventListener("click", async () => {
@@ -80,6 +104,7 @@ document.querySelectorAll("[data-salir]").forEach(b => b.addEventListener("click
    ========================================================= */
 async function cargar(){
   const { data, error } = await supabaseClient.rpc("plataforma_tiendas");
+  if(revisarAutorizacion(error)) return;
   if(error){
     mensaje(/function .* does not exist|could not find/i.test(error.message)
       ? "Falta correr sql/006_panel_plataforma.sql en Supabase."
@@ -233,7 +258,7 @@ $("tiendas").addEventListener("click", async e => {
     b.disabled = true;
     const { error } = await supabaseClient.rpc("plataforma_estado", { p_tienda: t.id, p_estado: suspender ? "suspendido" : "activo" });
     b.disabled = false;
-    if(error){ toast("No se pudo: " + error.message); return; }
+    if(error){ if(!revisarAutorizacion(error)) toast("No se pudo: " + error.message); return; }
     toast(suspender ? `${t.nombre} quedó suspendida` : `${t.nombre} está activa otra vez`);
     cargar();
   }
@@ -283,7 +308,7 @@ $("formRenovar").addEventListener("submit", async e => {
     p_tienda: tRenovar.id, p_meses: mesesElegidos(), p_monto: monto, p_metodo: $("renMetodo").value
   });
   btn.disabled = false;
-  if(error){ $("renError").textContent = "No se pudo guardar: " + error.message; return; }
+  if(error){ if(revisarAutorizacion(error)) $("dlgRenovar").close(); else $("renError").textContent = "No se pudo guardar: " + error.message; return; }
   $("dlgRenovar").close();
   toast(`${tRenovar.nombre}: pagada hasta el ${fechaLarga(hasta)}`);
   cargar();
@@ -309,7 +334,7 @@ $("formEditar").addEventListener("submit", async e => {
   $("edGuardar").disabled = true;
   const { error } = await supabaseClient.rpc("plataforma_editar", datos);
   $("edGuardar").disabled = false;
-  if(error){ $("edError").textContent = "No se pudo guardar: " + error.message; return; }
+  if(error){ if(revisarAutorizacion(error)) $("dlgEditar").close(); else $("edError").textContent = "No se pudo guardar: " + error.message; return; }
   $("dlgEditar").close();
   toast("Cambios guardados");
   cargar();
@@ -386,5 +411,27 @@ $("nvCopiar").addEventListener("click", async () => {
   try{ await navigator.clipboard.writeText($("nvMensaje").value); toast("Mensaje copiado"); }
   catch(e){ $("nvMensaje").select(); document.execCommand("copy"); toast("Mensaje copiado"); }
 });
+
+// Si en otra pestaña entras con otra cuenta (ej. el panel de un cliente), este panel se entera
+// y deja de mostrar la lista vieja: así nunca intentas cambios con la cuenta equivocada.
+supabaseClient.auth.onAuthStateChange((evento, session) => {
+  const nuevo = session ? session.user.id : null;
+  if(usuarioActual !== null && nuevo !== usuarioActual) iniciar();
+});
+window.addEventListener("focus", async () => {
+  if($("vistaPanel").hidden) return;
+  const { data: { session } } = await supabaseClient.auth.getSession();
+  if((session ? session.user.id : null) !== usuarioActual) iniciar();
+});
+
+// Si el servidor dice "No autorizado", la sesión ya no es la tuya: se vuelve a revisar
+function revisarAutorizacion(error){
+  if(error && /no autorizado/i.test(error.message || "")){
+    toast("Tu sesión cambió a otra cuenta. Vuelve a entrar con la tuya.");
+    iniciar();
+    return true;
+  }
+  return false;
+}
 
 iniciar();
