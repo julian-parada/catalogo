@@ -11,7 +11,7 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 // Páginas propias de la plataforma: nunca se confunden con una tienda
 export const RESERVADOS = new Set([
   "index", "admin", "ajustes", "agregarprenda", "editarprenda", "pedido",
-  "privacidad", "restablecer", "plataforma", "sitemap", "robots", "img", "favicon"
+  "privacidad", "restablecer", "plataforma", "sitemap", "robots", "img", "favicon", "inicio"
 ]);
 
 export const slugValido = s => /^[a-z0-9]+(-[a-z0-9]+)*$/.test(s) && s.length <= 60;

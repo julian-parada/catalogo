@@ -12,7 +12,9 @@ export async function onRequestGet(context){
   let tiendas = [];
   try{ tiendas = (await tiendasActivas(context.env)).filter(t => t && valido(t.slug)); }catch(e){ /* sin la función SQL 007: lista vacía */ }
 
-  const urls = tiendas.map(t => `  <url><loc>${esc(origen + "/" + t.slug)}</loc><priority>1.0</priority></url>`);
+  // Primero la página de ventas de Exhibe Pro, después cada tienda
+  const urls = [`  <url><loc>${esc(origen + "/")}</loc><priority>1.0</priority></url>`];
+  urls.push(...tiendas.map(t => `  <url><loc>${esc(origen + "/" + t.slug)}</loc><priority>0.9</priority></url>`));
 
   if(tiendas.length && tiendas.length <= MAX_TIENDAS_CON_PRODUCTOS){
     try{

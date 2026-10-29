@@ -365,10 +365,20 @@ $("btnNueva").addEventListener("click", () => {
   $("formNueva").hidden = false;
   $("nvListo").hidden = true;
   slugTocado = false;
-  $("nvVence").value = sumarMeses(hoyISO(), 1);
+  $("nvVence").value = venceSegunPlan();
   $("nvError").textContent = "";
   $("dlgNueva").showModal();
 });
+// Prueba gratis: 15 días desde hoy · Ya pagó: 1 mes
+const DIAS_PRUEBA = 15;
+const planNueva = () => (document.querySelector('input[name="nvPlan"]:checked') || {}).value || "prueba";
+function sumarDias(iso, dias){
+  const [a, m, d] = iso.split("-").map(Number);
+  return new Date(Date.UTC(a, m - 1, d + dias)).toISOString().slice(0, 10);
+}
+const venceSegunPlan = () => planNueva() === "mes" ? sumarMeses(hoyISO(), 1) : sumarDias(hoyISO(), DIAS_PRUEBA);
+$("nvPlan").addEventListener("change", () => { $("nvVence").value = venceSegunPlan(); });
+
 $("nvNombre").addEventListener("input", () => { if(!slugTocado) $("nvSlug").value = slugDe($("nvNombre").value); });
 $("nvSlug").addEventListener("input", () => { slugTocado = true; });
 $("nvSlug").addEventListener("blur", () => { $("nvSlug").value = slugDe($("nvSlug").value); });
@@ -400,7 +410,9 @@ Contraseña temporal: (escríbela aquí)
 Primeros pasos:
 1. Entra al panel y cambia la contraseña (botón 🔑)
 2. En "Mi tienda" pon tu WhatsApp, logo, colores y textos
-3. Agrega tus productos en "Agregar producto"`;
+3. Agrega tus productos en "Agregar producto"${planNueva() === "prueba" ? `
+
+🎁 Tienes ${DIAS_PRUEBA} días gratis, hasta el ${fechaLarga(d.p_vence)}. Si te gusta, sigues por ${money(PRECIO_MES)} al mes.` : ""}`;
   $("nvMensaje").value = texto;
   $("nvEnviar").href = enlaceWhatsapp(numeroWa(d.p_telefono), texto);
   $("formNueva").hidden = true;

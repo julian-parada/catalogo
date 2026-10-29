@@ -113,6 +113,14 @@ Al cliente le aparece un aviso en su panel 5 días antes de vencer.
 | `compartir.js`, `compartir.css` | Compartir productos e imagen para historias |
 | `sql/001…007_*.sql` | Migraciones de la base. La columna `tipo_opcion` de la 004 ya no se usa. De la 005 en adelante se pueden repetir sin problema |
 
+## 🏠 Página de ventas (exhibepro.pages.dev)
+
+- `inicio.html`, `inicio.css`, `inicio.js` y las capturas en `img/exhibe/`.
+- `functions/index.js` la muestra en `/` cuando el link no trae tienda (`?t=`). Los links `/?t=tienda` y `/tienda` siguen igual.
+- Precio y WhatsApp: cámbialos en `inicio.html` (textos y JSON-LD) y en `inicio.js` (`WHATSAPP` y mensajes de cada botón).
+- "Ver una tienda de ejemplo" abre `/lookshop`: mantenla con productos bonitos.
+- Prueba gratis: en la plataforma, **Nueva tienda → Prueba gratis · 15 días** deja la fecha en hoy + 15 y el mensaje de bienvenida lo dice.
+
 ## 🔎 Google (SEO)
 
 - `functions/` (Cloudflare Pages Functions): `/slug` y `/?t=slug` salen del servidor con el título,
