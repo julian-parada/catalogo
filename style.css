@@ -1363,6 +1363,9 @@ body.con-barra .footer{padding-bottom:90px}
   .hero::after{
     background:linear-gradient(0deg, rgba(var(--bg-rgb), .97) 0%, rgba(var(--bg-rgb), .75) 42%, rgba(var(--bg-rgb), .1) 80%, transparent);
   }
+  /* En el celular la foto se ve angosta: se muestra la parte derecha, donde va el protagonista
+     (el texto queda abajo, sobre el velo) */
+  html.con-portada .hero::before{background-position:90% center}
   .hero-overlay, html[data-fondo] .hero-overlay{padding:0 0 26px; margin:0 16px; max-width:none}
   .hero-overlay .tag, html[data-fondo] .hero-overlay .tag{font-size:clamp(2rem, 9.5vw, 2.8rem)}
   .hero-overlay p, html[data-fondo] .hero-overlay p{font-size:.95rem; margin-top:8px}
