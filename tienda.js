@@ -186,8 +186,19 @@ if(window.configTienda){
   Promise.all([window.configTienda, domListo]).then(([cfg]) => {
     if(!cfg) return;
     aplicarConfiguracion(cfg);
+    iconoPestana(cfg);
     try{ localStorage.setItem(claveLocal("tiendaCfg"), JSON.stringify(cfg)); }catch(e){}
   });
+}
+
+// La pestaña del navegador muestra el logo de la tienda (Google sigue usando el ícono de Exhibe Pro)
+function iconoPestana(cfg){
+  const logo = String((cfg && cfg.logo_url) || "").trim();
+  if(!/^https:\/\//i.test(logo) || cfg.quitar_logo === true) return;
+  document.querySelectorAll('link[rel="icon"]').forEach(l => l.remove());
+  const link = document.createElement("link");
+  link.rel = "icon"; link.href = logo;
+  document.head.appendChild(link);
 }
 
 // ============================================================
