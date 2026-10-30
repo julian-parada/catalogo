@@ -519,9 +519,20 @@ function updateCount(){
 async function sendWhatsapp(){
   if(!cart.length){ alert("Agrega al menos un producto al pedido."); return; }
 
+  const saludo = (window.CFG && window.CFG.mensaje_saludo) || "Hola, quiero hacer este pedido:";
+
+  // Tienda de ejemplo de Exhibe Pro (demo.js): no se guarda ni se envía, solo se muestra cómo llega
+  if(window.ExhibeDemo && window.ExhibeDemo.activo){
+    const clienteDemo = leerDatosCliente();
+    if(!validarDatosCliente(clienteDemo)) return;
+    const totalDemo = cart.reduce((a,x) => a + x.price * x.qty, 0);
+    const detalle = cart.map(x => `${x.qty} x ${x.name}${esOpcionUnica(x.talla) ? "" : ` (${x.talla})`} - ${money(x.price * x.qty)}`);
+    window.ExhibeDemo.mostrarPedido(mensajePedido(saludo, clienteDemo, totalDemo, null, detalle), clienteDemo.nombre);
+    return;
+  }
+
   const numero = numeroWhatsapp(window.CFG);   // tienda.js: "" si no hay número real
   if(!numero){ alert("Esta tienda todavía no tiene WhatsApp para recibir pedidos. Intenta más tarde."); return; }
-  const saludo = window.CFG.mensaje_saludo || "Hola, quiero hacer este pedido:";
 
   const cliente = leerDatosCliente();
   if(!validarDatosCliente(cliente)) return;
@@ -562,8 +573,20 @@ async function sendWhatsapp(){
 
   guardarDatosCliente(cliente);   // para que la próxima compra ya salga lleno
 
-  // Sin emojis a propósito: algunos WhatsApp (sobre todo Web/escritorio) los muestran como "�".
-  // Las *palabras entre asteriscos* WhatsApp las pone en negrita.
+  const urlWhatsapp = enlaceWhatsapp(numero, mensajePedido(saludo, cliente, totalFinal, urlPedido));
+  // Algunos celulares bloquean la ventana nueva: en ese caso se abre en la misma pestaña
+  const ventana = window.open(urlWhatsapp, "_blank");
+  if(!ventana) window.location.href = urlWhatsapp;
+
+  btn.disabled = false;
+  btn.textContent = "ENVIAR PEDIDO POR WHATSAPP";
+}
+
+// Texto del pedido que llega a WhatsApp.
+// Sin emojis a propósito: algunos WhatsApp (sobre todo Web/escritorio) los muestran como "�".
+// Las *palabras entre asteriscos* WhatsApp las pone en negrita.
+// detalle: líneas de productos (solo la tienda de ejemplo; las reales llevan el link del pedido)
+function mensajePedido(saludo, cliente, total, urlPedido, detalle){
   const lineas = [saludo, "", `*Cliente:* ${cliente.nombre}`];
   if(cliente.entrega === "domicilio"){
     lineas.push(`*Entrega:* Domicilio`, `*Dirección:* ${cliente.direccion}, barrio ${cliente.barrio}`);
@@ -573,15 +596,11 @@ async function sendWhatsapp(){
   }
   lineas.push(`*Pago:* ${NOMBRES_PAGO[cliente.pago]}`);
   if(cliente.nota) lineas.push(`*Nota:* ${cliente.nota}`);
-  lineas.push("", `*Ver pedido:* ${urlPedido}`, `*Total:* ${money(totalFinal)}${cliente.entrega === "domicilio" ? " + domicilio" : ""}`, "", "¿Me confirman disponibilidad? Gracias.");
-
-  const urlWhatsapp = enlaceWhatsapp(numero, lineas.join("\n"));
-  // Algunos celulares bloquean la ventana nueva: en ese caso se abre en la misma pestaña
-  const ventana = window.open(urlWhatsapp, "_blank");
-  if(!ventana) window.location.href = urlWhatsapp;
-
-  btn.disabled = false;
-  btn.textContent = "ENVIAR PEDIDO POR WHATSAPP";
+  if(detalle && detalle.length) lineas.push("", "*Productos:*", ...detalle);
+  lineas.push("");
+  if(urlPedido) lineas.push(`*Ver pedido:* ${urlPedido}`);
+  lineas.push(`*Total:* ${money(total)}${cliente.entrega === "domicilio" ? " + domicilio" : ""}`, "", "¿Me confirman disponibilidad? Gracias.");
+  return lineas.join("\n");
 }
 
 /* ---------------------------------------------------------
