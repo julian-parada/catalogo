@@ -8,10 +8,14 @@
 const SUPABASE_URL = "https://txnvsigmwshwduhearvz.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InR4bnZzaWdtd3Nod2R1aGVhcnZ6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA2NDMzMjgsImV4cCI6MjEwNjIxOTMyOH0.JhO4JYOUTh13aZfDT4eDCioTjShcJsVjgxIXcOOS-uQ";
 
+import { PAGINAS_SEO } from "./paginas-seo.js";
+export { PAGINAS_SEO };
+
 // Páginas propias de la plataforma: nunca se confunden con una tienda
 export const RESERVADOS = new Set([
   "index", "admin", "ajustes", "agregarprenda", "editarprenda", "pedido",
-  "privacidad", "restablecer", "plataforma", "sitemap", "robots", "img", "favicon", "inicio"
+  "privacidad", "restablecer", "plataforma", "sitemap", "robots", "img", "favicon", "inicio",
+  ...PAGINAS_SEO
 ]);
 
 export const slugValido = s => /^[a-z0-9]+(-[a-z0-9]+)*$/.test(s) && s.length <= 60;

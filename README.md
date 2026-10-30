@@ -121,6 +121,13 @@ Al cliente le aparece un aviso en su panel 5 días antes de vencer.
 - "Ver una tienda de ejemplo" abre `/lookshop`: mantenla con productos bonitos.
 - Prueba gratis: en la plataforma, **Nueva tienda → Prueba gratis · 15 días** deja la fecha en hoy + 15 y el mensaje de bienvenida lo dice.
 
+## 🔍 Páginas por búsqueda (Google)
+
+- 10 páginas como `/pagina-web-para-mi-tienda`, `/tienda-online-ocana`, `/catalogo-virtual-para-almacenes`…
+- Los textos están en `seo/paginas.py`. Para cambiar o agregar una: edita ese archivo y corre `python3 seo/generar.py`
+  (crea los .html y `funciones-lib/paginas-seo.js`, que las mete al sitemap y evita que una tienda use ese link).
+- Toman el diseño y las secciones compartidas (cómo compra, precio, cierre) de `inicio.html`: si cambias el precio allá, vuelve a generar.
+
 ## 🔎 Google (SEO)
 
 - `functions/` (Cloudflare Pages Functions): `/slug` y `/?t=slug` salen del servidor con el título,

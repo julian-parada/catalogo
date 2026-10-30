@@ -1,5 +1,5 @@
 // /sitemap.xml → tiendas activas y sus productos, para Google (se actualiza solo)
-import { tiendasActivas, datosTienda, productosDe } from "../funciones-lib/seo.js";
+import { tiendasActivas, datosTienda, productosDe, PAGINAS_SEO } from "../funciones-lib/seo.js";
 
 // Cloudflare gratis permite 50 consultas por visita: con muchas tiendas se listan solo las tiendas
 const MAX_TIENDAS_CON_PRODUCTOS = 40;
@@ -14,7 +14,9 @@ export async function onRequestGet(context){
 
   // Primero la página de ventas de Exhibe Pro, después cada tienda
   const urls = [`  <url><loc>${esc(origen + "/")}</loc><priority>1.0</priority></url>`];
-  urls.push(...tiendas.map(t => `  <url><loc>${esc(origen + "/" + t.slug)}</loc><priority>0.9</priority></url>`));
+  // Páginas por búsqueda (seo/generar.py)
+  PAGINAS_SEO.forEach(s => urls.push(`  <url><loc>${esc(origen + "/" + s)}</loc><priority>0.9</priority></url>`));
+  urls.push(...tiendas.map(t => `  <url><loc>${esc(origen + "/" + t.slug)}</loc><priority>0.8</priority></url>`));
 
   if(tiendas.length && tiendas.length <= MAX_TIENDAS_CON_PRODUCTOS){
     try{

@@ -333,3 +333,16 @@ p{margin:0}
   .tabla thead th:first-child{position:sticky; left:0; z-index:1}
   .tabla-pista{display:block}
 }
+
+/* ---------- Páginas por búsqueda (seo/generar.py) ---------- */
+.migas{display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin-bottom:18px; font-size:.92rem; color:var(--tinta-2)}
+.migas a{color:var(--violeta); font-weight:600; text-decoration:none}
+.migas a:hover{text-decoration:underline}
+.extras-sola{margin-top:0}
+.fila-sola{border-top:0; padding-block:0}
+.fila-h2{font-size:clamp(1.6rem, 1.1rem + 1.5vw, 2.25rem); text-wrap:balance}
+.seccion-enlaces{padding-block:64px; background:var(--papel-2)}
+.enlaces-t{font-size:1.4rem; margin-bottom:20px}
+.enlaces{display:grid; grid-template-columns:repeat(auto-fill, minmax(260px, 1fr)); gap:10px 28px; margin:0; padding:0; list-style:none}
+.enlaces a{display:block; padding:10px 0; border-bottom:1px solid var(--linea); color:var(--tinta); font-weight:600; text-decoration:none}
+.enlaces a:hover{color:var(--violeta)}
