@@ -1,4 +1,4 @@
-// "/" sin tienda → página de ventas de Exhibe Pro (inicio.html), la que encuentra Google.
+// "/" sin tienda → página de ventas de LinkTalogo (inicio.html), la que encuentra Google.
 // "/" con ?t=nombre-tienda (los links de siempre) → el catálogo de esa tienda, con su nombre y foto
 // para que WhatsApp y Google los muestren. Esos links siguen funcionando igual que antes.
 import { slugValido, idProductoValido, paginaTienda } from "../funciones-lib/seo.js";

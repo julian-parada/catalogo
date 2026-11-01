@@ -23,14 +23,14 @@ def entre(a, b):
 ICONO_WA = re.search(r'<svg class="ico" viewBox="0 0 24 24" aria-hidden="true">.*?</svg>', base, re.S).group(0)
 FAVICONS = re.search(r'  <link rel="icon" href="/favicon.ico".*?<link rel="manifest" href="/site.webmanifest">\n', base, re.S).group(0)
 BARRA = entre('  <a class="saltar"', '  <main id="contenido">')
-BARRA = BARRA.replace('<a href="#funciones">Funciones</a>', '<a href="/">Exhibe Pro</a>').replace('href="/" aria-label="Exhibe Pro, inicio"', 'href="/" aria-label="Exhibe Pro, página principal"')
+BARRA = BARRA.replace('<a href="#funciones">Funciones</a>', '<a href="/">LinkTalogo</a>').replace('href="/" aria-label="LinkTalogo, inicio"', 'href="/" aria-label="LinkTalogo, página principal"')
 COMO = entre('    <!-- ============ CÓMO LLEGA UN PEDIDO ============ -->', '    <!-- ============ FUNCIONES ============ -->')
 PRECIO = entre('    <!-- ============ PRECIO ============ -->', '    <!-- ============ PREGUNTAS ============ -->')
 CIERRE = base[base.index('    <!-- ============ CIERRE ============ -->'):]
 CIERRE = CIERRE.replace('</main>', '</main>', 1)
 
 IMG_ALT = {
-  "tienda-rosa": "Catálogo de una tienda de ropa hecho con Exhibe Pro, visto en el celular",
+  "tienda-rosa": "Catálogo de una tienda de ropa hecho con LinkTalogo, visto en el celular",
   "tienda-noche_dorada": "Catálogo virtual con colores negro y dorado, visto en el celular",
   "tienda-grafito_lima": "Tienda en línea con colores grafito y lima, vista en el celular",
   "tienda-cielo_limpio": "Tienda online con colores claros y azul, vista en el celular",
@@ -53,10 +53,10 @@ def pagina(p):
          "inLanguage": "es-CO", "isPartOf": {"@id": ORIGEN + "/#web"}, "about": {"@id": ORIGEN + "/#org"},
          "primaryImageOfPage": f"{ORIGEN}/img/exhibe/og.jpg"},
         {"@type": "BreadcrumbList", "itemListElement": [
-          {"@type": "ListItem", "position": 1, "name": "Exhibe Pro", "item": ORIGEN + "/"},
+          {"@type": "ListItem", "position": 1, "name": "LinkTalogo", "item": ORIGEN + "/"},
           {"@type": "ListItem", "position": 2, "name": p["corto"], "item": url}]},
         {"@type": "Service", "name": p["corto"], "serviceType": "Página web y catálogo en línea para tiendas",
-         "provider": {"@type": "Organization", "@id": ORIGEN + "/#org", "name": "Exhibe Pro", "url": ORIGEN + "/", "logo": ORIGEN + "/icon-512.png"},
+         "provider": {"@type": "Organization", "@id": ORIGEN + "/#org", "name": "LinkTalogo", "url": ORIGEN + "/", "logo": ORIGEN + "/icon-512.png"},
          "areaServed": ({"@type": "City", "name": ciudad} if ciudad else {"@type": "Country", "name": "Colombia"}),
          "offers": {"@type": "Offer", "price": "39900", "priceCurrency": "COP", "description": "15 días gratis. Después, $39.900 al mes. Sin permanencia."}},
         {"@type": "FAQPage", "mainEntity": [
@@ -87,7 +87,7 @@ def pagina(p):
   <meta name="theme-color" content="#1b1446">
 
   <meta property="og:type" content="website">
-  <meta property="og:site_name" content="Exhibe Pro">
+  <meta property="og:site_name" content="LinkTalogo">
   <meta property="og:locale" content="es_CO">
   <meta property="og:url" content="{url}">
   <meta property="og:title" content="{e(p["titulo"])}">
@@ -112,7 +112,7 @@ def pagina(p):
     <section class="portada">
       <div class="envoltura portada-in">
         <div class="portada-texto">
-          <nav class="migas" aria-label="Ubicación"><a href="/">Exhibe Pro</a><span aria-hidden="true">/</span><span>{e(p["corto"])}</span></nav>
+          <nav class="migas" aria-label="Ubicación"><a href="/">LinkTalogo</a><span aria-hidden="true">/</span><span>{e(p["corto"])}</span></nav>
           <p class="sello"><span class="sello-punto" aria-hidden="true"></span>{e(p["sello"])}</p>
           <h1>{e(p["h1"])}</h1>
           <p class="portada-sub">{e(p["sub"])}</p>
@@ -174,7 +174,7 @@ def pagina(p):
       <div class="envoltura">
         <h2 id="enlaces-t" class="enlaces-t">También te puede interesar</h2>
         <ul class="enlaces">
-          <li><a href="/">Exhibe Pro: página web para almacenes</a></li>
+          <li><a href="/">LinkTalogo: página web para almacenes</a></li>
 {enlaces}
         </ul>
       </div>

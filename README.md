@@ -1,4 +1,4 @@
-# Exhibe Pro — catálogos multi-tienda
+# LinkTalogo — catálogos multi-tienda
 
 Catálogo web con pedidos por WhatsApp para **cualquier tipo de negocio** (ropa, perfumes, joyas, accesorios…). **Un solo código y una sola base (Supabase) para todas las tiendas.**
 

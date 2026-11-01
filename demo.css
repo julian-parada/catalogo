@@ -1,5 +1,5 @@
-/* demo.css — Tienda de ejemplo de Exhibe Pro (solo aplica con html.modo-demo, ver demo.js).
-   Usa los colores de Exhibe Pro, no los de la tienda, para que se note que es la marca. */
+/* demo.css — Tienda de ejemplo de LinkTalogo (solo aplica con html.modo-demo, ver demo.js).
+   Usa los colores de LinkTalogo, no los de la tienda, para que se note que es la marca. */
 .modo-demo{
   --ep-violeta:#5b3df5; --ep-tinta:#1b1446; --ep-etiqueta:#ffd23f; --ep-wa:#25d366;
 }

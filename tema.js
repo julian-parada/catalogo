@@ -685,11 +685,11 @@ window.tiendaActual.then(() => {
 
 
 /* =========================================================
-   CRÉDITO "Hecho con Exhibe Pro" (pie de las tiendas y del pedido)
+   CRÉDITO "Hecho con LinkTalogo" (pie de las tiendas y del pedido)
    Cambia aquí el WhatsApp donde te escriben los interesados.
    ========================================================= */
 const EXHIBE_PRO = {
-  nombre: "Exhibe Pro",
+  nombre: "LinkTalogo",
   whatsapp: "573247348475"
 };
 

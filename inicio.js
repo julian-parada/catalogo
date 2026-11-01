@@ -1,15 +1,15 @@
-// Exhibe Pro — página de ventas (inicio.html)
+// LinkTalogo — página de ventas (inicio.html)
 (function(){
   "use strict";
 
   const WHATSAPP = "573247348475";
   // Mensaje que llega a tu WhatsApp según el botón que tocaron (así sabes de dónde viene)
   const MENSAJES = {
-    portada:  "Hola, vi Exhibe Pro y quiero probar la página 15 días gratis para mi almacén.",
-    precio:   "Hola, quiero empezar mi prueba gratis de 15 días de Exhibe Pro.",
-    cierre:   "Hola, quiero que me muestres cómo quedaría la página de mi almacén con Exhibe Pro.",
-    barra:    "Hola, quiero información sobre Exhibe Pro para mi almacén.",
-    flotante: "Hola, quiero probar Exhibe Pro 15 días gratis."
+    portada:  "Hola, vi LinkTalogo y quiero probar la página 15 días gratis para mi almacén.",
+    precio:   "Hola, quiero empezar mi prueba gratis de 15 días de LinkTalogo.",
+    cierre:   "Hola, quiero que me muestres cómo quedaría la página de mi almacén con LinkTalogo.",
+    barra:    "Hola, quiero información sobre LinkTalogo para mi almacén.",
+    flotante: "Hola, quiero probar LinkTalogo 15 días gratis."
   };
   const enlace = texto => `https://api.whatsapp.com/send?phone=${WHATSAPP}&text=${encodeURIComponent(texto)}`;
   document.querySelectorAll("[data-wa]").forEach(a => {

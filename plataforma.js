@@ -1,4 +1,4 @@
-// plataforma.js — panel del dueño de Exhibe Pro (plataforma.html).
+// plataforma.js — panel del dueño de LinkTalogo (plataforma.html).
 // Toda la seguridad la pone el servidor: cada función revisa es_superadmin().
 // Si otra persona abre esta página, solo ve "Sin permiso".
 
@@ -236,10 +236,10 @@ function pintarTiendas(){
 function enlaceRecordatorio(t){
   const hola = `Hola ${String(t.contacto || "").split(" ")[0]} 👋`;
   let texto;
-  if(t.situacion === "suspendida") texto = `${hola} Tu tienda *${t.nombre}* en Exhibe Pro está pausada. Cuando quieras reactivarla me escribes y la dejo funcionando de inmediato.`;
-  else if(t.dias < 0) texto = `${hola} El plan de tu tienda *${t.nombre}* en Exhibe Pro venció el ${fechaLarga(t.vence)} y tus clientes ya no la pueden ver. Renuévalo y la activo enseguida. ¿Te envío los datos para el pago?`;
-  else if(t.dias === 0) texto = `${hola} Te recuerdo que el plan de tu tienda *${t.nombre}* en Exhibe Pro vence hoy. ¿Te envío los datos para renovarlo y que no se apague?`;
-  else texto = `${hola} Te recuerdo que el plan de tu tienda *${t.nombre}* en Exhibe Pro vence el ${fechaLarga(t.vence)} (en ${t.dias} día${t.dias === 1 ? "" : "s"}). El valor es ${money(PRECIO_MES)} al mes. ¿Te envío los datos para el pago?`;
+  if(t.situacion === "suspendida") texto = `${hola} Tu tienda *${t.nombre}* en LinkTalogo está pausada. Cuando quieras reactivarla me escribes y la dejo funcionando de inmediato.`;
+  else if(t.dias < 0) texto = `${hola} El plan de tu tienda *${t.nombre}* en LinkTalogo venció el ${fechaLarga(t.vence)} y tus clientes ya no la pueden ver. Renuévalo y la activo enseguida. ¿Te envío los datos para el pago?`;
+  else if(t.dias === 0) texto = `${hola} Te recuerdo que el plan de tu tienda *${t.nombre}* en LinkTalogo vence hoy. ¿Te envío los datos para renovarlo y que no se apague?`;
+  else texto = `${hola} Te recuerdo que el plan de tu tienda *${t.nombre}* en LinkTalogo vence el ${fechaLarga(t.vence)} (en ${t.dias} día${t.dias === 1 ? "" : "s"}). El valor es ${money(PRECIO_MES)} al mes. ¿Te envío los datos para el pago?`;
   return enlaceWhatsapp(numeroWa(t.telefono), texto);
 }
 

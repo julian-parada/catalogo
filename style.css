@@ -1102,7 +1102,7 @@ html[data-fondo="claro"] .footer-social a{color:var(--white)}
 .dc-olvidar:hover{color:var(--danger, #ff537d)}
 
 /* =========================================================
-   DISEÑO 2.0 — Exhibe Pro
+   DISEÑO 2.0 — LinkTalogo
    · Contraste automático: tema.js calcula --acento-texto, --texto-acento…
      para que ninguna paleta deje textos que no se leen
    · Portada sin cuadro gris: velo del color de fondo sobre la foto,
@@ -1405,7 +1405,7 @@ body.con-barra .footer{padding-bottom:90px}
 }
 .modal-card h2{font-size:clamp(2rem, 6vw, 2.8rem); text-transform:var(--titulo-transform, uppercase)}
 
-/* ---------- Crédito "Hecho con Exhibe Pro" ---------- */
+/* ---------- Crédito "Hecho con LinkTalogo" ---------- */
 .hecho-con{
   display:flex; align-items:center; justify-content:center; flex-wrap:wrap; gap:6px;
   width:fit-content; margin:0 auto 22px; padding:8px 14px; border-radius:999px;
@@ -1416,15 +1416,13 @@ body.con-barra .footer{padding-bottom:90px}
 .hecho-con b{display:inline-flex; align-items:center; gap:6px; color:var(--white); font-weight:800; letter-spacing:.02em}
 .hecho-con em{font-style:normal; color:var(--acento-texto, var(--pink)); font-weight:700}
 .hecho-con:hover{border-color:rgba(var(--pink-rgb), .55); color:var(--white); transform:translateY(-1px)}
-/* Ícono provisional (se reemplaza por el logo de Exhibe Pro) */
+/* Logo de LinkTalogo: cuadro del color de la tienda con el ícono de enlace */
 .ep-icono{
-  width:16px; height:16px; border-radius:5px; flex:none;
-  background:
-    linear-gradient(var(--texto-acento, #fff), var(--texto-acento, #fff)) 4px 4px/8px 2px no-repeat,
-    linear-gradient(var(--texto-acento, #fff), var(--texto-acento, #fff)) 4px 7px/6px 2px no-repeat,
-    linear-gradient(var(--texto-acento, #fff), var(--texto-acento, #fff)) 4px 10px/8px 2px no-repeat,
-    linear-gradient(var(--texto-acento, #fff), var(--texto-acento, #fff)) 4px 4px/2px 8px no-repeat,
-    var(--pink);
+  width:16px; height:16px; border-radius:5px; flex:none; position:relative; background:var(--pink);
+}
+.ep-icono::after{
+  content:""; position:absolute; inset:2px; background:var(--texto-acento, #fff);
+  -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71'/%3E%3Cpath d='M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71'/%3E%3C/svg%3E") center/contain no-repeat; mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71'/%3E%3Cpath d='M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71'/%3E%3C/svg%3E") center/contain no-repeat;
 }
 
 /* "+ domicilio" junto al total: el envío lo confirma la tienda */

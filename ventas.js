@@ -103,7 +103,7 @@
     if(r.error){
       console.error(r.error);
       sinTabla = esSinTabla(r.error);
-      pintarError(sinTabla ? "El historial de ventas todavía no está activado. Escríbele a Exhibe Pro para activarlo." : "No se pudieron cargar las ventas. Recarga la página.");
+      pintarError(sinTabla ? "El historial de ventas todavía no está activado. Escríbele a LinkTalogo para activarlo." : "No se pudieron cargar las ventas. Recarga la página.");
       return;
     }
     sinTabla = false;

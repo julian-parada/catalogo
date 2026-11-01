@@ -521,7 +521,7 @@ async function sendWhatsapp(){
 
   const saludo = (window.CFG && window.CFG.mensaje_saludo) || "Hola, quiero hacer este pedido:";
 
-  // Tienda de ejemplo de Exhibe Pro (demo.js): no se guarda ni se envía, solo se muestra cómo llega
+  // Tienda de ejemplo de LinkTalogo (demo.js): no se guarda ni se envía, solo se muestra cómo llega
   if(window.ExhibeDemo && window.ExhibeDemo.activo){
     const clienteDemo = leerDatosCliente();
     if(!validarDatosCliente(clienteDemo)) return;

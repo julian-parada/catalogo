@@ -1,4 +1,4 @@
-# Exhibe Pro — qué puede leer Google
+# LinkTalogo — qué puede leer Google
 User-agent: *
 Allow: /
 Disallow: /admin

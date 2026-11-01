@@ -12,7 +12,7 @@ export async function onRequestGet(context){
   let tiendas = [];
   try{ tiendas = (await tiendasActivas(context.env)).filter(t => t && valido(t.slug)); }catch(e){ /* sin la función SQL 007: lista vacía */ }
 
-  // Primero la página de ventas de Exhibe Pro, después cada tienda
+  // Primero la página de ventas de LinkTalogo, después cada tienda
   const urls = [`  <url><loc>${esc(origen + "/")}</loc><priority>1.0</priority></url>`];
   // Páginas por búsqueda (seo/generar.py)
   PAGINAS_SEO.forEach(s => urls.push(`  <url><loc>${esc(origen + "/" + s)}</loc><priority>0.9</priority></url>`));

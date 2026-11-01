@@ -191,7 +191,7 @@ if(window.configTienda){
   });
 }
 
-// La pestaña del navegador muestra el logo de la tienda (Google sigue usando el ícono de Exhibe Pro)
+// La pestaña del navegador muestra el logo de la tienda (Google sigue usando el ícono de LinkTalogo)
 function iconoPestana(cfg){
   const logo = String((cfg && cfg.logo_url) || "").trim();
   if(!/^https:\/\//i.test(logo) || cfg.quitar_logo === true) return;

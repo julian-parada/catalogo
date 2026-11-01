@@ -1,4 +1,4 @@
-/* plataforma.css — panel del dueño de Exhibe Pro (colores fijos de la marca) */
+/* plataforma.css — panel del dueño de LinkTalogo (colores fijos de la marca) */
 :root{
   --bg:#0b0b10; --bg2:#111118; --card:#15151d; --card2:#1b1b25; --line:#26262f; --line2:#33333f;
   --text:#f5f5f8; --muted:#9a9aab; --pink:#ff1493; --pink-rgb:255,20,147; --gold:#f5b914;
@@ -22,14 +22,10 @@ button,input,select,textarea{font:inherit;color:inherit}
 /* ---------- Marca ---------- */
 .pl-marca{display:inline-flex; align-items:center; gap:10px; font-weight:800; font-size:1.05rem; letter-spacing:.01em}
 .pl-marca small{font-weight:600; color:var(--muted); font-size:.82rem; padding:3px 9px; border:1px solid var(--line2); border-radius:99px}
-.pl-e{width:30px; height:30px; border-radius:9px; flex:none; position:relative;
-  background:
-    linear-gradient(#fff,#fff) 8px 8px/14px 3px no-repeat,
-    linear-gradient(#fff,#fff) 8px 13.5px/10px 3px no-repeat,
-    linear-gradient(#fff,#fff) 8px 19px/14px 3px no-repeat,
-    linear-gradient(#fff,#fff) 8px 8px/3px 14px no-repeat,
-    var(--pink);
+.pl-e{width:30px; height:30px; border-radius:9px; flex:none; position:relative; background:var(--pink);
   box-shadow:0 6px 18px -4px rgba(var(--pink-rgb),.7)}
+.pl-e::after{content:""; position:absolute; inset:5px; background:#fff;
+  -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71'/%3E%3Cpath d='M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71'/%3E%3C/svg%3E") center/contain no-repeat; mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2.6' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71'/%3E%3Cpath d='M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71'/%3E%3C/svg%3E") center/contain no-repeat}
 
 /* ---------- Botones y campos ---------- */
 .pl-btn{

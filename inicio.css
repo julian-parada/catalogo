@@ -1,5 +1,5 @@
 /* =========================================================
-   Exhibe Pro — página de ventas (inicio.html)
+   LinkTalogo — página de ventas (inicio.html)
    Tinta índigo + violeta de marca + amarillo de etiqueta de precio.
    El verde se usa solo en lo que abre WhatsApp.
    ========================================================= */
@@ -65,7 +65,11 @@ p{margin:0}
 .marca{display:inline-flex; align-items:center; gap:10px; text-decoration:none; font-weight:800; font-size:1.2rem; font-variation-settings:"wdth" 112; letter-spacing:-.01em}
 .marca-logo{width:32px; height:32px; flex:none}
 .marca-logo rect{fill:var(--violeta)}
-.marca-logo path{fill:#fff}
+.marca-logo .marca-enlace path{fill:none; stroke:#fff; stroke-width:2.8; stroke-linecap:round; stroke-linejoin:round}
+.marca-txt{display:flex; flex-direction:column; line-height:1.05}
+.marca-eslogan{font-size:.68rem; font-weight:600; font-variation-settings:"wdth" 100; letter-spacing:0; color:var(--tinta-2); margin-top:2px}
+.marca-pie .marca-eslogan{color:#c9c3ef}
+.pie-eslogan{color:#fff}
 .barra-nav{display:flex; gap:26px; margin-left:auto}
 .barra-nav a{text-decoration:none; color:var(--tinta-2); font-weight:600; font-size:.97rem}
 .barra-nav a:hover{color:var(--tinta)}
