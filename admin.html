@@ -7,6 +7,7 @@
   <title>Admin — Catálogo</title>
   <link rel="stylesheet" href="admin.css">
   <link rel="stylesheet" href="admin-nav.css">
+  <link rel="stylesheet" href="ventas.css">
   <link rel="stylesheet" href="compartir.css">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabaseConfig.js"></script>
@@ -16,6 +17,7 @@
 <script src="tienda.js"></script>
 <script src="compartir.js" defer></script>
 <script src="admin.js" defer></script>
+<script src="ventas.js" defer></script>
 <!-- <script src="ajustes.js" defer></script>  ← QUITAR ESTA LÍNEA -->
   <link rel="icon" href="/favicon.ico" sizes="48x48">
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
@@ -146,6 +148,9 @@
       <button type="button" class="admin-tab" role="tab" data-tab="categorias" aria-selected="false">
         Categorías <span class="tab-num" id="numCategorias"></span>
       </button>
+      <button type="button" class="admin-tab" role="tab" data-tab="ventas" aria-selected="false">
+        Ventas
+      </button>
     </nav>
 
     <!-- PESTAÑA: PRENDAS -->
@@ -171,6 +176,40 @@
       <div id="listaCategorias" class="lista-cats">
         <!-- admin.js carga aquí las categorías -->
       </div>
+    </section>
+
+    <!-- PESTAÑA: VENTAS (ventas.js) -->
+    <section class="catalog-section" id="tabVentas" role="tabpanel" hidden>
+      <div class="v-herramientas">
+        <div class="v-periodos" id="vPeriodos" role="group" aria-label="Periodo">
+          <button type="button" class="chip-cat" data-periodo="hoy">Hoy</button>
+          <button type="button" class="chip-cat" data-periodo="7">7 días</button>
+          <button type="button" class="chip-cat" data-periodo="30">30 días</button>
+          <button type="button" class="chip-cat activo" data-periodo="mes">Este mes</button>
+          <button type="button" class="chip-cat" data-periodo="pasado">Mes pasado</button>
+          <button type="button" class="chip-cat" data-periodo="anio">Este año</button>
+          <button type="button" class="chip-cat" data-periodo="rango">Elegir fechas</button>
+        </div>
+        <button type="button" class="v-exportar" id="vExportar" disabled>Descargar Excel</button>
+      </div>
+      <div class="v-rango" id="vRango" hidden>
+        <label>Desde <input type="date" id="vDesde"></label>
+        <label>Hasta <input type="date" id="vHasta"></label>
+      </div>
+      <p class="v-periodo-txt" id="vPeriodoTxt"></p>
+
+      <div class="v-resumen" id="vResumen"></div>
+      <div class="v-grafica" id="vGrafica" hidden></div>
+
+      <div class="v-rankings" id="vRankings" hidden>
+        <section class="v-caja"><h3>Lo más vendido</h3><ol class="v-top" id="vTop"></ol></section>
+        <section class="v-caja"><h3>Por categoría</h3><ul class="v-cats" id="vCats"></ul>
+          <div id="vTallasBox"><h3 class="v-sub">Tallas y opciones que más salen</h3><ul class="v-tallas" id="vTallas"></ul></div>
+        </section>
+      </div>
+
+      <h3 class="v-hist-t">Historial</h3>
+      <div class="v-lista" id="vLista"><p class="lista-vacia">Cargando ventas…</p></div>
     </section>
 
   </main>

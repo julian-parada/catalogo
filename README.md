@@ -121,6 +121,13 @@ Al cliente le aparece un aviso en su panel 5 días antes de vencer.
 - "Ver una tienda de ejemplo" abre `/lookshop`: mantenla con productos bonitos.
 - Prueba gratis: en la plataforma, **Nueva tienda → Prueba gratis · 15 días** deja la fecha en hoy + 15 y el mensaje de bienvenida lo dice.
 
+## 🧾 Vendido e historial de ventas
+
+- En "Mis productos" cada producto tiene **Vendido**: marca la talla/opción como no disponible y guarda la venta.
+- Pestaña **Ventas**: total por periodo (hoy, 7 y 30 días, mes, mes pasado, año o fechas), comparación con el periodo anterior,
+  ventas por día, lo más vendido, categorías, tallas que más salen, historial por día (editar precio o quitar) y descarga para Excel.
+- Necesita la tabla de `sql/008_ventas.sql` (se corre una vez en Supabase → SQL Editor). Sin ella, Vendido funciona pero no guarda historial.
+
 ## 🔍 Páginas por búsqueda (Google)
 
 - 10 páginas como `/pagina-web-para-mi-tienda`, `/tienda-online-ocana`, `/catalogo-virtual-para-almacenes`…

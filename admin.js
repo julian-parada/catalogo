@@ -434,10 +434,16 @@ async function marcarVendido(p, t){
   if(!(await cambiarDisponible(t, false))) return;
   renderPrendas();
   const op = nombreOpcion(t);
+  // Queda en el historial de ventas (pestaña Ventas) con el precio de ese momento
+  const ventaId = window.Ventas ? await Ventas.registrar({
+    prendaId: p.id, tallaId: t.id, producto: p.nombre, opcion: op, categoria: nombreCategoria(p.categoria_id),
+    imagen: p.imagen, precio: p.precio_oferta || p.precio
+  }) : null;
   const texto = estaAgotado(p)
     ? `${p.nombre}${op ? " (" + op + ")" : ""}: vendido. Ya no aparece en la tienda.`
     : `${p.nombre}: talla ${op} vendida.`;
   avisar(texto, { texto: "Deshacer", fn: async () => {
+    if(ventaId && window.Ventas) await Ventas.borrar(ventaId);
     if(await cambiarDisponible(t, true)){ renderPrendas(); avisar("Listo, volvió a la tienda."); }
   }});
 }
@@ -596,6 +602,8 @@ function mostrarPestana(cual){
   });
   document.getElementById("tabPrendas").hidden = cual !== "prendas";
   document.getElementById("tabCategorias").hidden = cual !== "categorias";
+  const ventas = document.getElementById("tabVentas");
+  if(ventas){ ventas.hidden = cual !== "ventas"; if(cual === "ventas" && window.Ventas) Ventas.mostrar(); }
 }
 
 // Aviso corto abajo de la pantalla. accion (opcional): { texto: "Deshacer", fn }
