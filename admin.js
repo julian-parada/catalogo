@@ -372,11 +372,13 @@ function renderPrendas(){
     const precio = p.precio_oferta
       ? `<s>${pesos(p.precio)}</s> ${pesos(p.precio_oferta)} <em class="tag-oferta">OFERTA</em>`
       : pesos(p.precio);
+    const agotado = estaAgotado(p);
     return `
-      <div class="admin-item">
+      <div class="admin-item ${agotado ? "agotado" : ""}">
         <img src="${safeUrl(p.imagen) || "img/placeholder.jpg"}" alt="${esc(p.nombre)}" loading="lazy" onerror="this.src='img/placeholder.jpg'">
         <div class="admin-item-body">
           <h3>${esc(p.nombre)}</h3>
+          ${agotado ? `<p class="item-vendido">Vendido: ya no aparece en la tienda. Marca una opción para volver a publicarlo.</p>` : ""}
           <div class="item-meta">
             <span class="item-precio">${precio}</span>
             <span class="item-cat ${cat ? "" : "sin"}">${esc(cat || "Sin categoría")}</span>
@@ -391,6 +393,10 @@ function renderPrendas(){
           </div>
         </div>
         <div class="item-actions">
+          <button type="button" class="vendido-btn" data-vendido="${p.id}" ${agotado ? "disabled" : ""} title="${agotado ? "Ya está vendido" : "Marcar como vendido"}">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" d="M5 12.5l4.5 4.5L19 7.5"/></svg>
+            ${agotado ? "Agotado" : "Vendido"}
+          </button>
           <button type="button" class="compartir-btn" data-compartir="${p.id}" title="Compartir en WhatsApp, Facebook o Instagram">
             <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M12 3v12M7 8l5-5 5 5M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"/></svg>
             Compartir
@@ -403,6 +409,80 @@ function renderPrendas(){
   : `<p class='lista-vacia'>No hay productos ${textoBusqueda ? "que coincidan con la búsqueda" : "en esta categoría"}.</p>`;
 
   registrarListenersLista();
+}
+
+// ---------- VENDIDO ----------
+// Una prenda está vendida/agotada cuando tiene opciones y ninguna está disponible (la tienda ya no la muestra)
+const estaAgotado = p => (p.tallas || []).length > 0 && !(p.tallas || []).some(t => t.disponible);
+function buscarTalla(id){
+  for(const prenda of prendasCache){
+    const t = (prenda.tallas || []).find(x => String(x.id) === String(id));
+    if(t) return { prenda, t };
+  }
+  return null;
+}
+const nombreOpcion = t => esOpcionUnica(t.talla) ? "" : t.talla;
+
+async function cambiarDisponible(t, disponible){
+  const { error } = await supabaseClient.from("tallas").update({ disponible }).eq("id", t.id);
+  if(error){ alert("No se pudo guardar: " + error.message); return false; }
+  t.disponible = disponible;
+  return true;
+}
+
+async function marcarVendido(p, t){
+  if(!(await cambiarDisponible(t, false))) return;
+  renderPrendas();
+  const op = nombreOpcion(t);
+  const texto = estaAgotado(p)
+    ? `${p.nombre}${op ? " (" + op + ")" : ""}: vendido. Ya no aparece en la tienda.`
+    : `${p.nombre}: talla ${op} vendida.`;
+  avisar(texto, { texto: "Deshacer", fn: async () => {
+    if(await cambiarDisponible(t, true)){ renderPrendas(); avisar("Listo, volvió a la tienda."); }
+  }});
+}
+
+// Si tiene varias opciones disponibles, se elige cuál se vendió
+function elegirVendido(p, disponibles){
+  let dlg = document.getElementById("dlgVendido");
+  if(!dlg){
+    dlg = document.createElement("div");
+    dlg.id = "dlgVendido";
+    dlg.className = "vendido-fondo";
+    dlg.hidden = true;
+    dlg.innerHTML = `
+      <div class="vendido-dlg" role="dialog" aria-modal="true" aria-labelledby="vendidoT">
+        <div class="vendido-cab"><img alt="" id="vendidoImg"><div><h2 id="vendidoT">¿Qué se vendió?</h2><p id="vendidoNombre"></p></div></div>
+        <p class="vendido-ayuda">Toca la opción que vendiste. Las demás siguen en la tienda.</p>
+        <div class="vendido-opciones" id="vendidoOpciones"></div>
+        <button type="button" class="vendido-cancelar" data-cerrar-vendido>Cancelar</button>
+      </div>`;
+    document.body.appendChild(dlg);
+    dlg.addEventListener("click", e => { if(e.target === dlg || e.target.closest("[data-cerrar-vendido]")) cerrarVendido(); });
+    document.addEventListener("keydown", e => { if(e.key === "Escape" && !dlg.hidden) cerrarVendido(); });
+  }
+  document.getElementById("vendidoNombre").textContent = p.nombre;
+  const img = document.getElementById("vendidoImg");
+  img.src = safeUrl(p.imagen) || "img/placeholder.jpg";
+  const cont = document.getElementById("vendidoOpciones");
+  cont.innerHTML = disponibles.map(t => `<button type="button" class="vendido-op" data-op="${t.id}">${esc(t.talla)}</button>`).join("");
+  cont.onclick = e => {
+    const b = e.target.closest("[data-op]"); if(!b) return;
+    const t = disponibles.find(x => String(x.id) === b.dataset.op);
+    cerrarVendido();
+    if(t) marcarVendido(p, t);
+  };
+  elegirVendido.antes = document.activeElement;
+  dlg.hidden = false;
+  document.body.classList.add("vendido-abierto");
+  cont.querySelector("button")?.focus();
+}
+function cerrarVendido(){
+  const dlg = document.getElementById("dlgVendido");
+  if(!dlg) return;
+  dlg.hidden = true;
+  document.body.classList.remove("vendido-abierto");
+  elegirVendido.antes?.focus?.();
 }
 
 // ---------- CATEGORÍAS ----------
@@ -518,9 +598,9 @@ function mostrarPestana(cual){
   document.getElementById("tabCategorias").hidden = cual !== "categorias";
 }
 
-// Aviso corto abajo de la pantalla
+// Aviso corto abajo de la pantalla. accion (opcional): { texto: "Deshacer", fn }
 let avisoTimer;
-function avisar(texto){
+function avisar(texto, accion){
   let el = document.getElementById("avisoPanel");
   if(!el){
     el = document.createElement("div");
@@ -529,10 +609,18 @@ function avisar(texto){
     el.setAttribute("role", "status");
     document.body.appendChild(el);
   }
-  el.textContent = texto;
+  el.textContent = "";
+  const span = document.createElement("span"); span.textContent = texto; el.appendChild(span);
+  el.classList.toggle("con-accion", !!accion);
+  if(accion){
+    const b = document.createElement("button");
+    b.type = "button"; b.className = "aviso-accion"; b.textContent = accion.texto;
+    b.addEventListener("click", () => { el.classList.remove("visible"); accion.fn(); }, { once: true });
+    el.appendChild(b);
+  }
   el.classList.add("visible");
   clearTimeout(avisoTimer);
-  avisoTimer = setTimeout(() => el.classList.remove("visible"), 2600);
+  avisoTimer = setTimeout(() => el.classList.remove("visible"), accion ? 6000 : 2600);
 }
 
 // ---------- LISTENERS (una sola vez) ----------
@@ -551,6 +639,16 @@ function registrarListenersLista(){
       if(error){
         alert("Error al actualizar: " + error.message);
         e.target.checked = !e.target.checked;
+        return;
+      }
+      const talla = buscarTalla(e.target.dataset.talla);
+      if(talla){
+        const prenda = talla.prenda, antes = estaAgotado(prenda);
+        talla.t.disponible = e.target.checked;
+        if(antes !== estaAgotado(prenda)){
+          renderPrendas();
+          avisar(antes ? "Publicado de nuevo: ya aparece en la tienda." : "Sin opciones disponibles: ya no aparece en la tienda.");
+        }
       }
     }
   });
@@ -571,6 +669,16 @@ function registrarListenersLista(){
         imagen: /^https?:\/\//i.test(p.imagen || "") ? p.imagen : "",
         tienda: (cfg && cfg.nombre_tienda) || tienda.nombre || "mi tienda"
       });
+      return;
+    }
+    const vendido = e.target.closest("[data-vendido]");
+    if(vendido){
+      const p = prendasCache.find(x => String(x.id) === vendido.dataset.vendido);
+      if(!p) return;
+      const disponibles = (p.tallas || []).filter(t => t.disponible).sort((a, b) => a.id - b.id);
+      if(!disponibles.length) return;
+      if(disponibles.length === 1) marcarVendido(p, disponibles[0]);
+      else elegirVendido(p, disponibles);
       return;
     }
     const btn = e.target.closest("[data-prenda]");
