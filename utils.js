@@ -114,3 +114,15 @@ async function borrarFotoPrenda(url){
     await supabaseClient.storage.from(BUCKET_FOTOS).remove([ruta]);
   }catch(e){ console.warn("No se pudo borrar la foto del almacenamiento:", e); }
 }
+
+
+// Precio de oferta vigente: las promociones duran 10 días y se vencen solas
+// (oferta_hasta lo pone la base de datos, ver sql/009_oferta_vence.sql).
+// Sin oferta_hasta (tienda que aún no corre el 009) la oferta sigue valiendo como antes.
+function ofertaVigente(p){
+  if(!p || !Number(p.precio_oferta)) return false;
+  if(!p.oferta_hasta) return true;
+  const fin = new Date(p.oferta_hasta);
+  return isNaN(fin.getTime()) || fin.getTime() > Date.now();
+}
+function precioVigente(p){ return ofertaVigente(p) ? p.precio_oferta : p.precio; }

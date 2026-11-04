@@ -348,6 +348,7 @@ button.admin-tab{background:none; border:0; border-bottom:2px solid transparent;
 .item-precio{font-weight:800; font-size:16px}
 .item-precio s{color:var(--muted); font-weight:500; font-size:13px; margin-right:4px}
 .tag-oferta{font-style:normal; font-size:10px; font-weight:900; letter-spacing:.06em; padding:3px 7px; border-radius:5px; background:var(--pink); color:#fff; margin-left:4px}
+.tag-oferta.tag-vencida{background:transparent; color:var(--muted); border:1px solid var(--line); letter-spacing:.02em; font-weight:800}
 .item-cat{padding:4px 10px; border-radius:999px; background:var(--bg-2); border:1px solid var(--line); font-size:12px; font-weight:700; color:var(--muted)}
 .item-cat.sin{border-style:dashed}
 .item-actions{display:flex; flex-direction:column; gap:8px}

@@ -280,6 +280,12 @@ async function avisoPrimerosPasos(){
 // ---------- DATOS ----------
 const esc = s => (typeof escapeHtml === "function" ? escapeHtml(s) : String(s ?? ""));
 const pesos = n => "$" + Number(n || 0).toLocaleString("es-CO");
+// " · 3 días": cuánto le queda a la promoción
+function diasOferta(p){
+  if(!p.oferta_hasta) return "";
+  const d = Math.ceil((new Date(p.oferta_hasta).getTime() - Date.now()) / 86400000);
+  return isNaN(d) ? "" : d <= 1 ? " · vence hoy" : ` · ${d} días`;
+}
 let filtroCategoria = "todas";   // "todas", "sin" o el id de la categoría
 let textoBusqueda = "";
 
@@ -295,7 +301,7 @@ async function cargarPrendas(){
   const [rPrendas, rCats] = await Promise.all([
     supabaseClient
       .from("prendas")
-      .select(`id, nombre, precio, precio_oferta, imagen, categoria_id, tallas(id, talla, disponible)`)
+      .select(`*, tallas(id, talla, disponible)`)
       .eq("tienda_id", tienda.id)
       .order("creado_en", { ascending: false }),
     supabaseClient
@@ -369,9 +375,11 @@ function renderPrendas(){
   const lista = prendasVisibles();
   cont.innerHTML = lista.length ? lista.map(p => {
     const cat = nombreCategoria(p.categoria_id);
-    const precio = p.precio_oferta
-      ? `<s>${pesos(p.precio)}</s> ${pesos(p.precio_oferta)} <em class="tag-oferta">OFERTA</em>`
-      : pesos(p.precio);
+    const precio = ofertaVigente(p)
+      ? `<s>${pesos(p.precio)}</s> ${pesos(p.precio_oferta)} <em class="tag-oferta">OFERTA${diasOferta(p)}</em>`
+      : Number(p.precio_oferta)
+        ? `${pesos(p.precio)} <em class="tag-oferta tag-vencida" title="Edita el producto para ponerla otra vez">Oferta vencida</em>`
+        : pesos(p.precio);
     const agotado = estaAgotado(p);
     return `
       <div class="admin-item ${agotado ? "agotado" : ""}">
@@ -437,7 +445,7 @@ async function marcarVendido(p, t){
   // Queda en el historial de ventas (pestaña Ventas) con el precio de ese momento
   const ventaId = window.Ventas ? await Ventas.registrar({
     prendaId: p.id, tallaId: t.id, producto: p.nombre, opcion: op, categoria: nombreCategoria(p.categoria_id),
-    imagen: p.imagen, precio: p.precio_oferta || p.precio
+    imagen: p.imagen, precio: precioVigente(p)
   }) : null;
   const texto = estaAgotado(p)
     ? `${p.nombre}${op ? " (" + op + ")" : ""}: vendido. Ya no aparece en la tienda.`
@@ -672,8 +680,8 @@ function registrarListenersLista(){
       Compartir.abrir({
         url: Compartir.urlProducto(tienda.slug, p.id),
         nombre: p.nombre,
-        precio: p.precio_oferta || p.precio,
-        precioAntes: p.precio_oferta ? p.precio : 0,
+        precio: precioVigente(p),
+        precioAntes: ofertaVigente(p) ? p.precio : 0,
         imagen: /^https?:\/\//i.test(p.imagen || "") ? p.imagen : "",
         tienda: (cfg && cfg.nombre_tienda) || tienda.nombre || "mi tienda"
       });

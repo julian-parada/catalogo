@@ -2,7 +2,7 @@
 // Se carga al final del <body>, DESPUÉS de tienda.js.
 // Necesita antes: supabase-js, supabaseConfig.js (supabaseClient), tema.js y tienda.js (window.CFG).
 
-const DIAS_NUEVO = 15; // una prenda cuenta como "nueva" durante estos días desde que se agrega
+const DIAS_NUEVO = 5; // una prenda cuenta como "nueva" durante estos días desde que se agrega
 
 let products = [];
 let categoriasMenu = [];
@@ -50,7 +50,7 @@ async function cargarProductos(){
 
   const { data, error } = await supabaseClient
     .from("prendas")
-    .select(`id, nombre, precio, precio_oferta, imagen, descripcion, creado_en, categoria_id, categorias(nombre), tallas(id, talla, disponible), imagenes_prenda(url, orden)`)
+    .select(`*, categorias(nombre), tallas(id, talla, disponible), imagenes_prenda(url, orden)`)
     .eq("tienda_id", tienda.id)
     .order("creado_en", { ascending: false });
 
@@ -62,8 +62,8 @@ async function cargarProductos(){
       name: p.nombre,
       category: p.categorias ? p.categorias.nombre : "Otros",
       categoryId: p.categoria_id,
-      price: p.precio_oferta ? p.precio_oferta : p.precio,
-      originalPrice: p.precio_oferta ? p.precio : null,
+      price: precioVigente(p),
+      originalPrice: ofertaVigente(p) ? p.precio : null,   // la promoción dura 10 días
       img: p.imagen,
       description: p.descripcion || "",
       creado: p.creado_en,

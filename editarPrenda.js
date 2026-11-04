@@ -41,7 +41,7 @@ async function resolverCategoria(nombreTexto){
 async function cargarPrenda(){
   const { data, error } = await supabaseClient
     .from("prendas")
-    .select(`id, nombre, precio, precio_oferta, imagen, descripcion, categorias(nombre)`)
+    .select(`*, categorias(nombre)`)
     .eq("id", prendaId)
     .single();
 
@@ -50,7 +50,17 @@ async function cargarPrenda(){
   document.getElementById("nombre").value = data.nombre;
   document.getElementById("categoria").value = data.categorias ? data.categorias.nombre : "";
   document.getElementById("precio").value = data.precio;
-  document.getElementById("precioOferta").value = data.precio_oferta || "";
+  // Oferta vencida: el campo queda vacío (si la vuelves a escribir, dura otros 10 días)
+  const vigente = ofertaVigente(data);
+  document.getElementById("precioOferta").value = vigente ? (data.precio_oferta || "") : "";
+  const nota = document.getElementById("notaOferta");
+  if(nota){
+    if(vigente && data.oferta_hasta){
+      nota.textContent = "La promoción vence el " + new Date(data.oferta_hasta).toLocaleDateString("es-CO", { day: "numeric", month: "long" }) + ". Si cambias el precio de oferta, empieza a contar otros 10 días.";
+    }else if(Number(data.precio_oferta)){
+      nota.textContent = `La oferta anterior ($${Number(data.precio_oferta).toLocaleString("es-CO")}) ya venció. Escríbela otra vez para activarla 10 días más.`;
+    }
+  }
   document.getElementById("imagen").value = data.imagen;
   document.getElementById("descripcion").value = data.descripcion || "";
 

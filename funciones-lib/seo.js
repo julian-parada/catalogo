@@ -55,7 +55,7 @@ export async function datosTienda(env, slug){
 // Un producto de una tienda activa (las reglas de Supabase solo lo dejan ver si la tienda está al día)
 export async function datosProducto(env, tiendaId, productoId){
   const filas = await supabase(env,
-    "/rest/v1/prendas?select=id,nombre,precio,precio_oferta,imagen,descripcion,categorias(nombre),tallas(disponible)" +
+    "/rest/v1/prendas?select=*,categorias(nombre),tallas(disponible)" +
     "&id=eq." + encodeURIComponent(productoId) + "&tienda_id=eq." + encodeURIComponent(tiendaId));
   return Array.isArray(filas) && filas.length ? filas[0] : null;
 }
@@ -124,12 +124,13 @@ export async function paginaTienda(context, slug, { inyectarSlug, productoId = n
 
   let titulo, descripcion, imagen, canonica, datos, extras = "";
   if(indexable && prod){
-    const precio = Number(prod.precio_oferta || prod.precio) || 0;
+    const conOferta = Number(prod.precio_oferta) > 0 && (!prod.oferta_hasta || new Date(prod.oferta_hasta).getTime() > Date.now());
+    const precio = Number(conOferta ? prod.precio_oferta : prod.precio) || 0;
     const disponible = !Array.isArray(prod.tallas) || prod.tallas.some(t => t.disponible);
     canonica = `${origen}/${slug}?p=${prod.id}`;
     titulo = `${corto(prod.nombre, 70)} · ${pesos(precio)} | ${nombre}`;
     descripcion = corto(prod.descripcion ||
-      `${prod.nombre} por ${pesos(precio)} en ${nombre}.${prod.precio_oferta ? ` Antes ${pesos(prod.precio)}.` : ""} Pídelo fácil por WhatsApp.`, 160);
+      `${prod.nombre} por ${pesos(precio)} en ${nombre}.${conOferta ? ` Antes ${pesos(prod.precio)}.` : ""} Pídelo fácil por WhatsApp.`, 160);
     imagen = urlSegura(prod.imagen) || urlSegura(cfg.logo_url);
     datos = {
       "@context": "https://schema.org", "@type": "Product",
