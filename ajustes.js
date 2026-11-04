@@ -411,6 +411,7 @@ function limpiarWhatsapp(valor){
 async function subirArchivo(archivo, prefijo, limite){
   if(!archivo.type.startsWith("image/")) throw new Error("El archivo del " + prefijo + " debe ser una imagen.");
   // Se comprime antes de revisar el peso: logo hasta 600px, banner hasta 1920px (utils.js)
+  const original = archivo;
   archivo = await comprimirImagen(archivo, prefijo === "logo" ? 600 : 1920, 0.85);
   if(archivo.size > limite){
     throw new Error(`La imagen del ${prefijo} pesa demasiado (máximo ${Math.round(limite / 1024 / 1024)} MB).`);
@@ -423,8 +424,20 @@ async function subirArchivo(archivo, prefijo, limite){
   const { error } = await supabaseClient.storage.from(BUCKET).upload(nombre, archivo);
   if(error) throw error;
 
+  // Banner: además se sube una copia liviana para celular (mismo nombre + "-m").
+  // La página la usa en pantallas pequeñas y carga mucho más rápido. Si falla, se usa la grande.
+  if(prefijo === "banner" && original){
+    try{
+      const movil = await comprimirImagen(original, 900, 0.72);
+      await supabaseClient.storage.from(BUCKET).upload(nombreMovil(nombre), movil);
+    }catch(e){ console.warn("No se subió la versión para celular:", e); }
+  }
+
   return supabaseClient.storage.from(BUCKET).getPublicUrl(nombre).data.publicUrl;
 }
+
+// banner_123_abc.webp → banner_123_abc-m.webp (copia para celular)
+function nombreMovil(ruta){ return ruta.replace(/(\.[a-z0-9]+)$/i, "-m$1"); }
 
 // Borra del bucket el archivo viejo para no llenar el almacenamiento. Si falla, no pasa nada.
 async function borrarAnterior(url){
@@ -433,7 +446,9 @@ async function borrarAnterior(url){
   const i = url.indexOf(marca);
   if(i === -1) return;
   const ruta = decodeURIComponent(url.slice(i + marca.length).split("?")[0]);
-  await supabaseClient.storage.from(BUCKET).remove([ruta]);
+  const rutas = [ruta];
+  if(/\/banner_[^/]+$/.test(ruta)) rutas.push(nombreMovil(ruta));   // su copia para celular, si existe
+  await supabaseClient.storage.from(BUCKET).remove(rutas);
 }
 
 /* ---------------------------------------------------------

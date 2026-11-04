@@ -129,7 +129,9 @@ function aplicarConfiguracion(cfg){
 
   // Foto del banner (si no hay, se queda la que trae el CSS por defecto)
   const banner = urlSegura(cfg.banner_url);
-  if(banner){
+  const delServidor = document.documentElement.classList.contains("con-portada-m");
+  if(delServidor){ /* el servidor ya puso la foto grande y la de celular */ }
+  else if(banner){
     document.documentElement.style.setProperty("--hero-img", `url("${banner.replace(/"/g, "%22")}")`);
   }else{
     document.documentElement.style.removeProperty("--hero-img");
@@ -246,7 +248,7 @@ function pintarHero(cfg){
   });
 
   // Banner del hero como imagen de fondo
-  if(urlSegura(cfg.banner_url) && !cfg.quitar_banner){
+  if(urlSegura(cfg.banner_url) && !cfg.quitar_banner && !document.documentElement.classList.contains("con-portada-m")){
     document.documentElement.style.setProperty("--hero-img", `url("${urlSegura(cfg.banner_url).replace(/"/g, "%22")}")`);
     document.documentElement.classList.add("con-portada");
   }

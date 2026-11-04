@@ -20,14 +20,14 @@
   <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"></noscript>
   
   <!-- 1. ESTA ES LA LIBRERÍA DE SUPABASE (La que faltaba) -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0"></script>
   
   <!-- 2. Tu configuración (donde están tu URL y Key) -->
-  <script src="supabaseConfig.js"></script>
+  <script defer src="supabaseConfig.js"></script>
   
   <!-- 3. Tus otros scripts -->
-  <script src="utils.js"></script> 
-  <script src="tema.js"></script>
+  <script defer src="utils.js"></script> 
+  <script defer src="tema.js"></script>
   <link rel="icon" href="/favicon.ico" sizes="48x48">
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="/apple-touch-icon.png">
@@ -93,7 +93,7 @@
       </div>
 
       <!-- Accesos rápidos a las categorías (script.js los llena) -->
-      <div class="cat-chips" id="catChips" role="toolbar" aria-label="Filtrar por categoría" hidden></div>
+      <div class="cat-chips" id="catChips" role="toolbar" aria-label="Filtrar por categoría"></div>
 
       <!-- Mientras cargan los productos se ven tarjetas "fantasma" -->
       <div class="products" id="products">
@@ -277,10 +277,10 @@
 </footer>
 
 
-  <script src="tienda.js"></script>
-<script src="demo.js"></script>
-<script src="compartir.js"></script>
-<script src="script.js"></script>
+  <script defer src="tienda.js"></script>
+<script defer src="demo.js"></script>
+<script defer src="compartir.js"></script>
+<script defer src="script.js"></script>
 
   
 </body>

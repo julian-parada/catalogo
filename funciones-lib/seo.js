@@ -60,6 +60,16 @@ export async function datosProducto(env, tiendaId, productoId){
   return Array.isArray(filas) && filas.length ? filas[0] : null;
 }
 
+// Copia liviana del banner para celular (la sube ajustes.js): "" si no existe
+export async function bannerMovil(banner){
+  if(!/\/banner_[^/?#]+\.(webp|jpe?g|png)$/i.test(banner)) return "";
+  const url = banner.replace(/(\.[a-z0-9]+)$/i, "-m$1");
+  try{
+    const r = await fetch(url, { method: "HEAD", cf: { cacheTtl: 86400, cacheEverything: true }, signal: AbortSignal.timeout(800) });
+    return r.ok ? url : "";
+  }catch(e){ return ""; }
+}
+
 // Tiendas activas para el sitemap
 export async function tiendasActivas(env){
   const filas = await supabase(env, "/rest/v1/rpc/tiendas_publicas");
@@ -155,6 +165,7 @@ export async function paginaTienda(context, slug, { inyectarSlug, productoId = n
   }
   if(indexable){
     const banner = !cfg.quitar_banner ? urlSegura(cfg.banner_url) : "";
+    const movil = banner ? await bannerMovil(banner) : "";
     const hayPortada = ["portada_frase", "portada_subtitulo", "portada_boton"].some(c => String(cfg[c] || "").trim());
     rw = rw
       .on("#tiendaH1", { element(el){ el.setInnerContent(nombre); } })
@@ -166,9 +177,11 @@ export async function paginaTienda(context, slug, { inyectarSlug, productoId = n
       } });
     if(banner){
       // La foto de portada se pide de una vez, sin esperar al JavaScript: carga mucho más rápido en el celular
+      const u = x => `url("${x.replace(/["\\]/g, "")}")`;
       rw = rw.on("html", { element(el){
-        el.setAttribute("style", `--hero-img:url("${banner.replace(/["\\]/g, "")}")`);
-        el.setAttribute("class", ((el.getAttribute("class") || "") + " con-portada").trim());
+        // Con copia para celular: el CSS elige la foto según el ancho (style.css, "con-portada-m")
+        el.setAttribute("style", movil ? `--hero-img-d:${u(banner)};--hero-img-m:${u(movil)}` : `--hero-img:${u(banner)}`);
+        el.setAttribute("class", ((el.getAttribute("class") || "") + " con-portada" + (movil ? " con-portada-m" : "")).trim());
       } });
     }
     rw = rw
@@ -179,7 +192,10 @@ export async function paginaTienda(context, slug, { inyectarSlug, productoId = n
       .on('meta[property="og:type"]', { element(el){ el.setAttribute("content", prod ? "product" : "website"); } })
       .on("head", { element(el){
         el.append(
-          (banner && !prod ? `<link rel="preload" as="image" href="${attr(banner)}" fetchpriority="high">` : "") +
+          (banner && !prod ? (movil
+            ? `<link rel="preload" as="image" href="${attr(movil)}" media="(max-width: 750px)" fetchpriority="high">` +
+              `<link rel="preload" as="image" href="${attr(banner)}" media="(min-width: 751px)" fetchpriority="high">`
+            : `<link rel="preload" as="image" href="${attr(banner)}" fetchpriority="high">`) : "") +
           `<link rel="canonical" href="${attr(canonica)}">` +
           `<meta property="og:url" content="${attr(canonica)}">` +
           `<meta property="og:site_name" content="${attr(nombre)}">` +
