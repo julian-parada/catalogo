@@ -99,10 +99,47 @@ function pintarFooter(cfg){
     social.innerHTML = redes.join("");
   }
 
+  pintarUbicacion(cfg);
+
   const copy = document.getElementById("footerCopy");
   if(copy){
     const anio = new Date().getFullYear();
     copy.textContent = `© ${anio} ${cfg.nombre_tienda || ""}. Todos los derechos reservados.`;
+  }
+}
+
+// Cuadro de ubicación en el pie:
+//  · con dirección → mini mapa (al tocarlo abre Google Maps)
+//  · sin dirección → "Tienda 100 % en línea" con botón a WhatsApp
+function pintarUbicacion(cfg){
+  const caja = document.getElementById("footerUbicacion");
+  if(!caja) return;
+  const dir = String(cfg.footer_direccion || "").trim();
+  const link = safeUrl(cfg.footer_mapa_url);
+  const wa = numeroWhatsapp(cfg);
+  if(dir || link){
+    const destino = link || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(dir)}`;
+    // El mapa pequeño se dibuja con la dirección escrita (el link corto de Maps no se puede incrustar)
+    const mapa = dir
+      ? `<iframe src="https://maps.google.com/maps?q=${encodeURIComponent(dir)}&z=16&output=embed" loading="lazy" referrerpolicy="no-referrer-when-downgrade" tabindex="-1" aria-hidden="true" title="Mapa"></iframe>`
+      : `<span class="ubi-mapa-falso" aria-hidden="true"></span>`;
+    caja.innerHTML = `
+      <a class="ubi-card" href="${destino}" target="_blank" rel="noopener" aria-label="Ver la ubicación en Google Maps">
+        <span class="ubi-mapa">${mapa}<span class="ubi-pin" aria-hidden="true"></span></span>
+        <span class="ubi-pie">
+          <span class="ubi-txt"><b>Visítanos</b><small>${escapeHtml(dir || "Ver ubicación")}</small></span>
+          <span class="ubi-ir">Cómo llegar ↗</span>
+        </span>
+      </a>`;
+  }else{
+    caja.innerHTML = `
+      <div class="ubi-card ubi-virtual">
+        <span class="ubi-icono" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7h11v9H3z"/><path d="M14 10h4l3 3v3h-7"/><circle cx="7" cy="17.5" r="1.8"/><circle cx="17" cy="17.5" r="1.8"/></svg>
+        </span>
+        <span class="ubi-txt"><b>Tienda 100 % en línea</b><small>Pide por WhatsApp y te lo llevamos a domicilio.</small></span>
+        ${wa ? `<a class="ubi-ir" href="https://wa.me/${wa}" target="_blank" rel="noopener">Escríbenos ↗</a>` : ""}
+      </div>`;
   }
 }
 

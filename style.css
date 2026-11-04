@@ -1639,3 +1639,28 @@ html.ficha-abierta{overflow:hidden}
   .ver-mas{width:100%; min-width:0}
 }
 @media (prefers-reduced-motion:reduce){ .ver-mas, .ver-mas svg, .ver-mas-progreso span{transition:none} }
+
+/* ---------- Ubicación en el pie (mapa o tienda en línea) ---------- */
+#footerUbicacion{margin-top:18px; max-width:420px}
+.ubi-card{display:block; border:1px solid var(--line); border-radius:18px; overflow:hidden; background:var(--card, #151515); color:var(--white, #fff); text-decoration:none; transition:border-color .2s, transform .2s}
+a.ubi-card:hover{border-color:var(--acento-texto, var(--pink)); transform:translateY(-2px)}
+.ubi-mapa{position:relative; display:block; height:150px; background:#1d2230; overflow:hidden}
+.ubi-mapa iframe{position:absolute; inset:0; width:100%; height:100%; border:0; pointer-events:none; filter:saturate(.9)}
+.ubi-mapa-falso{position:absolute; inset:0; background:
+  linear-gradient(90deg, rgba(255,255,255,.06) 1px, transparent 1px) 0 0/28px 28px,
+  linear-gradient(0deg, rgba(255,255,255,.06) 1px, transparent 1px) 0 0/28px 28px,
+  radial-gradient(circle at 60% 45%, rgba(var(--pink-rgb, 255,20,147), .25), transparent 60%)}
+.ubi-pin{position:absolute; left:50%; top:50%; width:22px; height:22px; margin:-26px 0 0 -11px; border-radius:50% 50% 50% 0; transform:rotate(-45deg); background:var(--pink); box-shadow:0 6px 14px rgba(0,0,0,.35)}
+.ubi-pin::after{content:""; position:absolute; inset:6px; border-radius:50%; background:#fff}
+.ubi-mapa:has(iframe) .ubi-pin{display:none}
+.ubi-pie{display:flex; align-items:center; justify-content:space-between; gap:12px; padding:12px 14px}
+.ubi-txt{display:grid; gap:2px; min-width:0}
+.ubi-txt b{font-size:.92rem; font-weight:800}
+.ubi-txt small{font-size:.8rem; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.ubi-ir{flex:none; font-size:.78rem; font-weight:800; letter-spacing:.04em; padding:8px 12px; border-radius:99px; background:var(--pink); color:var(--texto-acento, #fff); text-decoration:none; white-space:nowrap}
+.ubi-virtual{display:flex; align-items:center; gap:14px; padding:14px}
+.ubi-virtual .ubi-txt small{white-space:normal}
+.ubi-icono{flex:none; width:46px; height:46px; border-radius:14px; display:grid; place-items:center; background:rgba(var(--pink-rgb, 255,20,147), .15); color:var(--acento-texto, var(--pink))}
+.ubi-icono svg{width:24px; height:24px}
+@media (max-width:750px){ #footerUbicacion{max-width:none} .ubi-virtual{flex-wrap:wrap} .ubi-virtual .ubi-ir{margin-left:60px} }
+html[data-fondo="claro"] .ubi-card{background:#fff; color:#111}
