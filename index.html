@@ -9,14 +9,18 @@
   <meta property="og:title" content="Catálogo en línea">
   <meta property="og:description" content="Mira el catálogo, elige tus productos y haz tu pedido por WhatsApp.">
   <meta property="og:type" content="website">
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="preconnect" href="https://txnvsigmwshwduhearvz.supabase.co" crossorigin>
   
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="compartir.css">
   <link rel="stylesheet" href="demo.css">
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <!-- Íconos de redes (solo se usan abajo, en el pie): se cargan sin frenar la página -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"></noscript>
   
   <!-- 1. ESTA ES LA LIBRERÍA DE SUPABASE (La que faltaba) -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0"></script>
   
   <!-- 2. Tu configuración (donde están tu URL y Key) -->
   <script src="supabaseConfig.js"></script>
@@ -65,6 +69,7 @@
 </div>
 
   <header class="hero">
+    <h1 class="sr-only" id="tiendaH1">Catálogo en línea</h1>
     <div class="hero-overlay">
       <span class="hero-pill"><i aria-hidden="true"></i> Pide fácil por WhatsApp</span>
       <span data-cfg="portada_frase" class="tag"></span>
@@ -223,7 +228,7 @@
   <button class="img-close" id="imgClose" aria-label="Cerrar">✕</button>
   <div class="img-modal-content">
     <button class="img-nav prev" id="imgPrev" aria-label="Foto anterior">‹</button>
-    <img id="imgBig" src="" alt="">
+    <img id="imgBig" alt="Foto del producto ampliada">
     <button class="img-nav next" id="imgNext" aria-label="Foto siguiente">›</button>
     <div id="imgThumbs" class="img-thumbs"></div>
   </div>

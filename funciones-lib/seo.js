@@ -46,7 +46,7 @@ export async function datosTienda(env, slug){
   const { id, activa } = filas[0];
   let cfg = null;
   if(activa){
-    const c = await supabase(env, "/rest/v1/configuracion?select=nombre_tienda,portada_titulo,portada_subtitulo,footer_texto,logo_url,banner_url&tienda_id=eq." + encodeURIComponent(id));
+    const c = await supabase(env, "/rest/v1/configuracion?select=*&tienda_id=eq." + encodeURIComponent(id));
     cfg = Array.isArray(c) && c.length ? c[0] : null;
   }
   return { id, activa, cfg };
@@ -82,6 +82,15 @@ const corto = (t, n) => { t = String(t || "").replace(/\s+/g, " ").trim(); retur
 const pesos = n => "$" + Math.round(Number(n) || 0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 const attr = v => String(v).replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;");
 const jsonSeguro = o => JSON.stringify(o).replace(/</g, "\\u003c");
+// Descripción para Google: el subtítulo de la tienda, completado si es muy corto (Google pide 50–160 letras)
+export function descripcionTienda(cfg, nombre){
+  const base = String(cfg.portada_subtitulo || cfg.footer_texto || "").replace(/\s+/g, " ").trim();
+  const relleno = `Mira el catálogo de ${nombre}, elige tus productos y haz tu pedido por WhatsApp.`;
+  if(base.length >= 50) return corto(base, 160);
+  return corto(base ? `${base.replace(/[.\s]+$/, "")}. ${relleno}` : relleno, 160);
+}
+// Textos de la portada que el servidor ya deja escritos (así no "saltan" al cargar)
+const TEXTOS_PORTADA = ["portada_frase", "portada_subtitulo", "portada_boton", "catalogo_etiqueta", "catalogo_titulo"];
 
 // Lee el index.html publicado y le pone el nombre, la descripción y la foto de la tienda.
 // Si el link trae un producto (?p=ID), la vista previa es la del producto: su foto, nombre y precio.
@@ -132,7 +141,7 @@ export async function paginaTienda(context, slug, { inyectarSlug, productoId = n
   }else if(indexable){
     canonica = `${origen}/${slug}`;
     titulo = cfg.portada_titulo ? `${nombre} | ${corto(cfg.portada_titulo, 60)}` : nombre;
-    descripcion = corto(cfg.portada_subtitulo || cfg.footer_texto || `Mira el catálogo de ${nombre}, elige tus productos y haz tu pedido por WhatsApp.`, 160);
+    descripcion = descripcionTienda(cfg, nombre);
     imagen = urlSegura(cfg.banner_url) || urlSegura(cfg.logo_url);
     datos = { "@context": "https://schema.org", "@type": "Store", name: nombre, url: canonica, description: descripcion, ...(imagen ? { image: imagen } : {}) };
   }
@@ -145,6 +154,23 @@ export async function paginaTienda(context, slug, { inyectarSlug, productoId = n
     rw = rw.on("head", { element(el){ el.prepend(`<script>${variables.join("")}</script>`, { html: true }); } });
   }
   if(indexable){
+    const banner = !cfg.quitar_banner ? urlSegura(cfg.banner_url) : "";
+    const hayPortada = ["portada_frase", "portada_subtitulo", "portada_boton"].some(c => String(cfg[c] || "").trim());
+    rw = rw
+      .on("#tiendaH1", { element(el){ el.setInnerContent(nombre); } })
+      .on(".hero-overlay", { element(el){ if(!hayPortada) el.setAttribute("hidden", ""); } })
+      .on(".hero-cta", { element(el){ if(!String(cfg.portada_boton || "").trim()) el.setAttribute("hidden", ""); } })
+      .on("[data-cfg]", { element(el){
+        const c = el.getAttribute("data-cfg"), v = cfg[c];
+        if(TEXTOS_PORTADA.includes(c) && typeof v === "string" && v.trim()) el.setInnerContent(v);
+      } });
+    if(banner){
+      // La foto de portada se pide de una vez, sin esperar al JavaScript: carga mucho más rápido en el celular
+      rw = rw.on("html", { element(el){
+        el.setAttribute("style", `--hero-img:url("${banner.replace(/["\\]/g, "")}")`);
+        el.setAttribute("class", ((el.getAttribute("class") || "") + " con-portada").trim());
+      } });
+    }
     rw = rw
       .on("title", { element(el){ el.setInnerContent(titulo); } })
       .on('meta[name="description"]', { element(el){ el.setAttribute("content", descripcion); } })
@@ -153,6 +179,7 @@ export async function paginaTienda(context, slug, { inyectarSlug, productoId = n
       .on('meta[property="og:type"]', { element(el){ el.setAttribute("content", prod ? "product" : "website"); } })
       .on("head", { element(el){
         el.append(
+          (banner && !prod ? `<link rel="preload" as="image" href="${attr(banner)}" fetchpriority="high">` : "") +
           `<link rel="canonical" href="${attr(canonica)}">` +
           `<meta property="og:url" content="${attr(canonica)}">` +
           `<meta property="og:site_name" content="${attr(nombre)}">` +

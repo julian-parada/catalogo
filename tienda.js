@@ -143,8 +143,12 @@ function aplicarConfiguracion(cfg){
 
   // Descripción de la página con los textos de la tienda
   const desc = document.querySelector('meta[name="description"]');
-  const texto = cfg.portada_subtitulo || cfg.footer_texto;
-  if(desc && texto) desc.setAttribute("content", texto);
+  const base = String(cfg.portada_subtitulo || cfg.footer_texto || "").replace(/\s+/g, " ").trim();
+  const relleno = `Mira el catálogo de ${cfg.nombre_tienda || "la tienda"}, elige tus productos y haz tu pedido por WhatsApp.`;
+  if(desc) desc.setAttribute("content", base.length >= 50 ? base : (base ? `${base.replace(/[.\s]+$/, "")}. ${relleno}` : relleno));
+  // Título principal (oculto en pantalla) con el nombre de la tienda
+  const h1 = document.getElementById("tiendaH1");
+  if(h1 && cfg.nombre_tienda) h1.textContent = cfg.nombre_tienda;
 }
 
 // Si la tienda no puso frase, subtítulo ni botón, no se muestra el cuadro vacío
