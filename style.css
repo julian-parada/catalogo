@@ -1665,15 +1665,16 @@ a.ubi-card:hover{border-color:var(--acento-texto, var(--pink)); transform:transl
 @media (max-width:750px){ #footerUbicacion{max-width:none} .ubi-virtual{flex-wrap:wrap} .ubi-virtual .ubi-ir{margin-left:60px} }
 html[data-fondo="claro"] .ubi-card{background:#fff; color:#111}
 
-/* Letra cursiva de mano (fuente "Artesanal"): la cursiva queda en los títulos y los nombres;
-   lo pequeño (menú, botones, precios, pie) usa la letra del texto para que se lea fácil */
-html[data-letra-mano] .cat-link,
-html[data-letra-mano] .add,
-html[data-letra-mano] .price,
-html[data-letra-mano] .footer-col h4,
-html[data-letra-mano] .footer-social a,
-html[data-letra-mano] .cart-total strong,
-html[data-letra-mano] .toast,
-html[data-letra-mano] .hero-cta,
-html[data-letra-mano] .chip,
-html[data-letra-mano] .btn{font-family:var(--font-texto, system-ui, sans-serif) !important; font-weight:700; letter-spacing:.02em}
+/* Botones y avisos se escriben normal en el código y se muestran en MAYÚSCULAS con CSS
+   (así la letra de mano "Artesanal" puede mostrarlos normal) */
+.add, #sendWhatsapp, .btn-whatsapp, .toast{text-transform:uppercase}
+
+/* Letra cursiva de mano (fuente "Artesanal"): toda la tienda con la letra de mano —menú, botones,
+   precios, etiquetas, pie— para que se vea pareja. Solo los párrafos largos y lo que se escribe
+   (descripciones, buscador, formularios) quedan con la letra del texto, porque en cursiva no se leen.
+   Esta letra no tiene negrilla ni se ve bien en MAYÚSCULAS: se quitan en todo. */
+html[data-letra-mano] body{font-family:var(--font-titulo) !important}
+html[data-letra-mano] body *{font-family:var(--font-titulo) !important; font-weight:400 !important; text-transform:none !important; letter-spacing:.01em !important}
+html[data-letra-mano] :is(p, input, textarea, select, option, .ficha-desc, .ubi-txt small, .cart-item small, .demo-burbuja, .hecho-con, .hecho-con *, .footer-bottom),
+html[data-letra-mano] :is(p, .ficha-desc) *{font-family:var(--font-texto, system-ui, sans-serif) !important}
+html[data-letra-mano] .bi::before{font-family:"bootstrap-icons" !important}

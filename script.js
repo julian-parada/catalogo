@@ -259,7 +259,7 @@ function tarjetaProducto(p, i, paso){
         ${esOpcionUnica(p.sizes[0].talla) ? "" : `<p class="talla-unica">${esc(p.sizes[0].talla)}</p>`}
         <input type="hidden" id="talla-${p.id}" value="${p.sizes[0].id}">
       `}
-      <button class="add" data-add="${p.id}" onclick="addToCart(${p.id})"><span>AÑADIR</span> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cart4" viewBox="0 0 16 16">
+      <button class="add" data-add="${p.id}" onclick="addToCart(${p.id})"><span>Añadir</span> <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-cart4" viewBox="0 0 16 16">
         <path d="M0 2.5A.5.5 0 0 1 .5 2H2a.5.5 0 0 1 .485.379L2.89 4H14.5a.5.5 0 0 1 .485.621l-1.5 6A.5.5 0 0 1 13 11H4a.5.5 0 0 1-.485-.379L1.61 3H.5a.5.5 0 0 1-.5-.5M3.14 5l.5 2H5V5zM6 5v2h2V5zm3 0v2h2V5zm3 0v2h1.36l.5-2zm1.11 3H12v2h.61zM11 8H9v2h2zM8 8H6v2h2zM5 8H3.89l.5 2H5zm0 5a1 1 0 1 0 0 2 1 1 0 0 0 0-2m-2 1a2 2 0 1 1 4 0 2 2 0 0 1-4 0m9-1a1 1 0 1 0 0 2 1 1 0 0 0 0-2m-2 1a2 2 0 1 1 4 0 2 2 0 0 1-4 0"/>
       </svg></button>
     </div>
@@ -437,7 +437,7 @@ function addToCart(id, tallaElegida){
     boton.classList.add("agregado");
     if(texto) texto.textContent = "✓ AÑADIDO";
     clearTimeout(boton._t);
-    boton._t = setTimeout(() => { boton.classList.remove("agregado"); if(texto) texto.textContent = "AÑADIR"; }, 1400);
+    boton._t = setTimeout(() => { boton.classList.remove("agregado"); if(texto) texto.textContent = "Añadir"; }, 1400);
   }
   return true;
 }
@@ -514,7 +514,7 @@ function updateCount(){
 }
 
 /* ---------------------------------------------------------
-   ENVIAR PEDIDO POR WHATSAPP
+   Enviar pedido por WhatsApp
    --------------------------------------------------------- */
 async function sendWhatsapp(){
   if(!cart.length){ alert("Agrega al menos un producto al pedido."); return; }
@@ -559,7 +559,7 @@ async function sendWhatsapp(){
       ? "Algún producto de tu pedido ya no está disponible. Recarga el catálogo y vuelve a intentar."
       : "No se pudo generar el pedido, intenta de nuevo.");
     btn.disabled = false;
-    btn.textContent = "ENVIAR PEDIDO POR WHATSAPP";
+    btn.textContent = "Enviar pedido por WhatsApp";
     return;
   }
 
@@ -579,7 +579,7 @@ async function sendWhatsapp(){
   if(!ventana) window.location.href = urlWhatsapp;
 
   btn.disabled = false;
-  btn.textContent = "ENVIAR PEDIDO POR WHATSAPP";
+  btn.textContent = "Enviar pedido por WhatsApp";
 }
 
 // Texto del pedido que llega a WhatsApp.
@@ -722,7 +722,7 @@ if($dc("datosCliente")){
 }
 
 /* ---------------------------------------------------------
-   AVISO "AGREGADO AL CARRITO"
+   AVISO "Agregado al carrito"
    --------------------------------------------------------- */
 let toastTimeout;
 function showToast(texto){
@@ -848,7 +848,7 @@ function pintarFicha(p, foto){
 
   const add = document.getElementById("fichaAdd");
   add.classList.remove("agregado");
-  add.querySelector("span").textContent = "AÑADIR AL PEDIDO";
+  add.querySelector("span").textContent = "Añadir al pedido";
   document.getElementById("fichaVerPedido").hidden = true;
 
   requestAnimationFrame(() => { track.scrollLeft = foto * track.clientWidth; });
@@ -965,7 +965,7 @@ window.addEventListener("popstate", () => {
     add.querySelector("span").textContent = "✓ AÑADIDO AL PEDIDO";
     document.getElementById("fichaVerPedido").hidden = false;
     clearTimeout(add._t);
-    add._t = setTimeout(() => { add.classList.remove("agregado"); add.querySelector("span").textContent = "AÑADIR OTRO"; }, 1600);
+    add._t = setTimeout(() => { add.classList.remove("agregado"); add.querySelector("span").textContent = "Añadir otro"; }, 1600);
   });
 
   document.getElementById("fichaVerPedido").addEventListener("click", () => {
@@ -1084,8 +1084,8 @@ document.addEventListener("keydown", (e) => {
    --------------------------------------------------------- */
 function pantallaBloqueo(motivo){
   const textos = {
-    noExiste:   ["TIENDA NO ENCONTRADA", "Revisa que el link esté completo."],
-    suspendida: ["SERVICIO SUSPENDIDO", "Esta tienda se encuentra temporalmente inactiva."]
+    noExiste:   ["Tienda no encontrada", "Revisa que el link esté completo."],
+    suspendida: ["Servicio suspendido", "Esta tienda se encuentra temporalmente inactiva."]
   };
   const [titulo, detalle] = textos[motivo] || textos.noExiste;
 
@@ -1094,7 +1094,7 @@ function pantallaBloqueo(motivo){
   const caja = document.createElement("div");
   caja.style.cssText = "display:flex;flex-direction:column;justify-content:center;align-items:center;min-height:100vh;background:#070707;color:#fff;text-align:center;font-family:sans-serif;padding:20px";
   const h1 = document.createElement("h1");
-  h1.style.cssText = "font-size:2.6rem;color:#ff1493;font-family:'Bebas Neue',sans-serif;margin:0 0 12px";
+  h1.style.cssText = "font-size:2.6rem;color:#ff1493;font-family:'Bebas Neue',sans-serif;margin:0 0 12px;text-transform:uppercase";
   h1.textContent = titulo;
   const p = document.createElement("p");
   p.style.cssText = "font-size:1.1rem;max-width:420px;margin:0";
