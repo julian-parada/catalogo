@@ -514,7 +514,7 @@ const FUENTES = {
   },
   artesanal: {
     nombre: "Artesanal", descripcion: "Hecho a mano, postres, detalles",
-    titulo: "'Pacifico', cursive", texto: "'Poppins', system-ui, sans-serif", peso: 400, mayusculas: false,
+    titulo: "'Pacifico', cursive", texto: "'Poppins', system-ui, sans-serif", peso: 400, mayusculas: false, deMano: true,
     google: "family=Pacifico&family=Poppins:wght@400;500;600;700;800;900"
   },
   suave: {
@@ -541,6 +541,8 @@ function aplicarFuente(clave){
   raiz.setProperty("--font-titulo-peso", String(f.peso));
   // Letras de mano o con serifa fina se ven mal en MAYÚSCULAS: esas van como se escriben
   raiz.setProperty("--titulo-transform", f.mayusculas === false ? "none" : "uppercase");
+  // Letra cursiva de mano: solo en títulos; menús, botones y precios van con la letra normal (se leen mejor)
+  document.documentElement.toggleAttribute("data-letra-mano", !!f.deMano);
 }
 
 /* =========================================================

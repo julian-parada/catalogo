@@ -1664,3 +1664,16 @@ a.ubi-card:hover{border-color:var(--acento-texto, var(--pink)); transform:transl
 .ubi-icono svg{width:24px; height:24px}
 @media (max-width:750px){ #footerUbicacion{max-width:none} .ubi-virtual{flex-wrap:wrap} .ubi-virtual .ubi-ir{margin-left:60px} }
 html[data-fondo="claro"] .ubi-card{background:#fff; color:#111}
+
+/* Letra cursiva de mano (fuente "Artesanal"): la cursiva queda en los títulos y los nombres;
+   lo pequeño (menú, botones, precios, pie) usa la letra del texto para que se lea fácil */
+html[data-letra-mano] .cat-link,
+html[data-letra-mano] .add,
+html[data-letra-mano] .price,
+html[data-letra-mano] .footer-col h4,
+html[data-letra-mano] .footer-social a,
+html[data-letra-mano] .cart-total strong,
+html[data-letra-mano] .toast,
+html[data-letra-mano] .hero-cta,
+html[data-letra-mano] .chip,
+html[data-letra-mano] .btn{font-family:var(--font-texto, system-ui, sans-serif) !important; font-weight:700; letter-spacing:.02em}
