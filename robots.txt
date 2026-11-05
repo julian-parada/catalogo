@@ -9,4 +9,4 @@ Disallow: /plataforma
 Disallow: /restablecer
 Disallow: /pedido
 
-Sitemap: https://exhibepro.pages.dev/sitemap.xml
+Sitemap: https://linktalogo.com/sitemap.xml

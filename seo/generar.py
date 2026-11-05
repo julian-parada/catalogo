@@ -11,7 +11,7 @@ RAIZ = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from paginas import PAGINAS
 
-ORIGEN = "https://exhibepro.pages.dev"
+ORIGEN = "https://linktalogo.com"
 e = lambda s: html.escape(str(s), quote=True)
 
 base = open(os.path.join(RAIZ, "inicio.html"), encoding="utf-8").read()

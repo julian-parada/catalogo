@@ -6,7 +6,7 @@
 const PRECIO_MES = 39900;
 const PRECIOS = { 1: 39900, 3: 107700, 6: 215400, 12: 399000 };   // 3 y 6 meses: 10 % menos · 1 año: 2 meses gratis
 const DIAS_AVISO = 5;            // "por vencer" cuando quedan estos días o menos
-const URL_BASE = "https://exhibepro.pages.dev";
+const URL_BASE = "https://linktalogo.com";
 
 const $ = id => document.getElementById(id);
 const esc = s => escapeHtml(s ?? "");

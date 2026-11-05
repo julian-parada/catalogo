@@ -25,7 +25,7 @@ PAGINAS = [
     "faq": [
       ("¿Cuánto cuesta una página web para mi tienda?", "Con LinkTalogo pagas $39.900 al mes, o $399.000 el año (te salen 2 meses gratis). No hay costo de diseño ni de instalación, y los primeros 15 días son gratis."),
       ("¿En cuánto tiempo queda lista?", "La configuro en uno o dos días con tu nombre, logo y portada. Después tú subes tus productos a tu ritmo; cada uno toma un minuto."),
-      ("¿Necesito dominio o hosting?", "No. Tu tienda ya tiene su dirección, por ejemplo exhibepro.pages.dev/tu-tienda, y el hosting está incluido."),
+      ("¿Necesito dominio o hosting?", "No. Tu tienda ya tiene su dirección, por ejemplo linktalogo.com/tu-tienda, y el hosting está incluido."),
       ("¿Puedo cambiar precios y productos yo mismo?", "Sí. Desde tu panel en el celular agregas, editas, pones en oferta o desactivas productos cuando quieras."),
       ("¿Qué pasa si no me gusta?", "Si en los 15 días de prueba no te convence, no pagas nada. No hay contratos ni permanencia."),
     ],
