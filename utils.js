@@ -98,7 +98,7 @@ async function subirFotoPrenda(archivo){
   if(!tienda) throw new Error("No se encontró tu tienda. Vuelve a iniciar sesión.");
   const limpio = (archivo.name || "foto").normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^a-zA-Z0-9._-]/g, "_");
   const ruta = `${tienda.id}/${Date.now()}_${Math.random().toString(36).slice(2, 7)}_${limpio}`;
-  const { error } = await supabaseClient.storage.from(BUCKET_FOTOS).upload(ruta, archivo);
+  const { error } = await supabaseClient.storage.from(BUCKET_FOTOS).upload(ruta, archivo, { cacheControl: "31536000" });
   if(error) throw error;
   return supabaseClient.storage.from(BUCKET_FOTOS).getPublicUrl(ruta).data.publicUrl;
 }

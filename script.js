@@ -324,7 +324,7 @@ function htmlFotos(p, pos = 0){
   const fotos = fotosDe(p);
   const slides = fotos.map((u, i) => `
       <div class="media-slide" style="--bg:url('${esc(urlCss(u))}')">
-        <img class="product-img" src="${esc(u)}" alt="${esc(p.name)}${fotos.length > 1 ? ` (foto ${i + 1})` : ""}"
+        <img class="product-img" width="600" height="750" src="${esc(u)}" alt="${esc(p.name)}${fotos.length > 1 ? ` (foto ${i + 1})` : ""}"
              loading="${i === 0 && pos < 8 ? "eager" : "lazy"}" onerror="this.src='img/placeholder.jpg'">
       </div>`).join("");
 

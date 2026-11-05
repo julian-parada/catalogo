@@ -64,10 +64,20 @@ export async function datosProducto(env, tiendaId, productoId){
 export async function bannerMovil(banner){
   if(!/\/banner_[^/?#]+\.(webp|jpe?g|png)$/i.test(banner)) return "";
   const url = banner.replace(/(\.[a-z0-9]+)$/i, "-m$1");
+  // La respuesta (sí/no) se guarda 1 día en la caché de Cloudflare: así no se pregunta en cada visita
+  const clave = new Request("https://cache.linktalogo.internal/banner-movil?u=" + encodeURIComponent(url));
+  const cache = typeof caches !== "undefined" ? caches.default : null;
   try{
-    const r = await fetch(url, { method: "HEAD", cf: { cacheTtl: 86400, cacheEverything: true }, signal: AbortSignal.timeout(800) });
-    return r.ok ? url : "";
-  }catch(e){ return ""; }
+    const guardado = cache && await cache.match(clave);
+    if(guardado) return (await guardado.text()) === "1" ? url : "";
+  }catch(e){}
+  let existe = false;
+  try{
+    const r = await fetch(url, { method: "HEAD", signal: AbortSignal.timeout(800) });
+    existe = r.ok;
+  }catch(e){ return ""; }   // si tardó, no se guarda: se vuelve a intentar en la próxima visita
+  try{ if(cache) await cache.put(clave, new Response(existe ? "1" : "0", { headers: { "Cache-Control": "max-age=86400" } })); }catch(e){}
+  return existe ? url : "";
 }
 
 // Tiendas activas para el sitemap

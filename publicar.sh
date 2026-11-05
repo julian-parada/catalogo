@@ -5,7 +5,7 @@
 set -e
 rm -rf dist
 mkdir -p dist
-cp *.html *.js *.css _headers robots.txt dist/
+cp *.html *.js *.css _headers robots.txt llms.txt dist/
 # Íconos (pestaña del navegador, Google, iPhone/Android)
 cp favicon.ico favicon.svg favicon-48.png icon-192.png icon-512.png apple-touch-icon.png site.webmanifest dist/
 cp -r img dist/

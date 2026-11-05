@@ -1,0 +1,30 @@
+# LinkTalogo
+
+> LinkTalogo es una plataforma colombiana (Ocaña, Norte de Santander) que le da a cada almacén o emprendimiento su propia página web con catálogo de productos, donde los clientes arman su pedido y lo envían listo por WhatsApp. Pedido a un clic.
+
+- Precio: $39.900 COP al mes, con 15 días de prueba gratis y sin tarjeta. Sin comisiones por venta.
+- Cada tienda tiene su logo, colores, banner y productos; la tienda sube y edita sus productos desde el celular.
+- Funciones: categorías, buscador, fotos y opciones (talla, color, tamaño), carrito con pedido a WhatsApp, link del pedido, marcar productos como vendidos, historial de ventas y aparición en Google.
+- Contacto: WhatsApp +57 324 734 8475.
+
+## Páginas principales
+
+- [Inicio](https://linktalogo.com/): qué es LinkTalogo, funciones, precio y preguntas frecuentes
+- [Página web para mi tienda](https://linktalogo.com/pagina-web-para-mi-tienda)
+- [Catálogo virtual para almacenes](https://linktalogo.com/catalogo-virtual-para-almacenes)
+- [Catálogo en línea con pedidos por WhatsApp](https://linktalogo.com/catalogo-en-linea-whatsapp)
+- [Tienda online para negocios](https://linktalogo.com/tienda-online-para-negocios)
+- [Página web para tiendas de ropa](https://linktalogo.com/pagina-web-para-tiendas-de-ropa)
+- [Página web para zapaterías](https://linktalogo.com/pagina-web-para-zapaterias)
+- [Catálogo para perfumerías y accesorios](https://linktalogo.com/catalogo-para-perfumerias-y-accesorios)
+- [Tienda online en Ocaña](https://linktalogo.com/tienda-online-ocana)
+- [Tienda online en Cúcuta](https://linktalogo.com/tienda-online-cucuta)
+- [Página web para emprendedores](https://linktalogo.com/pagina-web-para-emprendedores)
+
+## Ejemplo
+
+- [Tienda de ejemplo (LookShop)](https://linktalogo.com/lookshop): así se ve una tienda LinkTalogo
+
+## Optional
+
+- [Mapa del sitio](https://linktalogo.com/sitemap.xml): todas las tiendas y productos públicos

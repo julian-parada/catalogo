@@ -421,7 +421,7 @@ async function subirArchivo(archivo, prefijo, limite){
   // Cada tienda sube a su propia carpeta (lo exige el servidor)
   const nombre = `${tienda.id}/${prefijo}_${Date.now()}_${Math.random().toString(36).slice(2, 8)}.${ext}`;
 
-  const { error } = await supabaseClient.storage.from(BUCKET).upload(nombre, archivo);
+  const { error } = await supabaseClient.storage.from(BUCKET).upload(nombre, archivo, { cacheControl: "31536000" });
   if(error) throw error;
 
   // Banner: además se sube una copia liviana para celular (mismo nombre + "-m").
@@ -429,7 +429,7 @@ async function subirArchivo(archivo, prefijo, limite){
   if(prefijo === "banner" && original){
     try{
       const movil = await comprimirImagen(original, 900, 0.72);
-      await supabaseClient.storage.from(BUCKET).upload(nombreMovil(nombre), movil);
+      await supabaseClient.storage.from(BUCKET).upload(nombreMovil(nombre), movil, { cacheControl: "31536000" });
     }catch(e){ console.warn("No se subió la versión para celular:", e); }
   }
 
