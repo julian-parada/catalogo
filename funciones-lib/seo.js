@@ -44,12 +44,16 @@ export async function datosTienda(env, slug){
   const filas = await supabase(env, "/rest/v1/rpc/tienda_publica?p_slug=" + encodeURIComponent(slug));
   if(!Array.isArray(filas) || !filas.length) return null;
   const { id, activa } = filas[0];
-  let cfg = null;
+  let cfg = null, cats = [];
   if(activa){
-    const c = await supabase(env, "/rest/v1/configuracion?select=*&tienda_id=eq." + encodeURIComponent(id));
+    const [c, k] = await Promise.all([
+      supabase(env, "/rest/v1/configuracion?select=*&tienda_id=eq." + encodeURIComponent(id)),
+      supabase(env, "/rest/v1/categorias?select=nombre&order=orden&tienda_id=eq." + encodeURIComponent(id)).catch(() => [])
+    ]);
     cfg = Array.isArray(c) && c.length ? c[0] : null;
+    cats = Array.isArray(k) ? k.map(x => String(x.nombre || "").trim()).filter(Boolean) : [];
   }
-  return { id, activa, cfg };
+  return { id, activa, cfg, cats };
 }
 
 // Un producto de una tienda activa (las reglas de Supabase solo lo dejan ver si la tienda está al día)
@@ -103,11 +107,31 @@ const pesos = n => "$" + Math.round(Number(n) || 0).toString().replace(/\B(?=(\d
 const attr = v => String(v).replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;");
 const jsonSeguro = o => JSON.stringify(o).replace(/</g, "\\u003c");
 // Descripción para Google: el subtítulo de la tienda, completado si es muy corto (Google pide 50–160 letras)
-export function descripcionTienda(cfg, nombre){
-  const base = String(cfg.portada_subtitulo || cfg.footer_texto || "").replace(/\s+/g, " ").trim();
-  const relleno = `Mira el catálogo de ${nombre}, elige tus productos y haz tu pedido por WhatsApp.`;
+// Textos que la tienda dejó de ejemplo o genéricos: no sirven para Google
+const GENERICO = /^(nuestra colecci[oó]n|cat[aá]logo|bienvenid[oa]s?|inicio|tienda|t[ií]tulo que se ve.*|subt[ií]tulo de tu negocio.*|texto de ejemplo.*)$/i;
+const util = t => { const s = String(t || "").replace(/\s+/g, " ").trim(); return s && !GENERICO.test(s) ? s : ""; };
+// Ciudad de la tienda: la última parte de la dirección ("Calle 11 #12-30, Centro, Ocaña") o una ciudad nombrada en sus textos
+const CIUDADES = /\b(Oca[ñn]a|C[uú]cuta|Bucaramanga|Bogot[aá]|Medell[ií]n|Cali|Barranquilla|Cartagena|Santa Marta|Valledupar|Aguachica|Pamplona|[ÁA]brego|Convenci[oó]n|Teorama|San Calixto|El Carmen|Hacar[ií]|La Playa|Villa del Rosario|Los Patios|Tib[uú])\b/i;
+export function ciudadTienda(cfg){
+  const dir = String(cfg.footer_direccion || "").trim();
+  const ult = dir.split(",").map(s => s.trim()).filter(Boolean).pop() || "";
+  if(ult && !/\d|#/.test(ult) && ult.length <= 30 && dir.includes(",")) return ult.replace(/\s*-\s*.*$/, "");
+  const m = [dir, cfg.portada_subtitulo, cfg.footer_texto, cfg.portada_titulo].join(" ").match(CIUDADES);
+  return m ? m[1] : "";
+}
+export function descripcionTienda(cfg, nombre, cats = [], ciudad = ""){
+  const base = util(cfg.portada_subtitulo) || util(cfg.footer_texto);
+  const lista = cats.slice(0, 4).join(", ").toLowerCase();
+  const relleno = `${lista ? `${nombre}${ciudad ? ` en ${ciudad}` : ""}: ${lista}. ` : ""}Mira el catálogo con fotos y precios y haz tu pedido por WhatsApp.`;
   if(base.length >= 50) return corto(base, 160);
-  return corto(base ? `${base.replace(/[.\s]+$/, "")}. ${relleno}` : relleno, 160);
+  return corto(base ? `${base.replace(/[.\s]+$/, "")}. ${relleno}` : `${lista ? "" : `Catálogo de ${nombre}${ciudad ? ` en ${ciudad}` : ""}. `}${relleno}`, 160);
+}
+// Título para Google: el de la tienda si es propio; si no, nombre + ciudad + qué es
+export function tituloTienda(cfg, nombre, ciudad = ""){
+  const propio = util(cfg.portada_titulo);
+  const lugar = ciudad && !new RegExp(ciudad, "i").test(nombre + " " + propio) ? ` en ${ciudad}` : "";
+  if(propio) return corto(`${nombre} | ${propio}${lugar}`, 70);
+  return corto(`${nombre}${lugar} | Catálogo y pedidos por WhatsApp`, 70);
 }
 // Textos de la portada que el servidor ya deja escritos (así no "saltan" al cargar)
 const TEXTOS_PORTADA = ["portada_frase", "portada_subtitulo", "portada_boton", "catalogo_etiqueta", "catalogo_titulo"];
@@ -161,10 +185,23 @@ export async function paginaTienda(context, slug, { inyectarSlug, productoId = n
       (imagen ? `<meta property="og:image:alt" content="${attr(prod.nombre)}">` : "");
   }else if(indexable){
     canonica = `${origen}/${slug}`;
-    titulo = cfg.portada_titulo ? `${nombre} | ${corto(cfg.portada_titulo, 60)}` : nombre;
-    descripcion = descripcionTienda(cfg, nombre);
+    const ciudad = ciudadTienda(cfg);
+    titulo = tituloTienda(cfg, nombre, ciudad);
+    descripcion = descripcionTienda(cfg, nombre, info.cats || [], ciudad);
     imagen = urlSegura(cfg.banner_url) || urlSegura(cfg.logo_url);
-    datos = { "@context": "https://schema.org", "@type": "Store", name: nombre, url: canonica, description: descripcion, ...(imagen ? { image: imagen } : {}) };
+    // Datos para Google: "sameAs" le dice que esta página es del mismo negocio que su Instagram, TikTok y Facebook
+    const redes = [cfg.instagram_url, cfg.tiktok_url, cfg.facebook_url].map(urlSegura).filter(Boolean);
+    const tel = String(cfg.whatsapp || "").replace(/\D/g, "");
+    const dir = util(cfg.footer_direccion);
+    datos = {
+      "@context": "https://schema.org", "@type": "Store", name: nombre, url: canonica, description: descripcion,
+      ...(imagen ? { image: imagen } : {}),
+      ...(urlSegura(cfg.logo_url) ? { logo: urlSegura(cfg.logo_url) } : {}),
+      ...(redes.length ? { sameAs: redes } : {}),
+      ...(tel.length >= 10 ? { telephone: "+" + tel } : {}),
+      ...((dir || ciudad) ? { address: { "@type": "PostalAddress", ...(dir ? { streetAddress: dir } : {}), ...(ciudad ? { addressLocality: ciudad } : {}), addressCountry: "CO" } } : {}),
+      ...((info.cats || []).length ? { keywords: info.cats.join(", ") } : {})
+    };
   }
 
   let rw = new HTMLRewriter();

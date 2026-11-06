@@ -160,9 +160,13 @@ function aplicarConfiguracion(cfg){
   // Buscador
 
   // Pestaña del navegador
-  document.title = cfg.portada_titulo
-    ? `${cfg.nombre_tienda} | ${cfg.portada_titulo}`
-    : cfg.nombre_tienda;
+  // Si el servidor ya puso el título para Google (nombre + ciudad + qué es), se respeta
+  const nombreT = String(cfg.nombre_tienda || "").trim();
+  if(!nombreT || !document.title.startsWith(nombreT)){
+    const generico = /^(nuestra colecci[oó]n|cat[aá]logo|bienvenid[oa]s?|inicio|tienda|t[ií]tulo que se ve.*)$/i;
+    const propio = String(cfg.portada_titulo || "").trim();
+    document.title = propio && !generico.test(propio) ? `${nombreT} | ${propio}` : `${nombreT} | Catálogo y pedidos por WhatsApp`;
+  }
 
   // Foto del banner (si no hay, se queda la que trae el CSS por defecto)
   const banner = urlSegura(cfg.banner_url);
