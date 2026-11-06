@@ -589,7 +589,7 @@ async function sendWhatsapp(){
 function mensajePedido(saludo, cliente, total, urlPedido, detalle){
   const lineas = [saludo, "", `*Cliente:* ${cliente.nombre}`];
   if(cliente.entrega === "domicilio"){
-    lineas.push(`*Entrega:* Domicilio`, `*Dirección:* ${cliente.direccion}, barrio ${cliente.barrio}`);
+    lineas.push(`*Entrega:* Domicilio`, `*Dirección:* ${cliente.direccion}`, `*Barrio y ciudad:* ${cliente.barrio}`);
     if(cliente.referencia) lineas.push(`*Referencia:* ${cliente.referencia}`);
   }else{
     lineas.push("*Entrega:* Lo recojo en la tienda");
@@ -647,7 +647,7 @@ function validarDatosCliente(d){
   if(!d.entrega) return mostrarErrorCliente("Elige si es a domicilio o si lo recoges.", document.querySelector('input[name="dcEntrega"]')), false;
   if(d.entrega === "domicilio"){
     if(!d.direccion) return mostrarErrorCliente("Escribe la dirección.", $dc("dcDireccion")), false;
-    if(!d.barrio)    return mostrarErrorCliente("Escribe el barrio.", $dc("dcBarrio")), false;
+    if(!d.barrio)    return mostrarErrorCliente("Escribe el barrio y la ciudad.", $dc("dcBarrio")), false;
   }
   if(!d.pago) return mostrarErrorCliente("Elige la forma de pago.", document.querySelector('input[name="dcPago"]')), false;
   mostrarErrorCliente("");
