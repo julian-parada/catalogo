@@ -301,6 +301,25 @@ const PALETAS = {
     bg: "#fff6f0", bg2: "#ffffff", card: "#ffffff",
     texto: "#2a1408", textoSuave: "#7d6252", textoAcento: "#ffffff", borde: "#f6e2d4"
   },
+  // Innóvate Y&A (bolsos tejidos): negro, dorado y blanco
+  innovate_lila: {
+    acento:       "#1e1b1a", // Negro trapillo (botones)
+    acentoClaro:  "#3a3533",
+    acentoOscuro: "#0f0d0c",
+    secundario:   "#c49a45", // Dorado herraje
+    bg: "#faf7f2", bg2: "#ffffff", card: "#ffffff", // Blanco hilo
+    texto: "#1e1b1a", textoSuave: "#5e5852", textoAcento: "#faf7f2",
+    borde: "#e3ddf2"         // Toque lila del logo
+  },
+  innovate_cacao: {
+    acento:       "#262321", // Carbón (botones)
+    acentoClaro:  "#5b4335", // Cacao
+    acentoOscuro: "#14110f",
+    secundario:   "#b48a3e", // Oro viejo
+    bg: "#f7f1e5", bg2: "#fffdf8", card: "#fffdf8", // Marfil
+    texto: "#262321", textoSuave: "#6b625a", textoAcento: "#f7f1e5",
+    borde: "#e6d9c2"         // Arena
+  },
   claro: {
     // ✅ Paleta CLARA completa — antes era "blanco" y rompía todo
     acento:       "#ff1493",
