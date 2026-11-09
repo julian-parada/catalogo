@@ -320,6 +320,15 @@ const PALETAS = {
     texto: "#262321", textoSuave: "#6b625a", textoAcento: "#f7f1e5",
     borde: "#e6d9c2"         // Arena
   },
+  innovate_noche: {
+    acento:       "#c49a45", // Dorado herraje (botones)
+    acentoClaro:  "#dcc08a",
+    acentoOscuro: "#8a6a2b",
+    secundario:   "#eadbb8", // Champaña
+    bg: "#1e1b1a", bg2: "#24201e", card: "#2a2522", // Mismo negro del banner
+    texto: "#faf7f2", textoSuave: "#c9c1b6", textoAcento: "#1e1b1a",
+    borde: "#3a332c"
+  },
   claro: {
     // ✅ Paleta CLARA completa — antes era "blanco" y rompía todo
     acento:       "#ff1493",
