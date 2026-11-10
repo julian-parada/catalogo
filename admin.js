@@ -187,6 +187,11 @@ $id("logoutBtn").addEventListener("click", async () => {
 // ---------- MOSTRAR PANEL ----------
 async function mostrarPanel(){
   const tienda = await window.tiendaActual;
+  // Falla de conexión: NO se cierra la sesión, solo se ofrece reintentar
+  if(!tienda && window.tiendaFallo){
+    if(confirm("No pudimos conectar con el servidor. Revisa tu internet.\n\n¿Reintentar ahora?")) location.reload();
+    return;
+  }
   if(!tienda){
     alert("Tu usuario no tiene una tienda asignada. Escríbele al administrador de la plataforma.");
     await supabaseClient.auth.signOut();

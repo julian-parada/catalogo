@@ -650,8 +650,15 @@ window.tiendaActual = (async () => {
       // Sin sesión (pantalla de login): si el link trae ?t=, se muestra la marca de esa tienda
       if(!session) return buscarTiendaPublica(SLUG_URL);
 
-      const { data, error } = await supabaseClient.rpc("mi_tienda_info");
-      if(error){ console.error("No se pudo leer tu tienda:", error); return null; }
+      // Hasta 3 intentos: un corte de señal o un token renovándose no debe sacar al usuario
+      let data = null, error = null;
+      for(let i = 0; i < 3; i++){
+        ({ data, error } = await supabaseClient.rpc("mi_tienda_info"));
+        if(!error) break;
+        if(/jwt|token/i.test(error.message || "")) await supabaseClient.auth.refreshSession();
+        await new Promise(r => setTimeout(r, 800 * (i + 1)));
+      }
+      if(error){ console.error("No se pudo leer tu tienda:", error); window.tiendaFallo = true; return null; }
       if(!data || !data.length) return null;          // usuario sin tienda asignada
       const t = data[0];
       SLUG_ACTUAL = t.slug;
