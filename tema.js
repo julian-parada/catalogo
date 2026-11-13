@@ -329,6 +329,25 @@ const PALETAS = {
     texto: "#faf7f2", textoSuave: "#c9c1b6", textoAcento: "#1e1b1a",
     borde: "#3a332c"
   },
+  // Avora + Dúo Perfume (ropa premium y perfumería): blanco y dorado
+  avora_oro: {
+    acento:       "#c5a253", // Dorado champaña (botones)
+    acentoClaro:  "#e3cd96",
+    acentoOscuro: "#8a6d2c", // Dorado profundo (texto sobre blanco)
+    secundario:   "#1a1712", // Negro de la etiqueta
+    bg: "#fdfbf6", bg2: "#ffffff", card: "#ffffff", // Blanco cálido
+    texto: "#1a1712", textoSuave: "#6e6557", textoAcento: "#1a1712",
+    borde: "#efe5cf"
+  },
+  avora_marfil: {
+    acento:       "#1a1712", // Negro (botones)
+    acentoClaro:  "#3d372e",
+    acentoOscuro: "#0d0b08",
+    secundario:   "#c5a253", // Dorado champaña (detalles)
+    bg: "#f8f3e8", bg2: "#fffdf8", card: "#fffdf8", // Marfil
+    texto: "#1a1712", textoSuave: "#6e6557", textoAcento: "#f8f3e8",
+    borde: "#e8dcc0"
+  },
   claro: {
     // ✅ Paleta CLARA completa — antes era "blanco" y rompía todo
     acento:       "#ff1493",
