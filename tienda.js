@@ -179,6 +179,9 @@ function aplicarConfiguracion(cfg){
   }
   // Con foto: la portada usa la foto con un velo del color de fondo. Sin foto: fondo animado de colores
   document.documentElement.classList.toggle("con-portada", Boolean(banner));
+  // Intensidad de la sombra sobre la foto (normal / suave / minimo)
+  if(["suave", "minimo"].includes(cfg.portada_velo)) document.documentElement.dataset.velo = cfg.portada_velo;
+  else delete document.documentElement.dataset.velo;
 
   pintarFooter(cfg);
   pintarWhatsappFlotante(cfg);

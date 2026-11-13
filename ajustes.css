@@ -297,3 +297,12 @@
   .aj-barra-in{width:calc(100% - 28px)}
   .aj-barra .submit-btn{padding:13px 18px; font-size:12.5px}
 }
+
+/* Sombra sobre la foto de portada */
+.aj-velo{display:flex; gap:8px; flex-wrap:wrap}
+.aj-velo label{cursor:pointer}
+.aj-velo input{position:absolute; opacity:0; pointer-events:none}
+.aj-velo span{display:inline-block; padding:9px 16px; border-radius:999px; border:1px solid var(--line, rgba(127,127,127,.3)); font-size:14px; font-weight:700}
+.aj-velo input:checked + span{background:var(--pink); color:var(--texto-acento, #fff); border-color:var(--pink)}
+.aj-velo input:focus-visible + span{outline:2px solid var(--pink); outline-offset:2px}
+#campoVelo.sin-columna .aj-velo{opacity:.45; pointer-events:none}

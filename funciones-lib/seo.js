@@ -230,6 +230,7 @@ export async function paginaTienda(context, slug, { inyectarSlug, productoId = n
         // Con copia para celular: el CSS elige la foto según el ancho (style.css, "con-portada-m")
         el.setAttribute("style", movil ? `--hero-img-d:${u(banner)};--hero-img-m:${u(movil)}` : `--hero-img:${u(banner)}`);
         el.setAttribute("class", ((el.getAttribute("class") || "") + " con-portada" + (movil ? " con-portada-m" : "")).trim());
+        if(["suave", "minimo"].includes(cfg.portada_velo)) el.setAttribute("data-velo", cfg.portada_velo);
       } });
     }
     rw = rw

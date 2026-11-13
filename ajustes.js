@@ -338,6 +338,12 @@ function llenarFormulario(){
   elegirFuente(cfg.fuente || "moderno");
   renderMedia("logo", cfg.logo_url);
   renderMedia("banner", cfg.banner_url);
+  // Sombra de la portada (columna nueva: si aún no existe en la base, se deja inactiva)
+  const hayVelo = "portada_velo" in cfg;
+  $("campoVelo").classList.toggle("sin-columna", !hayVelo);
+  if(!hayVelo) $("veloAyuda").textContent = "Disponible muy pronto.";
+  const v = document.querySelector(`input[name="portada_velo"][value="${cfg.portada_velo || "normal"}"]`);
+  if(v) v.checked = true;
 }
 
 function renderMedia(tipo, url){
@@ -483,6 +489,7 @@ $("tiendaForm").addEventListener("submit", async e => {
     datos.paleta = paletaElegida;
     datos.fuente = fuenteElegida;
     datos.mostrar_nombre = $("mostrar_nombre").checked;
+    if("portada_velo" in cfg) datos.portada_velo = document.querySelector('input[name="portada_velo"]:checked')?.value || "normal";
 
     // Logo y banner: archivo nuevo > quitar > dejar como estaba
     const anterior = { logo: cfg.logo_url, banner: cfg.banner_url };
