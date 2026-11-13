@@ -348,6 +348,16 @@ const PALETAS = {
     texto: "#1a1712", textoSuave: "#6e6557", textoAcento: "#f8f3e8",
     borde: "#e8dcc0"
   },
+  // Dúo Perfume + Avora: sacada del banner (tienda oscura, rack dorado, foco cálido)
+  duo_noche: {
+    acento:       "#c9a45c", // Dorado del rack iluminado (botones)
+    acentoClaro:  "#e2c98f", // Luz del foco
+    acentoOscuro: "#8f733c",
+    secundario:   "#efe3c4", // Champaña
+    bg: "#110d09", bg2: "#17130e", card: "#1e1913", // Negro cálido del fondo
+    texto: "#f6efe2", textoSuave: "#b3a68e", textoAcento: "#110d09",
+    borde: "#2f281e"
+  },
   claro: {
     // ✅ Paleta CLARA completa — antes era "blanco" y rompía todo
     acento:       "#ff1493",
