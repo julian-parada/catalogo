@@ -306,3 +306,4 @@
 .aj-velo input:checked + span{background:var(--pink); color:var(--texto-acento, #fff); border-color:var(--pink)}
 .aj-velo input:focus-visible + span{outline:2px solid var(--pink); outline-offset:2px}
 #campoVelo.sin-columna .aj-velo{opacity:.45; pointer-events:none}
+#campoCredito.sin-columna .check{opacity:.45}

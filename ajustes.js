@@ -339,6 +339,11 @@ function llenarFormulario(){
   renderMedia("logo", cfg.logo_url);
   renderMedia("banner", cfg.banner_url);
   // Sombra de la portada (columna nueva: si aún no existe en la base, se deja inactiva)
+  // Pagos a crédito (columnas nuevas: si aún no existen, quedan inactivos)
+  const hayCredito = "pago_addi" in cfg;
+  ["pago_addi", "pago_sistecredito"].forEach(c => { $(c).checked = Boolean(cfg[c]); $(c).disabled = !hayCredito; });
+  $("campoCredito").classList.toggle("sin-columna", !hayCredito);
+  if(!hayCredito) $("creditoAyuda").textContent = "Disponible muy pronto.";
   const hayVelo = "portada_velo" in cfg;
   $("campoVelo").classList.toggle("sin-columna", !hayVelo);
   if(!hayVelo) $("veloAyuda").textContent = "Disponible muy pronto.";
@@ -489,6 +494,7 @@ $("tiendaForm").addEventListener("submit", async e => {
     datos.paleta = paletaElegida;
     datos.fuente = fuenteElegida;
     datos.mostrar_nombre = $("mostrar_nombre").checked;
+    if("pago_addi" in cfg){ datos.pago_addi = $("pago_addi").checked; datos.pago_sistecredito = $("pago_sistecredito").checked; }
     if("portada_velo" in cfg) datos.portada_velo = document.querySelector('input[name="portada_velo"]:checked')?.value || "normal";
 
     // Logo y banner: archivo nuevo > quitar > dejar como estaba

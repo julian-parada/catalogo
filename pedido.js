@@ -108,7 +108,7 @@ function marcaTienda(cfg){
 // La dirección no se muestra aquí: este link lo puede abrir cualquiera que lo tenga
 function chipsEntrega(p){
   const entrega = { domicilio: "🛵 Domicilio", recoger: "🏪 Recoge en tienda" }[p.entrega];
-  const pago = { efectivo: "💵 Efectivo", nequi: "📱 Nequi", transferencia: "🏦 Transferencia" }[p.pago];
+  const pago = { efectivo: "💵 Efectivo", nequi: "📱 Nequi", transferencia: "🏦 Transferencia", addi: "💳 Addi (crédito)", sistecredito: "💳 Sistecrédito (crédito)" }[p.pago];
   return [entrega, pago].filter(Boolean);
 }
 

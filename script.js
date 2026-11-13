@@ -595,6 +595,7 @@ function mensajePedido(saludo, cliente, total, urlPedido, detalle){
     lineas.push("*Entrega:* Lo recojo en la tienda");
   }
   lineas.push(`*Pago:* ${NOMBRES_PAGO[cliente.pago]}`);
+  if(cliente.pago === "addi" || cliente.pago === "sistecredito") lineas.push("_Por favor envíame el link para pagar a crédito._");
   if(cliente.nota) lineas.push(`*Nota:* ${cliente.nota}`);
   if(detalle && detalle.length) lineas.push("", "*Productos:*", ...detalle);
   lineas.push("");
@@ -609,7 +610,7 @@ function mensajePedido(saludo, cliente, total, urlPedido, detalle){
    El servidor vuelve a validar todo en crear_pedido.
    --------------------------------------------------------- */
 const DATOS_KEY = claveLocal("datosCliente");
-const NOMBRES_PAGO = { efectivo: "Efectivo", nequi: "Nequi", transferencia: "Transferencia" };
+const NOMBRES_PAGO = { efectivo: "Efectivo", nequi: "Nequi", transferencia: "Transferencia", addi: "Addi (crédito)", sistecredito: "Sistecrédito (crédito)" };
 const $dc = id => document.getElementById(id);
 const radioMarcado = nombre => (document.querySelector(`input[name="${nombre}"]:checked`) || {}).value || "";
 
@@ -667,6 +668,22 @@ function actualizarEntrega(){
   pintarTotal();
 }
 
+// Addi / Sistecrédito: solo aparecen si la tienda los activó en Mi tienda
+function mostrarPagosCredito(cfg){
+  const activos = { addi: Boolean(cfg && cfg.pago_addi), sistecredito: Boolean(cfg && cfg.pago_sistecredito) };
+  document.querySelectorAll("[data-credito]").forEach(op => {
+    const si = activos[op.dataset.credito];
+    op.hidden = !si;
+    const radio = op.querySelector("input");
+    if(!si && radio.checked) radio.checked = false;   // guardado de otra vez, pero la tienda ya no lo acepta
+  });
+  actualizarInfoCredito();
+}
+function actualizarInfoCredito(){
+  const info = $dc("dcCreditoInfo"); if(!info) return;
+  info.hidden = !["addi", "sistecredito"].includes(radioMarcado("dcPago"));
+}
+
 function guardarDatosCliente(d){
   // La nota es de este pedido: no se guarda para la próxima vez
   const { nota, ...resto } = d;
@@ -718,7 +735,8 @@ if($dc("datosCliente")){
   llenarDatosCliente();
   actualizarBotonOlvidar();
   // La dirección de la tienda llega después: se refresca el aviso de "recoger"
-  if(window.configTienda) window.configTienda.then(actualizarEntrega);
+  if(window.configTienda) window.configTienda.then(cfg => { mostrarPagosCredito(cfg); actualizarEntrega(); });
+  document.querySelectorAll('input[name="dcPago"]').forEach(r => r.addEventListener("change", actualizarInfoCredito));
 }
 
 /* ---------------------------------------------------------
