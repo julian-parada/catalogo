@@ -1701,3 +1701,14 @@ html.con-portada[data-velo] .hero-overlay p{text-shadow:0 1px 10px rgba(var(--bg
     background:linear-gradient(0deg, rgba(var(--bg-rgb), .62) 0%, rgba(var(--bg-rgb), .25) 28%, transparent 52%);
   }
 }
+
+/* ---------- Bajo pedido (por encargo) ---------- */
+.insignia-encargo{background:var(--white); color:var(--dark-2, #111); text-transform:uppercase}
+.ficha-encargo{margin:6px 0 4px; padding:14px 16px; border-radius:16px; border:1px dashed rgba(var(--pink-rgb), .5); background:rgba(var(--pink-rgb), .07)}
+.ficha-encargo p{margin:0 0 10px; font-size:.9rem; line-height:1.45; color:var(--white)}
+.ficha-encargo label{display:block; font-size:.82rem; font-weight:700; margin-bottom:6px; color:var(--white)}
+.ficha-encargo label small{font-weight:500; color:var(--muted)}
+.ficha-encargo textarea{width:100%; resize:vertical; min-height:58px; padding:10px 12px; border-radius:12px; border:1px solid var(--line); background:var(--card); color:var(--white); font:inherit; font-size:.92rem}
+.ficha-encargo textarea:focus{outline:2px solid rgba(var(--pink-rgb), .6); outline-offset:1px}
+.cart-encargo{display:block; margin-top:2px; color:var(--pink)}
+.cart-encargo em{font-style:normal; color:var(--white)}

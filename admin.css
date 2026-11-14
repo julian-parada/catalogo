@@ -576,3 +576,5 @@ html[data-fondo="claro"] .admin-products .item-vendido{color:#8a5a00}
 html[data-fondo="claro"] .vendido-op:hover, html[data-fondo="claro"] .vendido-op:focus-visible{border-color:#13804f; background:rgba(19,128,79,.1)}
 /* El aviso usa el ancho que necesita (antes se encogía a media pantalla en el celular) */
 .aviso-panel{width:max-content}
+
+.item-encargo{display:inline-block;padding:3px 9px;border-radius:999px;font-size:11px;font-weight:800;background:rgba(var(--pink-rgb), .14);color:var(--pink)}

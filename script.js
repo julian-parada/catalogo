@@ -68,7 +68,9 @@ async function cargarProductos(){
       description: p.descripcion || "",
       creado: p.creado_en,
       gallery: [...new Set([p.imagen, ...p.imagenes_prenda.sort((a,b)=>a.orden-b.orden).map(i=>i.url)].filter(Boolean))],
-      sizes: p.tallas.filter(t => t.disponible)
+      sizes: p.tallas.filter(t => t.disponible),
+      porEncargo: Boolean(p.por_encargo),          // bajo pedido: se fabrica cuando lo piden
+      encargoTiempo: p.encargo_tiempo || ""
     }))
     .filter(p => p.sizes.length > 0);
 
@@ -337,7 +339,8 @@ function htmlFotos(p, pos = 0){
   const descuento = p.originalPrice ? Math.round((1 - p.price / p.originalPrice) * 100) : 0;
   const insignias = [
     descuento > 0 ? `<span class="insignia insignia-oferta">-${descuento}%</span>` : "",
-    esNuevo(p) ? `<span class="insignia insignia-nuevo">Nuevo</span>` : ""
+    esNuevo(p) ? `<span class="insignia insignia-nuevo">Nuevo</span>` : "",
+    p.porEncargo ? `<span class="insignia insignia-encargo">Bajo pedido</span>` : ""
   ].join("");
 
   return `
@@ -394,7 +397,8 @@ function activarCarruseles(contenedor){
 function save(){ try{ localStorage.setItem(CART_KEY, JSON.stringify(cart)); }catch(e){} updateCount(); }
 
 // tallaElegida: la opción que se marcó en la ficha (si no viene, se lee la de la tarjeta)
-function addToCart(id, tallaElegida){
+// personalizacion: lo que el cliente pide distinto en un producto bajo pedido (va en su propia línea)
+function addToCart(id, tallaElegida, personalizacion = ""){
   const p = products.find(x => x.id === id);
   if(!p) return false;
 
@@ -411,13 +415,15 @@ function addToCart(id, tallaElegida){
   }
   if(campoTalla) campoTalla.classList.remove("falta-opcion");
 
-  const cartId = `${id}_${tallaId}`;
+  const pers = p.porEncargo ? String(personalizacion || "").trim().slice(0, 150) : "";
+  const cartId = `${id}_${tallaId}` + (pers ? "_" + hashTexto(pers) : "");
   const found = cart.find(x => x.cartId === cartId);
   if(found) found.qty++;
   else cart.push({
     cartId, id: p.id, tallaId,
     name: p.name, talla: tallaObj.talla,
-    price: p.price, img: p.img, qty: 1
+    price: p.price, img: p.img, qty: 1,
+    ...(pers ? { pers } : {}), ...(p.porEncargo ? { encargo: true } : {})
   });
 
   save();
@@ -441,6 +447,8 @@ function addToCart(id, tallaElegida){
   }
   return true;
 }
+
+function hashTexto(t){ let h = 0; for(const c of t) h = (h * 31 + c.charCodeAt(0)) | 0; return (h >>> 0).toString(36); }
 
 function removeFromCart(cartId){
   cart = cart.filter(x => x.cartId !== cartId);
@@ -471,6 +479,7 @@ function renderCart(){
       <div class="cart-info">
         <strong>${esc(x.name)}</strong>
         <small>${esOpcionUnica(x.talla) ? "" : `${esc(x.talla)} · `}${money(x.price)} c/u</small>
+        ${x.encargo ? `<small class="cart-encargo">🧶 Bajo pedido${x.pers ? ` · <em>${esc(x.pers)}</em>` : ""}</small>` : ""}
         <div class="qty">
           <button onclick="changeQty('${esc(x.cartId)}',-1)">−</button>
           <span>${x.qty}</span>
@@ -526,7 +535,7 @@ async function sendWhatsapp(){
     const clienteDemo = leerDatosCliente();
     if(!validarDatosCliente(clienteDemo)) return;
     const totalDemo = cart.reduce((a,x) => a + x.price * x.qty, 0);
-    const detalle = cart.map(x => `${x.qty} x ${x.name}${esOpcionUnica(x.talla) ? "" : ` (${x.talla})`} - ${money(x.price * x.qty)}`);
+    const detalle = cart.map(x => `${x.qty} x ${x.name}${esOpcionUnica(x.talla) ? "" : ` (${x.talla})`} - ${money(x.price * x.qty)}${x.pers ? `\n   _Lo quiere así:_ ${x.pers}` : x.encargo ? "\n   _(bajo pedido)_" : ""}`);
     window.ExhibeDemo.mostrarPedido(mensajePedido(saludo, clienteDemo, totalDemo, null, detalle), clienteDemo.nombre);
     return;
   }
@@ -544,7 +553,7 @@ async function sendWhatsapp(){
   const total = cart.reduce((a,x) => a + x.price * x.qty, 0);
 
   // El pedido se crea en el servidor: él valida las prendas y calcula el total con los precios reales
-  const items = cart.map(x => ({ prenda_id: x.id, talla_id: x.tallaId, cantidad: x.qty }));
+  const items = cart.map(x => ({ prenda_id: x.id, talla_id: x.tallaId, cantidad: x.qty, ...(x.pers ? { personalizacion: x.pers } : {}) }));
   const { data: codigoPedido, error: errorPedido } = await supabaseClient
     .rpc("crear_pedido", { p_items: items, p_cliente: cliente });
 
@@ -597,6 +606,10 @@ function mensajePedido(saludo, cliente, total, urlPedido, detalle){
   lineas.push(`*Pago:* ${NOMBRES_PAGO[cliente.pago]}`);
   if(cliente.pago === "addi" || cliente.pago === "sistecredito") lineas.push("_Por favor envíame el link para pagar a crédito._");
   if(cliente.nota) lineas.push(`*Nota:* ${cliente.nota}`);
+  const encargos = cart.filter(x => x.encargo);
+  if(!detalle && encargos.length){
+    lineas.push("", "*Bajo pedido:*", ...encargos.map(x => `- ${x.name}${esOpcionUnica(x.talla) ? "" : ` (${x.talla})`}${x.pers ? `: ${x.pers}` : ""}`));
+  }
   if(detalle && detalle.length) lineas.push("", "*Productos:*", ...detalle);
   lineas.push("");
   if(urlPedido) lineas.push(`*Ver pedido:* ${urlPedido}`);
@@ -845,8 +858,17 @@ function pintarFicha(p, foto){
   const descuento = p.originalPrice ? Math.round((1 - p.price / p.originalPrice) * 100) : 0;
   document.getElementById("fichaInsignias").innerHTML = [
     descuento > 0 ? `<span class="insignia insignia-oferta">-${descuento}%</span>` : "",
-    esNuevo(p) ? `<span class="insignia insignia-nuevo">Nuevo</span>` : ""
+    esNuevo(p) ? `<span class="insignia insignia-nuevo">Nuevo</span>` : "",
+    p.porEncargo ? `<span class="insignia insignia-encargo">Bajo pedido</span>` : ""
   ].join("");
+
+  // Bajo pedido: aviso + "¿cómo lo quieres?" (otro color, tamaño, nombre...)
+  const encargo = document.getElementById("fichaEncargo");
+  if(encargo){
+    encargo.hidden = !p.porEncargo;
+    document.getElementById("fichaEncargoTiempo").textContent = p.encargoTiempo ? ` Tiempo de elaboración: ${p.encargoTiempo}.` : "";
+    document.getElementById("fichaPersonaliza").value = "";
+  }
 
   document.getElementById("fichaCat").textContent = p.category;
   document.getElementById("fichaNombre").textContent = p.name;
@@ -977,7 +999,8 @@ window.addEventListener("popstate", () => {
     if(!p) return;
     const marcada = document.querySelector('input[name="fichaOpcion"]:checked');
     const tallaId = marcada ? marcada.value : (p.sizes[0] && p.sizes[0].id);
-    if(!addToCart(p.id, tallaId)) return;
+    const pers = p.porEncargo ? document.getElementById("fichaPersonaliza").value : "";
+    if(!addToCart(p.id, tallaId, pers)) return;
     const add = document.getElementById("fichaAdd");
     add.classList.add("agregado");
     add.querySelector("span").textContent = "✓ AÑADIDO AL PEDIDO";

@@ -78,6 +78,7 @@ async function cargarPedido(){
         <div class="pedido-item-body">
           <h3>${escapeHtml(item.nombre)}</h3>
           <p>${esOpcionUnica(item.talla) ? "" : `${escapeHtml(item.talla)} · `}${cant} × ${money(precio)}</p>
+          ${item.personalizacion ? `<p class="pedido-pers">🧶 Lo quiere así: <strong>${escapeHtml(item.personalizacion)}</strong></p>` : ""}
         </div>
         <span class="pedido-item-precio">${money(precio * cant)}</span>
       </div>`;

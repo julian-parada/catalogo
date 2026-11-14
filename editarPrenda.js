@@ -63,6 +63,9 @@ async function cargarPrenda(){
   }
   document.getElementById("imagen").value = data.imagen;
   document.getElementById("descripcion").value = data.descripcion || "";
+  document.getElementById("porEncargo").checked = Boolean(data.por_encargo);
+  document.getElementById("encargoTiempo").value = data.encargo_tiempo || "";
+  if(window.pintarEncargo) window.pintarEncargo();
 
   cargarTallas();
   cargarFotos();
@@ -92,7 +95,8 @@ const { error } = await supabaseClient
   .from("prendas")
   .update({
     nombre, categoria_id: categoria.id, precio, imagen, descripcion,
-    precio_oferta: precioOferta ? precioOferta : null
+    precio_oferta: precioOferta ? precioOferta : null,
+    ...(await datosEncargo())
   })
   .eq("id", prendaId);
 
@@ -331,3 +335,23 @@ document.getElementById("fotosNuevas").addEventListener("change", e => {
 });
 
 revisarSesion();
+
+/* ---------- Bajo pedido (por encargo): la casilla solo sale cuando la base ya tiene la columna ---------- */
+const encargoListo = columnaExiste("prendas", "por_encargo").then(si => {
+  const campo = document.getElementById("campoEncargo");
+  if(campo) campo.hidden = !si;
+  return si;
+});
+(function(){
+  const check = document.getElementById("porEncargo"), box = document.getElementById("encargoTiempoBox");
+  if(!check || !box) return;
+  const pintar = () => { box.hidden = !check.checked; };
+  check.addEventListener("change", pintar);
+  window.pintarEncargo = pintar;
+})();
+async function datosEncargo(){
+  if(!(await encargoListo)) return {};
+  const si = document.getElementById("porEncargo").checked;
+  const tiempo = document.getElementById("encargoTiempo").value.trim().slice(0, 60);
+  return { por_encargo: si, encargo_tiempo: si && tiempo ? tiempo : null };
+}

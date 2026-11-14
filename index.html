@@ -217,6 +217,11 @@
           <legend>Elige una opción</legend>
           <div class="ficha-chips" id="fichaOpciones"></div>
         </fieldset>
+        <div class="ficha-encargo" id="fichaEncargo" hidden>
+          <p><strong>🧶 Bajo pedido</strong> · Se prepara cuando lo pides.<span id="fichaEncargoTiempo"></span></p>
+          <label for="fichaPersonaliza">¿Lo quieres diferente? <small>(opcional)</small></label>
+          <textarea id="fichaPersonaliza" maxlength="150" rows="2" placeholder="Ej: en color negro, con mi nombre, más grande…"></textarea>
+        </div>
         <div class="ficha-acciones">
           <button type="button" class="add ficha-add" id="fichaAdd"><span>Añadir al pedido</span></button>
           <button type="button" class="ficha-compartir" id="fichaCompartir" aria-label="Compartir producto" title="Compartir">

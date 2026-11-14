@@ -126,3 +126,11 @@ function ofertaVigente(p){
   return isNaN(fin.getTime()) || fin.getTime() > Date.now();
 }
 function precioVigente(p){ return ofertaVigente(p) ? p.precio_oferta : p.precio; }
+
+// ¿Ya existe esta columna en la base? (para funciones nuevas cuya migración SQL aún no se corre)
+const _columnas = {};
+function columnaExiste(tabla, columna){
+  const k = tabla + "." + columna;
+  if(!_columnas[k]) _columnas[k] = supabaseClient.from(tabla).select(columna).limit(1).then(({ error }) => !error, () => false);
+  return _columnas[k];
+}

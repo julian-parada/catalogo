@@ -395,6 +395,7 @@ function renderPrendas(){
           <div class="item-meta">
             <span class="item-precio">${precio}</span>
             <span class="item-cat ${cat ? "" : "sin"}">${esc(cat || "Sin categoría")}</span>
+            ${p.por_encargo ? `<span class="item-encargo" title="${esc(p.encargo_tiempo || "")}">🧶 Bajo pedido</span>` : ""}
           </div>
           <div class="item-tallas">
             ${(p.tallas || []).sort((a, b) => a.id - b.id).map(t => `

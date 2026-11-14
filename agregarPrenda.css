@@ -534,3 +534,9 @@ body{
   background:rgba(0,0,0,.72);color:#fff;font-size:12px;line-height:24px;cursor:pointer;padding:0}
 .foto-extra-quitar:hover{background:var(--danger)}
 .fotos-extra-cuenta{font-size:12px;color:var(--muted);font-weight:700}
+
+/* Bajo pedido (por encargo) */
+.campo-encargo{padding:16px 18px;border:1px dashed rgba(var(--pink-rgb), .45);border-radius:16px;background:rgba(var(--pink-rgb), .06)}
+.encargo-check{display:flex !important;align-items:center;gap:12px;cursor:pointer;margin:0 !important;font-size:15px;color:var(--text)}
+.encargo-check input{width:22px;height:22px;accent-color:var(--pink);flex:none}
+.encargo-tiempo{margin-top:12px}
