@@ -479,7 +479,7 @@ function renderCart(){
       <div class="cart-info">
         <strong>${esc(x.name)}</strong>
         <small>${esOpcionUnica(x.talla) ? "" : `${esc(x.talla)} · `}${money(x.price)} c/u</small>
-        ${x.encargo ? `<small class="cart-encargo">🧶 Bajo pedido${x.pers ? ` · <em>${esc(x.pers)}</em>` : ""}</small>` : ""}
+        ${x.encargo ? `<small class="cart-encargo">📦 Bajo pedido${x.pers ? ` · <em>${esc(x.pers)}</em>` : ""}</small>` : ""}
         <div class="qty">
           <button onclick="changeQty('${esc(x.cartId)}',-1)">−</button>
           <span>${x.qty}</span>
@@ -866,7 +866,7 @@ function pintarFicha(p, foto){
   const encargo = document.getElementById("fichaEncargo");
   if(encargo){
     encargo.hidden = !p.porEncargo;
-    document.getElementById("fichaEncargoTiempo").textContent = p.encargoTiempo ? ` Tiempo de elaboración: ${p.encargoTiempo}.` : "";
+    document.getElementById("fichaEncargoTiempo").textContent = p.encargoTiempo ? ` Tiempo de entrega: ${p.encargoTiempo}.` : "";
     document.getElementById("fichaPersonaliza").value = "";
   }
 
