@@ -92,6 +92,17 @@
           <span class="eyebrow" data-cfg="catalogo_etiqueta"></span>
           <h2 data-cfg="catalogo_titulo"></h2>
         </div>
+        <!-- Ordenar (script.js lo muestra cuando hay 4 productos o más) -->
+        <label class="orden-box" id="ordenBox" hidden>
+          <span class="orden-label">Ordenar</span>
+          <select id="ordenSelect" aria-label="Ordenar productos">
+            <option value="recomendados">Recomendados</option>
+            <option value="menor">Menor precio</option>
+            <option value="mayor">Mayor precio</option>
+            <option value="ofertas">Ofertas primero</option>
+            <option value="nuevos">Más nuevos</option>
+          </select>
+        </label>
       </div>
 
       <!-- Accesos rápidos a las categorías (script.js los llena) -->
@@ -230,6 +241,11 @@
         </div>
         <button type="button" class="ficha-ver-pedido" id="fichaVerPedido" hidden>Ver mi pedido →</button>
         <p class="ficha-nota">🛵 Haces el pedido por WhatsApp y la tienda te confirma disponibilidad y envío.</p>
+        <!-- Productos relacionados (script.js) -->
+        <section class="ficha-rel" id="fichaRel" hidden aria-labelledby="fichaRelTitulo">
+          <h3 id="fichaRelTitulo">También te puede gustar</h3>
+          <div class="rel-fila" id="fichaRelFila"></div>
+        </section>
       </div>
     </article>
   </div>

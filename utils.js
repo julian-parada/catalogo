@@ -131,6 +131,12 @@ function precioVigente(p){ return ofertaVigente(p) ? p.precio_oferta : p.precio;
 const _columnas = {};
 function columnaExiste(tabla, columna){
   const k = tabla + "." + columna;
-  if(!_columnas[k]) _columnas[k] = supabaseClient.from(tabla).select(columna).limit(1).then(({ error }) => !error, () => false);
+  if(!_columnas[k]){
+    let consulta;
+    try{ consulta = Promise.resolve(supabaseClient.from(tabla).select(columna).limit(1)).then(r => !(r && r.error), () => false); }
+    catch(e){ consulta = Promise.resolve(false); }
+    // Si la red se demora, no bloquea el formulario: se asume que aún no existe
+    _columnas[k] = Promise.race([consulta, new Promise(r => setTimeout(() => r(false), 5000))]);
+  }
   return _columnas[k];
 }

@@ -269,10 +269,32 @@ function tarjetaProducto(p, i, paso){
   `;
 }
 
-// Cambió la categoría o la búsqueda: vuelve a empezar desde las primeras 12
+/* ---------- Ordenar ----------
+   "recomendados" es el orden de la tienda (lo más reciente primero, como siempre).
+   El orden es estable: si dos productos empatan, conservan el orden de la tienda. */
+let ordenActual = "recomendados";
+const ORDENES = {
+  menor:   (a, b) => a.price - b.price,
+  mayor:   (a, b) => b.price - a.price,
+  ofertas: (a, b) => descuentoDe(b) - descuentoDe(a),
+  nuevos:  (a, b) => fechaDe(b.creado) - fechaDe(a.creado)
+};
+const descuentoDe = p => p.originalPrice ? (p.originalPrice - p.price) / p.originalPrice : 0;
+function ordenarProductos(lista){
+  const f = ORDENES[ordenActual];
+  if(!f) return lista;
+  return lista.map((p, i) => [p, i]).sort((x, y) => f(x[0], y[0]) || x[1] - y[1]).map(x => x[0]);
+}
+function pintarOrden(){
+  const box = document.getElementById("ordenBox");
+  if(box) box.hidden = products.length < 4;
+}
+
+// Cambió la categoría, la búsqueda o el orden: vuelve a empezar desde las primeras 12
 function renderProducts(){
   const term = document.getElementById("searchInput").value.trim();
-  filtrados = filtrarProductos();
+  filtrados = ordenarProductos(filtrarProductos());
+  pintarOrden();
   visibles = POR_PAGINA;
 
   const container = document.getElementById("products");
@@ -886,12 +908,46 @@ function pintarFicha(p, foto){
   document.getElementById("fichaOpciones").innerHTML = unica ? "" : p.sizes.map((t, i) => `
     <label class="ficha-chip"><input type="radio" name="fichaOpcion" value="${t.id}" ${i === 0 ? "checked" : ""}><span>${esc(t.talla)}</span></label>`).join("");
 
+  pintarRelacionados(p);
+
   const add = document.getElementById("fichaAdd");
   add.classList.remove("agregado");
   add.querySelector("span").textContent = "Añadir al pedido";
   document.getElementById("fichaVerPedido").hidden = true;
 
   requestAnimationFrame(() => { track.scrollLeft = foto * track.clientWidth; });
+}
+
+/* ---------- "También te puede gustar" ----------
+   1) De la misma categoría, primero los de precio parecido.
+   2) Si faltan, completa con ofertas, luego nuevos, luego el resto (también por precio parecido).
+   Nunca repite el producto abierto. Con menos de 2, la sección no sale. */
+const MAX_RELACIONADOS = 8;
+function relacionadosDe(p){
+  const cerca = (a, b) => Math.abs(a.price - p.price) - Math.abs(b.price - p.price);
+  const otros = products.filter(x => x.id !== p.id);
+  const misma = p.categoryId == null ? [] : otros.filter(x => x.categoryId === p.categoryId).sort(cerca);
+  const usados = new Set(misma.map(x => x.id));
+  const grupo = x => x.originalPrice ? 0 : esNuevo(x) ? 1 : 2;
+  const resto = otros.filter(x => !usados.has(x.id)).sort((a, b) => grupo(a) - grupo(b) || cerca(a, b));
+  return [...misma, ...resto].slice(0, MAX_RELACIONADOS);
+}
+function pintarRelacionados(p){
+  const caja = document.getElementById("fichaRel");
+  if(!caja) return;
+  const lista = relacionadosDe(p);
+  caja.hidden = lista.length < 2;
+  const fila = document.getElementById("fichaRelFila");
+  fila.innerHTML = caja.hidden ? "" : lista.map(x => {
+    const desc = x.originalPrice ? Math.round((1 - x.price / x.originalPrice) * 100) : 0;
+    return `
+    <button type="button" class="rel-item" data-rel="${x.id}" aria-label="Ver ${esc(x.name)}, ${esc(money(x.price))}">
+      <span class="rel-foto"><img src="${esc(x.img || "img/placeholder.jpg")}" alt="" loading="lazy" onerror="this.src='img/placeholder.jpg'">
+        ${desc > 0 ? `<span class="insignia insignia-oferta">-${desc}%</span>` : ""}</span>
+      <span class="rel-nombre">${esc(x.name)}</span>
+      <span class="rel-precio">${x.originalPrice ? `<s>${money(x.originalPrice)}</s> ` : ""}${money(x.price)}</span>
+    </button>`; }).join("");
+  fila.scrollLeft = 0;
 }
 
 function abrirFicha(id, foto = 0, { desdeHistorial = false } = {}){
@@ -901,6 +957,9 @@ function abrirFicha(id, foto = 0, { desdeHistorial = false } = {}){
   pintarFicha(p, Math.min(Math.max(0, foto), fotos.length - 1));
 
   const modal = document.getElementById("fichaModal");
+  // Si ya estaba abierta (vino de "También te puede gustar"), vuelve arriba
+  modal.querySelector(".ficha").scrollTop = 0;
+  modal.querySelector(".ficha-info").scrollTop = 0;
   if(fichaActual === null) tituloSinFicha = document.title;
   modal.classList.add("show");
   modal.setAttribute("aria-hidden", "false");
@@ -1081,6 +1140,15 @@ document.getElementById("footerCats").addEventListener("click", e => {
 document.getElementById("verMas")?.addEventListener("click", verMasProductos);
 
 // Buscador
+document.getElementById("ordenSelect")?.addEventListener("change", e => {
+  ordenActual = e.target.value;
+  renderProducts();
+});
+document.getElementById("fichaRelFila")?.addEventListener("click", e => {
+  const b = e.target.closest("[data-rel]");
+  if(b) abrirFicha(Number(b.dataset.rel));
+});
+
 document.getElementById("searchInput").addEventListener("input", e => {
   renderProducts();
   if(e.target.value.trim()) irAlCatalogo();
