@@ -8,7 +8,9 @@ const BUCKET_PROMOS = "promos";
 const MAX_LAMINAS = 5;
 const MAX_VIDEO_MB = 15;
 const MAX_VIDEO_SEG = 16;          // 15 s + un margen por redondeo del celular
-const DESTINOS = { ofertas: "Productos en oferta", categoria: "Una categoría", producto: "Un producto", cerrar: "Solo cerrar la ventana" };
+const DESTINOS = { ofertas: "Productos en oferta", categoria: "Una categoría", producto: "Un producto", seleccion: "Varios productos que yo elija", cerrar: "Solo cerrar la ventana" };
+const MAX_SELECCION = 40;
+let conSeleccion = false;   // sql/014 corrido (columna destino_ids)
 
 let tienda = null, funciones = {};
 let ajustes = null, laminas = [], categorias = [], productos = [], cupones = [];
@@ -83,8 +85,9 @@ async function cargarVentana(){
     supabaseClient.from("promo_ajustes").select("*").eq("tienda_id", tienda.id).maybeSingle(),
     supabaseClient.from("promociones").select("*").eq("tienda_id", tienda.id).order("orden").order("id"),
     supabaseClient.from("categorias").select("id, nombre").eq("tienda_id", tienda.id).order("nombre"),
-    supabaseClient.from("prendas").select("id, nombre").eq("tienda_id", tienda.id).order("nombre")
+    supabaseClient.from("prendas").select("id, nombre, imagen, precio, precio_oferta").eq("tienda_id", tienda.id).order("nombre")
   ]);
+  conSeleccion = await columnaExiste("promociones", "destino_ids");
   if(lam.error){ msg("prMsg", "No se pudieron leer tus láminas: " + lam.error.message, "error"); return; }
   ajustes = aj.data || { encendida: true, desde: null, hasta: null, frecuencia: "dia", mostrar_cuenta: true };
   laminas = lam.data || [];
@@ -101,12 +104,30 @@ async function cargarVentana(){
 }
 
 function opcionesDestino(l){
+  if(l.boton_destino === "seleccion") return htmlSeleccion(l);
   const lista = l.boton_destino === "categoria" ? categorias : l.boton_destino === "producto" ? productos : null;
   if(!lista) return "";
   if(!lista.length) return `<small class="pr-ayuda">No tienes ${l.boton_destino === "categoria" ? "categorías" : "productos"} todavía.</small>`;
   return `<select data-campo="destino_id" aria-label="Elige ${l.boton_destino === "categoria" ? "la categoría" : "el producto"}">
     ${lista.map(x => `<option value="${x.id}" ${String(x.id) === String(l.destino_id) ? "selected" : ""}>${escapeHtml(x.nombre)}</option>`).join("")}
   </select>`;
+}
+
+// Lista con casillas para elegir varios productos (con buscador)
+function htmlSeleccion(l){
+  if(!productos.length) return `<small class="pr-ayuda">No tienes productos todavía.</small>`;
+  const elegidos = new Set((l.destino_ids || []).map(Number));
+  return `<div class="pr-sel">
+    <div class="pr-sel-cab"><input type="search" data-sel-buscar placeholder="Buscar producto…" aria-label="Buscar producto">
+      <span class="pr-sel-cuenta">${elegidos.size} elegido${elegidos.size === 1 ? "" : "s"}</span></div>
+    <div class="pr-sel-lista">
+      ${[...productos].sort((a, b) => elegidos.has(b.id) - elegidos.has(a.id)).map(x => `
+      <label class="pr-sel-item" data-nombre="${escapeHtml(x.nombre.toLowerCase())}">
+        <input type="checkbox" data-sel-id="${x.id}" ${elegidos.has(x.id) ? "checked" : ""}>
+        <img src="${safeUrl(x.imagen) || "img/placeholder.jpg"}" alt="" loading="lazy">
+        <span>${escapeHtml(x.nombre)}${Number(x.precio_oferta) > 0 ? ` <em>oferta</em>` : ""}</span>
+      </label>`).join("")}
+    </div></div>`;
 }
 
 function pintarLaminas(){
@@ -134,7 +155,7 @@ function pintarLaminas(){
         </label>
         <label>El botón lleva a
           <select data-campo="boton_destino">
-            ${Object.entries(DESTINOS).map(([k, v]) => `<option value="${k}" ${k === l.boton_destino ? "selected" : ""}>${v}</option>`).join("")}
+            ${Object.entries(DESTINOS).filter(([k]) => k !== "seleccion" || conSeleccion || l.boton_destino === k).map(([k, v]) => `<option value="${k}" ${k === l.boton_destino ? "selected" : ""}>${v}</option>`).join("")}
           </select>
         </label>
         <div class="pr-destino">${opcionesDestino(l)}</div>
@@ -150,6 +171,24 @@ function pintarLaminas(){
 
 // Cambios en los campos de una lámina
 $("prLaminas").addEventListener("input", e => {
+  const card0 = e.target.closest(".pr-lamina");
+  if(card0 && e.target.matches("[data-sel-buscar]")){
+    const t = e.target.value.trim().toLowerCase();
+    card0.querySelectorAll(".pr-sel-item").forEach(it => { it.hidden = t && !it.dataset.nombre.includes(t); });
+    return;
+  }
+  if(card0 && e.target.matches("[data-sel-id]")){
+    const l = laminas[Number(card0.dataset.i)];
+    const ids = new Set((l.destino_ids || []).map(Number)), id = Number(e.target.dataset.selId);
+    if(e.target.checked){
+      if(ids.size >= MAX_SELECCION){ e.target.checked = false; msg("prMsg", `Máximo ${MAX_SELECCION} productos por lámina.`, "error"); return; }
+      ids.add(id);
+    }else ids.delete(id);
+    l.destino_ids = [...ids];
+    card0.querySelector(".pr-sel-cuenta").textContent = `${ids.size} elegido${ids.size === 1 ? "" : "s"}`;
+    marcarCambio();
+    return;
+  }
   const card = e.target.closest(".pr-lamina"), campo = e.target.dataset.campo;
   if(!card || !campo) return;
   const l = laminas[Number(card.dataset.i)];
@@ -157,11 +196,12 @@ $("prLaminas").addEventListener("input", e => {
   if(campo === "boton_destino"){
     const lista = l.boton_destino === "categoria" ? categorias : l.boton_destino === "producto" ? productos : [];
     l.destino_id = lista.length ? lista[0].id : null;
+    if(l.boton_destino === "seleccion") l.destino_ids = l.destino_ids || [];
     card.querySelector(".pr-destino").innerHTML = opcionesDestino(l);
   }
   marcarCambio();
 });
-$("prLaminas").addEventListener("change", e => { if(e.target.matches("select")) e.target.dispatchEvent(new Event("input", { bubbles: true })); });
+$("prLaminas").addEventListener("change", e => { if(e.target.matches("select, [data-sel-id]")) e.target.dispatchEvent(new Event("input", { bubbles: true })); });
 
 $("prLaminas").addEventListener("click", async e => {
   const b = e.target.closest("[data-accion]"); if(!b) return;
@@ -256,6 +296,8 @@ $("prVideo").addEventListener("change", e => { const f = e.target.files[0]; e.ta
 async function guardarVentana(){
   const desde = $("prDesde").value || null, hasta = $("prHasta").value || null;
   if(desde && hasta && hasta < desde){ msg("prMsg", "La fecha «Hasta» debe ser igual o después de «Desde».", "error"); return false; }
+  const vacia = laminas.findIndex(l => l.boton_destino === "seleccion" && !(l.destino_ids || []).length);
+  if(vacia !== -1){ msg("prMsg", `En la lámina ${vacia + 1} elige al menos un producto.`, "error"); return false; }
   $("prGuardar").disabled = true;
   try{
     const { error } = await supabaseClient.from("promo_ajustes").upsert({
@@ -270,7 +312,9 @@ async function guardarVentana(){
     for(let i = 0; i < laminas.length; i++){
       const l = laminas[i];
       const dest = l.boton_destino in DESTINOS ? l.boton_destino : "ofertas";
+      const extra = conSeleccion ? { destino_ids: dest === "seleccion" ? (l.destino_ids || []).slice(0, MAX_SELECCION) : null } : {};
       const { error: e2 } = await supabaseClient.from("promociones").update({
+        ...extra,
         orden: i,
         titulo: (l.titulo || "").trim().slice(0, 80) || null,
         boton_texto: (l.boton_texto || "").trim().slice(0, 40) || null,

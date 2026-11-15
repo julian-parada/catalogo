@@ -100,3 +100,17 @@
   .pr-acciones>*{flex:1;justify-content:center}
   #cpForm .submit-btn{align-self:stretch}
 }
+
+/* Elegir varios productos (botón → "Varios productos que yo elija") */
+.pr-sel{display:flex;flex-direction:column;gap:8px;padding:10px;border-radius:10px;border:1px solid var(--line);background:var(--bg-2)}
+.pr-sel-cab{display:flex;align-items:center;gap:10px}
+.pr-sel-cab input{flex:1;min-width:0;min-height:40px;padding:0 12px;border-radius:10px;border:1px solid var(--line);background:var(--bg);color:var(--text);font:500 14px var(--body)}
+.pr-sel-cuenta{flex:none;font-size:12px;font-weight:800;color:var(--yellow)}
+.pr-sel-lista{display:flex;flex-direction:column;gap:4px;max-height:260px;overflow-y:auto;overscroll-behavior:contain}
+.pr-sel-item,.pr-lamina-campos label.pr-sel-item{display:flex;flex-direction:row;align-items:center;gap:10px;min-height:48px;padding:4px 8px;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;color:var(--text) !important}
+.pr-sel-item:hover{background:rgba(255,255,255,.04)}
+.pr-sel-item input{flex:none;width:20px;height:20px;accent-color:var(--pink)}
+.pr-sel-item img{flex:none;width:38px;height:38px;border-radius:6px;object-fit:cover;background:#000}
+.pr-sel-item span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pr-sel-item em{font-style:normal;font-size:10px;font-weight:800;color:var(--yellow);margin-left:4px}
+.pr-sel-item:has(input:checked){background:var(--pink-soft)}

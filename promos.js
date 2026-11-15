@@ -23,7 +23,7 @@
     if(!tienda) return;
     const [aj, lam] = await Promise.all([
       supabaseClient.from("promo_ajustes").select("encendida, desde, hasta, frecuencia, mostrar_cuenta").eq("tienda_id", tienda.id).maybeSingle(),
-      supabaseClient.from("promociones").select("id, orden, tipo, url, titulo, boton_texto, boton_destino, destino_id").eq("tienda_id", tienda.id).order("orden").order("id").limit(5)
+      supabaseClient.from("promociones").select("*").eq("tienda_id", tienda.id).order("orden").order("id").limit(5)
     ]);
     if(aj.error || lam.error) return;
     const ajustes = aj.data || { encendida: true, frecuencia: "dia", mostrar_cuenta: true };
@@ -62,7 +62,7 @@
     });
   }
 
-  const TEXTO_BOTON = { ofertas: "Ver ofertas", categoria: "Ver productos", producto: "Ver producto", cerrar: "" };
+  const TEXTO_BOTON = { ofertas: "Ver ofertas", categoria: "Ver productos", producto: "Ver producto", seleccion: "Ver productos", cerrar: "" };
 
   function abrir(laminas, fin){
     if(document.getElementById("promoVentana")) return;
@@ -229,6 +229,8 @@
         if(products.some(p => p.originalPrice)) seleccionarCategoria("__promos__"); else irAlCatalogo();
       }else if(l.boton_destino === "categoria" && l.destino_id){
         if(products.some(p => String(p.categoryId) === String(l.destino_id))) seleccionarCategoria(String(l.destino_id)); else irAlCatalogo();
+      }else if(l.boton_destino === "seleccion"){
+        mostrarSeleccion(l.destino_ids);
       }else if(l.boton_destino === "producto" && l.destino_id){
         if(!abrirFicha(l.destino_id)) irAlCatalogo();
       }

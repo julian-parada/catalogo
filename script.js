@@ -10,6 +10,7 @@ let currentCategory = "all"; // "all", "__nuevos__", "__promos__" o el id de una
 // Funciones extra que el superadmin activó para esta tienda (sql/013): { promos, cupones, cuenta }.
 // Las tiendas sin activar reciben {} y se ven exactamente como antes.
 let FUNC = {};
+let seleccionPromo = new Set();   // productos elegidos por la tienda en una lámina de la ventana de promociones
 let cupon = null;   // cupón aplicado en el carrito: { codigo, tipo, valor, minimo }
 
 // Carrito guardado en el navegador. Se descartan restos de versiones viejas (sin cartId).
@@ -166,6 +167,7 @@ function renderChips(items, hayPromos, hayNuevos){
   if(!cont) return;
   cont.textContent = "";
   const opciones = [["all", "Todo"]];
+  if(currentCategory === "__seleccion__") opciones.push(["__seleccion__", "🎁 De la promo"]);
   if(hayNuevos) opciones.push(["__nuevos__", "Nuevos"]);
   if(hayPromos) opciones.push(["__promos__", "Promociones"]);
   items.forEach(c => opciones.push([String(c.id), c.nombre]));
@@ -225,6 +227,15 @@ function seleccionarCategoria(valor){
   irAlCatalogo();
 }
 
+// Desde la ventana de promociones: muestra solo los productos que la tienda eligió
+function mostrarSeleccion(ids){
+  seleccionPromo = new Set((ids || []).map(Number).filter(id => products.some(p => p.id === id)));
+  if(!seleccionPromo.size){ irAlCatalogo(); return; }
+  document.getElementById("searchInput").value = "";
+  seleccionarCategoria("__seleccion__");
+  showToast("Estos son los productos de la promoción 👇");
+}
+
 function irAlCatalogo(){
   document.getElementById("catalogo")?.scrollIntoView({ behavior: "smooth" });
 }
@@ -246,6 +257,7 @@ function filtrarProductos(){
       currentCategory === "all" ? true :
       currentCategory === "__nuevos__" ? esNuevo(p) :
       currentCategory === "__promos__" ? Boolean(p.originalPrice) :
+      currentCategory === "__seleccion__" ? seleccionPromo.has(p.id) :
       String(p.categoryId) === currentCategory;
     const coincideTexto =
       p.name.toLowerCase().includes(term) ||
