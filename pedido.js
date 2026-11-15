@@ -84,6 +84,11 @@ async function cargarPedido(){
       </div>`;
     }).join("")}
 
+    ${Number(pedido.descuento) > 0 ? `
+    <div class="pedido-total pedido-cupon">
+      <span>🎟️ Cupón ${escapeHtml(pedido.cupon || "")}</span>
+      <span>-${money(Number(pedido.descuento))}</span>
+    </div>` : ""}
     <div class="pedido-total">
       <span>Total</span>
       <span>${money(Number(pedido.total) || 0)}${pedido.entrega === "domicilio" ? `<small class="mas-domicilio">+ domicilio</small>` : ""}</span>

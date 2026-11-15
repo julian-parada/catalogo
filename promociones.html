@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#080808">
+  <meta name="robots" content="noindex">
+  <title>Promociones — Admin</title>
+  <link rel="stylesheet" href="agregarPrenda.css">
+  <link rel="stylesheet" href="admin-nav.css">
+  <link rel="stylesheet" href="promociones.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabaseConfig.js"></script>
+  <script src="utils.js"></script>
+  <script src="tema.js"></script>
+  <script src="tienda.js"></script>
+  <link rel="icon" href="/favicon.ico" sizes="48x48">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="manifest" href="/site.webmanifest">
+</head>
+<body>
+  <main class="admin-shell">
+
+    <header class="admin-header">
+      <div>
+        <a href="index.html" class="brand-unificado" id="adminBrand"></a>
+      </div>
+      <div class="header-right">
+        <a href="admin.html#cambiar-clave" class="logout-btn"><span>🔑</span> <em class="txt-largo">Cambiar contraseña</em></a>
+        <button class="logout-btn" id="logoutBtn" type="button"><span>↪</span> Cerrar sesión</button>
+      </div>
+    </header>
+
+    <!-- NAVEGACIÓN DEL PANEL -->
+    <nav class="admin-nav" aria-label="Panel">
+      <a href="admin.html"><span class="nav-ico">▤</span> Mis productos</a>
+      <a href="agregarPrenda.html"><span class="nav-ico">＋</span> Agregar producto</a>
+      <a href="ajustes.html"><span class="nav-ico">✎</span> Mi tienda</a>
+      <a href="promociones.html" class="nav-promos" aria-current="page"><span class="nav-ico">🎁</span> Promociones</a>
+      <a href="index.html" class="admin-nav-ext" target="_blank" rel="noopener"><span class="nav-ico">↗</span> Ver mi tienda</a>
+    </nav>
+
+    <section class="page-intro">
+      <div>
+        <span class="eyebrow">MÁS VENTAS</span>
+        <h2>Promo<strong>ciones</strong></h2>
+        <p>Muestra tus ofertas apenas el cliente entra y crea cupones de descuento.</p>
+      </div>
+    </section>
+
+    <!-- Cargando / sin paquete -->
+    <div class="pr-aviso" id="prCargando">Cargando…</div>
+    <div class="pr-aviso pr-aviso-apagado" id="prSinPaquete" hidden>
+      <strong>Esta función no está activa en tu tienda.</strong>
+      <p>Con las promociones muestras imágenes y videos de tus ofertas al entrar a tu tienda, y con los cupones das descuentos a tus clientes fieles.</p>
+      <a class="submit-btn" id="prPedirPaquete" href="#" target="_blank" rel="noopener">Pedir el paquete por WhatsApp</a>
+    </div>
+
+    <div id="prContenido" hidden>
+      <!-- Pestañas -->
+      <div class="pr-tabs" role="tablist" aria-label="Tipo de promoción">
+        <button type="button" role="tab" id="tabVentana" aria-controls="panelVentana" aria-selected="true">🎁 Ventana al entrar</button>
+        <button type="button" role="tab" id="tabCupones" aria-controls="panelCupones" aria-selected="false">🎟️ Cupones</button>
+      </div>
+
+      <!-- ===================== VENTANA ===================== -->
+      <section class="pr-panel" id="panelVentana" role="tabpanel" aria-labelledby="tabVentana">
+        <p class="pr-paquete" id="paqPromos"></p>
+
+        <div class="pr-caja pr-fila-switch">
+          <label for="prEncendida"><strong>Mostrar la ventana</strong><small>Se abre cuando el cliente entra a tu tienda</small></label>
+          <input type="checkbox" id="prEncendida" class="pr-switch" checked>
+        </div>
+
+        <div class="pr-caja">
+          <div class="pr-titulo-fila"><h3>Láminas <span id="prCuenta">(0 de 5)</span></h3><small>Salen en este orden</small></div>
+          <div id="prLaminas" class="pr-laminas"></div>
+          <div class="pr-subir">
+            <label class="pr-subir-btn" id="btnSubirImagen">
+              <input type="file" id="prImagen" accept="image/jpeg,image/png,image/webp">
+              <strong>＋ Subir imagen</strong><small>Vertical 4:5 · pasa sola en 5 s</small>
+            </label>
+            <label class="pr-subir-btn" id="btnSubirVideo">
+              <input type="file" id="prVideo" accept="video/mp4,video/webm,video/quicktime">
+              <strong>＋ Subir video</strong><small>Máx. 15 s · 15 MB</small>
+            </label>
+          </div>
+          <p class="pr-progreso" id="prSubiendo" hidden></p>
+        </div>
+
+        <div class="pr-caja">
+          <h3>¿Cuándo se muestra?</h3>
+          <div class="pr-fechas">
+            <label>Desde<input type="date" id="prDesde"></label>
+            <label>Hasta<input type="date" id="prHasta"></label>
+          </div>
+          <small class="pr-ayuda" id="prFechasAyuda">Si las dejas vacías, se muestra mientras tengas el paquete.</small>
+          <label class="pr-opcion"><input type="radio" name="prFrecuencia" value="dia" checked> Una vez al día por cliente</label>
+          <label class="pr-opcion"><input type="radio" name="prFrecuencia" value="siempre"> Cada vez que entra</label>
+          <label class="pr-opcion"><input type="checkbox" id="prCuentaFin" checked> Mostrar «Termina en…» en la ventana</label>
+        </div>
+
+        <div class="pr-acciones">
+          <a class="pr-btn-sec" id="prVistaPrevia" href="index.html" target="_blank" rel="noopener">Vista previa</a>
+          <button type="button" class="submit-btn" id="prGuardar">Guardar</button>
+        </div>
+        <p class="form-msg" id="prMsg" role="status"></p>
+      </section>
+
+      <!-- ===================== CUPONES ===================== -->
+      <section class="pr-panel" id="panelCupones" role="tabpanel" aria-labelledby="tabCupones" hidden>
+        <p class="pr-paquete" id="paqCupones"></p>
+        <p class="pr-ayuda">El cliente escribe el código en el carrito y el descuento se le resta del total. Se aplica sobre los productos, no sobre el domicilio.</p>
+
+        <div class="pr-caja">
+          <h3>Mis cupones</h3>
+          <div id="cpLista" class="cp-lista"></div>
+        </div>
+
+        <form class="pr-caja" id="cpForm" novalidate>
+          <h3>Crear cupón</h3>
+          <label class="pr-campo">Código
+            <input type="text" id="cpCodigo" maxlength="20" placeholder="Ej: NAVIDAD15" autocomplete="off" required>
+            <small>Solo letras y números, sin espacios (3 a 20).</small>
+          </label>
+          <div class="pr-campo">Tipo de descuento
+            <div class="cp-tipos">
+              <label><input type="radio" name="cpTipo" value="pct" checked><span>Porcentaje %</span></label>
+              <label><input type="radio" name="cpTipo" value="fijo"><span>Valor fijo $</span></label>
+            </div>
+          </div>
+          <label class="pr-campo"><span id="cpValorTxt">Porcentaje (1 a 90)</span>
+            <input type="number" id="cpValor" min="1" inputmode="numeric" required>
+          </label>
+          <div class="pr-fechas">
+            <label>Compra mínima<input type="number" id="cpMinimo" min="0" inputmode="numeric" placeholder="Opcional"></label>
+            <label>Máx. de usos<input type="number" id="cpMax" min="1" inputmode="numeric" placeholder="Sin límite"></label>
+          </div>
+          <label class="pr-campo">Vence el
+            <input type="date" id="cpVence">
+            <small>Opcional. Si no pones fecha, sirve mientras tengas el paquete.</small>
+          </label>
+          <button type="submit" class="submit-btn" id="cpCrear">Crear cupón</button>
+          <p class="form-msg" id="cpMsg" role="status"></p>
+        </form>
+      </section>
+    </div>
+  </main>
+
+  <script src="promociones.js"></script>
+</body>
+</html>

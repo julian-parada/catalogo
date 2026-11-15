@@ -137,6 +137,21 @@
       <span class="eyebrow">Tu pedido</span>
       <h2>Productos seleccionados</h2>
       <div id="cartItems"></div>
+      <!-- Cupón de descuento: solo aparece si la tienda tiene el paquete de cupones -->
+      <div class="cupon-box" id="cuponBox" hidden>
+        <button type="button" class="cupon-abrir" id="cuponAbrir">🎟️ ¿Tienes un cupón de descuento?</button>
+        <div class="cupon-form" id="cuponForm" hidden>
+          <input id="cuponInput" type="text" maxlength="20" placeholder="Escribe tu cupón" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-label="Código del cupón">
+          <button type="button" id="cuponAplicar">Aplicar</button>
+        </div>
+        <div class="cupon-ok" id="cuponOk" hidden>
+          <span id="cuponOkTxt"></span>
+          <button type="button" id="cuponQuitar">Quitar</button>
+        </div>
+        <p class="cupon-msg" id="cuponMsg" role="status" aria-live="polite"></p>
+      </div>
+      <div class="cart-linea" id="cartSubtotal" hidden><span>Subtotal</span><span id="cartSubtotalVal"></span></div>
+      <div class="cart-linea cart-desc" id="cartDescuento" hidden><span>Descuento del cupón</span><span id="cartDescVal"></span></div>
       <div class="cart-total">
         <span>Total estimado</span>
         <strong id="cartTotal">$0</strong>
@@ -223,6 +238,7 @@
         <span class="eyebrow ficha-cat" id="fichaCat"></span>
         <h2 class="ficha-nombre" id="fichaNombre"></h2>
         <div class="ficha-precio" id="fichaPrecio"></div>
+        <div class="ficha-cuenta" id="fichaCuenta" hidden></div>
         <p class="ficha-desc" id="fichaDesc"></p>
         <fieldset class="ficha-opciones" id="fichaOpcionesBox">
           <legend>Elige una opción</legend>
@@ -308,6 +324,7 @@
 <script defer src="demo.js"></script>
 <script defer src="compartir.js"></script>
 <script defer src="script.js"></script>
+<script defer src="promos.js"></script>
 
   
 </body>

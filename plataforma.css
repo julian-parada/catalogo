@@ -176,3 +176,18 @@ button,input,select,textarea{font:inherit;color:inherit}
 /* Nueva tienda: cómo arranca (prueba gratis o ya pagó) */
 .pl-etiqueta{display:block; font-size:.8rem; font-weight:700; color:var(--muted); margin-bottom:6px}
 .pl-opciones.pl-opciones-2{grid-template-columns:1fr 1fr}
+
+/* ---------- Funciones extra (promociones, cupones, cuenta regresiva) ---------- */
+.pl-extras{border:1px solid var(--line2); border-radius:16px; padding:14px 14px 4px; margin:0 0 14px}
+.pl-extras legend{padding:0 6px; font-weight:800; font-size:.92rem}
+.pl-extra{border-top:1px solid var(--line); padding:12px 0 2px}
+.pl-extra:first-of-type{border-top:0; padding-top:4px}
+.pl-extra-on{display:flex; gap:10px; align-items:flex-start; cursor:pointer; margin-bottom:10px}
+.pl-extra-on input{width:20px; height:20px; margin-top:2px; accent-color:var(--pink); flex:none}
+.pl-extra-on span{display:flex; flex-direction:column}
+.pl-extra-on small{color:var(--muted); font-size:.8rem}
+.pl-extra-fechas{display:grid; grid-template-columns:1fr 1fr; gap:10px; align-items:end}
+.pl-extra-rapidos{grid-column:1 / -1; display:flex; gap:8px; margin:-6px 0 10px}
+.pl-extra-rapidos .pl-btn{padding:7px 12px; font-size:.82rem}
+.pl-extra.apagada .pl-extra-fechas{opacity:.4}
+.pl-chip-extra{display:inline-block; margin:6px 6px 0 0; padding:3px 9px; border-radius:99px; font-size:.74rem; font-weight:700; background:rgba(var(--pink-rgb),.14); color:#ff8cc8}

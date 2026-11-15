@@ -638,7 +638,7 @@ function separarOpciones(texto){
 const TIENDA_POR_DEFECTO = "lookshop";
 
 // Con o sin ".html": Cloudflare Pages muestra /admin en vez de /admin.html
-const ES_PAGINA_ADMIN = /\/(admin|agregarPrenda|editarPrenda|ajustes)(\.html)?\/?$/i.test(location.pathname);
+const ES_PAGINA_ADMIN = /\/(admin|agregarPrenda|editarPrenda|ajustes|promociones)(\.html)?\/?$/i.test(location.pathname);
 
 function limpiarSlug(valor){
   return String(valor || "").trim().toLowerCase().replace(/[^a-z0-9-]/g, "");
@@ -700,6 +700,26 @@ window.tiendaActual = (async () => {
     return null;
   }
 })();
+
+// Funciones extra que el superadmin le activó a esta tienda (sql/013):
+//   await window.funcionesTienda → { promos: "2026-11-30", cupones: "...", cuenta: "..." } (fecha "hasta")
+// Sin la migración o sin nada activo → {} y todo se ve como siempre.
+window.funcionesTienda = window.tiendaActual
+  .then(async tienda => {
+    if(!tienda || tienda.activa === false) return {};
+    const { data, error } = await supabaseClient.rpc("funciones_activas", { p_tienda: tienda.id });
+    return error || !data || typeof data !== "object" ? {} : data;
+  })
+  .catch(() => ({}));
+
+// Panel: la pestaña "Promociones" solo aparece si hay promos o cupones activos
+if(ES_PAGINA_ADMIN){
+  window.funcionesTienda.then(f => {
+    if(!(f.promos || f.cupones)) return;
+    const mostrar = () => document.querySelectorAll(".nav-promos").forEach(a => { a.hidden = false; });
+    if(document.readyState === "loading") document.addEventListener("DOMContentLoaded", mostrar); else mostrar();
+  });
+}
 
 // 1) Aplica enseguida la paleta (y la letra) de la visita anterior a ESTA tienda (evita el parpadeo)
 const paletaGuardada = leerLocal(claveLocal("tiendaPaleta"));

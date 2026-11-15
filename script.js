@@ -7,6 +7,10 @@ const DIAS_NUEVO = 5; // una prenda cuenta como "nueva" durante estos días desd
 let products = [];
 let categoriasMenu = [];
 let currentCategory = "all"; // "all", "__nuevos__", "__promos__" o el id de una categoría
+// Funciones extra que el superadmin activó para esta tienda (sql/013): { promos, cupones, cuenta }.
+// Las tiendas sin activar reciben {} y se ven exactamente como antes.
+let FUNC = {};
+let cupon = null;   // cupón aplicado en el carrito: { codigo, tipo, valor, minimo }
 
 // Carrito guardado en el navegador. Se descartan restos de versiones viejas (sin cartId).
 let cart = [];
@@ -48,12 +52,19 @@ async function cargarProductos(){
   if(!tienda){ pantallaBloqueo("noExiste"); return; }
   if(!tienda.activa){ pantallaBloqueo("suspendida"); return; }
 
+  // En paralelo con el catálogo; si tarda o falla, la tienda sigue normal (sin extras)
+  const funcionesP = Promise.race([
+    Promise.resolve(window.funcionesTienda).then(f => f || {}, () => ({})),
+    new Promise(ok => setTimeout(() => ok({}), 4000))
+  ]);
+
   const { data, error } = await supabaseClient
     .from("prendas")
     .select(`*, categorias(nombre), tallas(id, talla, disponible), imagenes_prenda(url, orden)`)
     .eq("tienda_id", tienda.id)
     .order("creado_en", { ascending: false });
 
+  FUNC = await funcionesP;
   if(error){ console.error(error); renderProducts(); return; }
 
   products = data
@@ -64,6 +75,7 @@ async function cargarProductos(){
       categoryId: p.categoria_id,
       price: precioVigente(p),
       originalPrice: ofertaVigente(p) ? p.precio : null,   // la promoción dura 10 días
+      ofertaHasta: ofertaVigente(p) ? p.oferta_hasta || null : null,
       img: p.imagen,
       description: p.descripcion || "",
       creado: p.creado_en,
@@ -89,7 +101,10 @@ async function cargarProductos(){
   renderNav();
   renderProducts();
   updateCount();
+  pintarCuponDisponible();
   abrirFichaDelLink();
+  window.catalogoListo = true;
+  document.dispatchEvent(new CustomEvent("catalogo-listo"));
 }
 
 /* ---------------------------------------------------------
@@ -252,6 +267,7 @@ function tarjetaProducto(p, i, paso){
         ${p.originalPrice ? `<span class="price-old">${money(p.originalPrice)}</span>` : ""}
         ${money(p.price)}
       </div>
+      ${htmlCuentaTarjeta(p)}
       ${p.sizes.length > 1 ? `
         <select class="talla-select" id="talla-${p.id}">
           
@@ -515,7 +531,8 @@ function renderCart(){
 
 // Total del carrito: si es a domicilio se aclara que el envío va aparte (lo confirma la tienda)
 function pintarTotal(){
-  const total = cart.reduce((a,x) => a + x.price * x.qty, 0);
+  const { total } = totalesCarrito();
+  pintarCupon();
   const domicilio = cart.length && radioMarcado("dcEntrega") === "domicilio";
   const el = document.getElementById("cartTotal");
   el.textContent = money(total);
@@ -540,9 +557,171 @@ function updateCount(){
   barra.hidden = unidades === 0;
   document.body.classList.toggle("con-barra", unidades > 0);
   document.getElementById("bpCant").textContent = unidades;
-  document.getElementById("bpTotal").textContent = money(cart.reduce((a,x) => a + x.price * x.qty, 0));
+  document.getElementById("bpTotal").textContent = money(totalesCarrito().total);
   if(antes && unidades){ barra.classList.remove("bump"); void barra.offsetWidth; barra.classList.add("bump"); }
 }
+
+/* ---------------------------------------------------------
+   CUPONES (solo si la tienda tiene el paquete "cupones")
+   El carrito calcula el descuento para mostrarlo; el valor real lo pone
+   crear_pedido en el servidor, que vuelve a validar el cupón.
+   --------------------------------------------------------- */
+const CUPON_KEY = claveLocal("cupon");
+
+function totalesCarrito(){
+  const subtotal = cart.reduce((a,x) => a + x.price * x.qty, 0);
+  let descuento = 0, falta = 0;
+  if(cupon && cart.length){
+    if(cupon.minimo && subtotal < cupon.minimo) falta = cupon.minimo - subtotal;
+    else descuento = cupon.tipo === "pct" ? Math.round(subtotal * cupon.valor / 100) : Math.min(cupon.valor, subtotal);
+  }
+  return { subtotal, descuento, total: subtotal - descuento, falta };
+}
+
+const textoCupon = c => c.tipo === "pct" ? `${Number(c.valor)}% de descuento` : `${money(c.valor)} de descuento`;
+
+function mostrarMsgCupon(texto, error){
+  const m = document.getElementById("cuponMsg");
+  if(!m) return;
+  m.textContent = texto || "";
+  m.classList.toggle("error", Boolean(error));
+}
+
+function pintarCupon(){
+  const box = document.getElementById("cuponBox");
+  if(!box) return;
+  box.hidden = !FUNC.cupones || !cart.length;
+  const { subtotal, descuento, falta } = totalesCarrito();
+  const conCupon = Boolean(cupon);
+  document.getElementById("cuponAbrir").hidden = conCupon || !document.getElementById("cuponForm").hidden;
+  if(conCupon) document.getElementById("cuponForm").hidden = true;
+  document.getElementById("cuponOk").hidden = !conCupon;
+  if(conCupon){
+    document.getElementById("cuponOkTxt").innerHTML = `🎟️ <b>${esc(cupon.codigo)}</b> · ${esc(textoCupon(cupon))}`;
+    if(falta) mostrarMsgCupon(`Te faltan ${money(falta)} para usar tu cupón (compra mínima ${money(cupon.minimo)}).`);
+    else if(!document.getElementById("cuponMsg").classList.contains("error")) mostrarMsgCupon("");
+  }
+  const filaSub = document.getElementById("cartSubtotal"), filaDesc = document.getElementById("cartDescuento");
+  if(filaSub){ filaSub.hidden = !descuento; document.getElementById("cartSubtotalVal").textContent = money(subtotal); }
+  if(filaDesc){ filaDesc.hidden = !descuento; document.getElementById("cartDescVal").textContent = "-" + money(descuento); }
+}
+
+async function aplicarCupon(codigo, { silencioso = false } = {}){
+  codigo = String(codigo || "").toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 20);
+  if(codigo.length < 3){ if(!silencioso) mostrarMsgCupon("Escribe el código de tu cupón.", true); return; }
+  const tienda = await window.tiendaActual;
+  const btn = document.getElementById("cuponAplicar");
+  if(btn) btn.disabled = true;
+  const { data, error } = await supabaseClient.rpc("validar_cupon", {
+    p_tienda: tienda.id, p_codigo: codigo, p_subtotal: totalesCarrito().subtotal
+  });
+  if(btn) btn.disabled = false;
+  if(error || !data || !data.ok){
+    try{ localStorage.removeItem(CUPON_KEY); }catch(e){}
+    if(!silencioso) mostrarMsgCupon((data && data.motivo) || "No se pudo revisar el cupón, intenta de nuevo.", true);
+    return;
+  }
+  cupon = { codigo: data.codigo, tipo: data.tipo, valor: Number(data.valor), minimo: data.minimo == null ? 0 : Number(data.minimo) };
+  try{ localStorage.setItem(CUPON_KEY, cupon.codigo); }catch(e){}
+  mostrarMsgCupon("");
+  pintarTotal(); updateCount();
+  if(!silencioso && totalesCarrito().descuento) showToast(`Cupón ${cupon.codigo} aplicado 🎉`);
+}
+
+// Al cargar: cupón del link (?cupon=ANA10) o el que ya había puesto en este navegador
+function pintarCuponDisponible(){
+  if(!FUNC.cupones || !document.getElementById("cuponBox")) return;
+  let guardado = "";
+  try{ guardado = localStorage.getItem(CUPON_KEY) || ""; }catch(e){}
+  const delLink = new URLSearchParams(location.search).get("cupon");
+  const codigo = delLink || guardado;
+  if(codigo) aplicarCupon(codigo, { silencioso: !delLink });
+  if(delLink) document.getElementById("cuponInput").value = String(delLink).toUpperCase().slice(0, 20);
+  pintarCupon();
+}
+
+document.getElementById("cuponAbrir")?.addEventListener("click", () => {
+  document.getElementById("cuponForm").hidden = false;
+  document.getElementById("cuponAbrir").hidden = true;
+  document.getElementById("cuponInput").focus();
+});
+document.getElementById("cuponInput")?.addEventListener("input", e => {
+  const limpio = e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, "");
+  if(limpio !== e.target.value) e.target.value = limpio;
+  mostrarMsgCupon("");
+});
+document.getElementById("cuponInput")?.addEventListener("keydown", e => {
+  if(e.key === "Enter"){ e.preventDefault(); aplicarCupon(e.target.value); }
+});
+document.getElementById("cuponAplicar")?.addEventListener("click", () => aplicarCupon(document.getElementById("cuponInput").value));
+document.getElementById("cuponQuitar")?.addEventListener("click", () => {
+  cupon = null;
+  try{ localStorage.removeItem(CUPON_KEY); }catch(e){}
+  document.getElementById("cuponInput").value = "";
+  mostrarMsgCupon("");
+  pintarTotal(); updateCount();
+});
+
+/* ---------------------------------------------------------
+   CUENTA REGRESIVA EN OFERTAS (solo si la tienda tiene el paquete "cuenta")
+   Usa oferta_hasta, la fecha real en que el servidor deja de cobrar la oferta.
+   --------------------------------------------------------- */
+function finOferta(p){
+  if(!FUNC.cuenta || !p.originalPrice || !p.ofertaHasta) return 0;
+  const f = fechaDe(p.ofertaHasta);
+  return f && f.getTime() > Date.now() ? f.getTime() : 0;
+}
+const dosDig = n => String(n).padStart(2, "0");
+function partesCuenta(ms){
+  const t = Math.max(0, Math.floor(ms / 1000));
+  return { d: Math.floor(t / 86400), h: Math.floor(t % 86400 / 3600), m: Math.floor(t % 3600 / 60), s: t % 60 };
+}
+function textoCuentaCorto(ms){
+  const { d, h, m, s } = partesCuenta(ms);
+  return d ? `${d}d ${h}h` : `${dosDig(h)}:${dosDig(m)}:${dosDig(s)}`;
+}
+
+function htmlCuentaTarjeta(p){
+  const fin = finOferta(p);
+  if(!fin) return "";
+  const resta = fin - Date.now();
+  return `<p class="cuenta-oferta${resta < 86400000 ? " urgente" : ""}" data-fin="${fin}">⏳ Termina en <b>${textoCuentaCorto(resta)}</b></p>`;
+}
+
+function pintarCuentaFicha(p){
+  const el = document.getElementById("fichaCuenta");
+  if(!el) return;
+  const fin = finOferta(p);
+  el.hidden = !fin;
+  if(!fin){ el.removeAttribute("data-fin"); return; }
+  el.dataset.fin = fin;
+  el.innerHTML = `<span class="fc-txt">⏳ La oferta termina en</span>
+    <span class="fc-cajas">${["d","h","m","s"].map(u => `<span class="fc-caja"><b data-u="${u}">00</b><small>${{ d:"días", h:"horas", m:"min", s:"seg" }[u]}</small></span>`).join("")}</span>`;
+  tickCuenta();
+}
+
+function tickCuenta(){
+  const ahora = Date.now();
+  document.querySelectorAll("[data-fin]").forEach(el => {
+    const resta = Number(el.dataset.fin) - ahora;
+    if(resta <= 0){
+      el.classList.add("terminada");
+      if(el.id === "fichaCuenta") el.innerHTML = `<span class="fc-txt">Esta oferta ya terminó</span>`;
+      else el.textContent = "Oferta terminada";
+      el.removeAttribute("data-fin");
+      return;
+    }
+    el.classList.toggle("urgente", resta < 86400000);
+    if(el.id === "fichaCuenta"){
+      const pt = partesCuenta(resta);
+      el.querySelectorAll("[data-u]").forEach(b => { b.textContent = dosDig(pt[b.dataset.u]); });
+    }else{
+      const b = el.querySelector("b");
+      if(b) b.textContent = textoCuentaCorto(resta);
+    }
+  });
+}
+document.addEventListener("catalogo-listo", () => { if(FUNC.cuenta) setInterval(tickCuenta, 1000); }, { once: true });   // script.js registra esto antes de cargar
 
 /* ---------------------------------------------------------
    Enviar pedido por WhatsApp
@@ -556,9 +735,9 @@ async function sendWhatsapp(){
   if(window.ExhibeDemo && window.ExhibeDemo.activo){
     const clienteDemo = leerDatosCliente();
     if(!validarDatosCliente(clienteDemo)) return;
-    const totalDemo = cart.reduce((a,x) => a + x.price * x.qty, 0);
+    const { total: totalDemo, descuento: descDemo } = totalesCarrito();
     const detalle = cart.map(x => `${x.qty} x ${x.name}${esOpcionUnica(x.talla) ? "" : ` (${x.talla})`} - ${money(x.price * x.qty)}${x.pers ? `\n   _Lo quiere así:_ ${x.pers}` : x.encargo ? "\n   _(bajo pedido)_" : ""}`);
-    window.ExhibeDemo.mostrarPedido(mensajePedido(saludo, clienteDemo, totalDemo, null, detalle), clienteDemo.nombre);
+    window.ExhibeDemo.mostrarPedido(mensajePedido(saludo, { ...clienteDemo, cupon: descDemo ? cupon.codigo : "", descuento: descDemo }, totalDemo, null, detalle), clienteDemo.nombre);
     return;
   }
 
@@ -572,16 +751,28 @@ async function sendWhatsapp(){
   btn.disabled = true;
   btn.textContent = "Generando pedido...";
 
-  const total = cart.reduce((a,x) => a + x.price * x.qty, 0);
+  const { total, descuento } = totalesCarrito();
+  // El cupón solo viaja si aplica (el servidor lo vuelve a validar y descuenta el uso)
+  const conCupon = cupon && descuento > 0 ? { ...cliente, cupon: cupon.codigo } : cliente;
 
   // El pedido se crea en el servidor: él valida las prendas y calcula el total con los precios reales
   const items = cart.map(x => ({ prenda_id: x.id, talla_id: x.tallaId, cantidad: x.qty, ...(x.pers ? { personalizacion: x.pers } : {}) }));
   const { data: codigoPedido, error: errorPedido } = await supabaseClient
-    .rpc("crear_pedido", { p_items: items, p_cliente: cliente });
+    .rpc("crear_pedido", { p_items: items, p_cliente: conCupon });
 
   if(errorPedido || !codigoPedido){
     console.error(errorPedido);
     const msg = (errorPedido && errorPedido.message) || "";
+    if(/cup[oó]n/i.test(msg)){
+      // El cupón se venció, se agotó o ya no cumple la compra mínima: se quita y se avisa
+      cupon = null;
+      pintarTotal(); updateCount();
+      mostrarMsgCupon(msg + ". Revisa el total y vuelve a enviar.", true);
+      document.getElementById("cuponBox")?.scrollIntoView({ behavior: "smooth", block: "center" });
+      btn.disabled = false;
+      btn.textContent = "Enviar pedido por WhatsApp";
+      return;
+    }
     const noDisponible = /Talla no disponible|Prenda no existe|Tienda no disponible/.test(msg);
     // Si el servidor rechazó algún dato del comprador, se muestra en el formulario
     const errorDatos = /nombre|domicilio|dirección|forma de pago|tus datos/i.test(msg);
@@ -595,16 +786,18 @@ async function sendWhatsapp(){
   }
 
   // Total real calculado por el servidor (si esta consulta falla, se usa el del carrito)
-  let totalFinal = total;
+  let totalFinal = total, descFinal = conCupon.cupon ? descuento : 0;
   const { data: resumen } = await supabaseClient.rpc("obtener_pedido", { p_codigo: codigoPedido });
   if(resumen && resumen.total != null) totalFinal = Number(resumen.total);
+  if(resumen && resumen.descuento != null) descFinal = Number(resumen.descuento);
 
   // Relativo a la página actual: sirve en /catalogo/index.html, en / y en /index (Cloudflare)
   const urlPedido = new URL(linkTienda("pedido.html", { codigo: codigoPedido }), location.href).href;
 
   guardarDatosCliente(cliente);   // para que la próxima compra ya salga lleno
 
-  const urlWhatsapp = enlaceWhatsapp(numero, mensajePedido(saludo, cliente, totalFinal, urlPedido));
+  const urlWhatsapp = enlaceWhatsapp(numero, mensajePedido(saludo, { ...cliente, cupon: descFinal > 0 ? conCupon.cupon : "", descuento: descFinal }, totalFinal, urlPedido));
+  if(descFinal > 0){ cupon = null; pintarTotal(); updateCount(); }   // ya se usó en este pedido
   // Algunos celulares bloquean la ventana nueva: en ese caso se abre en la misma pestaña
   const ventana = window.open(urlWhatsapp, "_blank");
   if(!ventana) window.location.href = urlWhatsapp;
@@ -635,6 +828,7 @@ function mensajePedido(saludo, cliente, total, urlPedido, detalle){
   if(detalle && detalle.length) lineas.push("", "*Productos:*", ...detalle);
   lineas.push("");
   if(urlPedido) lineas.push(`*Ver pedido:* ${urlPedido}`);
+  if(cliente.cupon && cliente.descuento > 0) lineas.push(`*Cupón:* ${cliente.cupon} (-${money(cliente.descuento)})`);
   lineas.push(`*Total:* ${money(total)}${cliente.entrega === "domicilio" ? " + domicilio" : ""}`, "", "¿Me confirman disponibilidad? Gracias.");
   return lineas.join("\n");
 }
@@ -897,6 +1091,7 @@ function pintarFicha(p, foto){
   document.getElementById("fichaPrecio").innerHTML = p.originalPrice
     ? `<span class="ficha-antes">${money(p.originalPrice)}</span> ${money(p.price)} <span class="ficha-ahorro">Ahorras ${money(p.originalPrice - p.price)}</span>`
     : money(p.price);
+  pintarCuentaFicha(p);
   const desc = document.getElementById("fichaDesc");
   desc.textContent = p.description;
   desc.hidden = !p.description.trim();

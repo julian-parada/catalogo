@@ -44,3 +44,4 @@
   .header-right{gap:8px}
 }
 .header-right .logout-btn{height:44px; padding-top:0; padding-bottom:0; line-height:1; box-sizing:border-box; text-decoration:none}
+.admin-nav a[hidden]{display:none !important}

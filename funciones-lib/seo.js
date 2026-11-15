@@ -13,7 +13,7 @@ export { PAGINAS_SEO };
 
 // Páginas propias de la plataforma: nunca se confunden con una tienda
 export const RESERVADOS = new Set([
-  "index", "admin", "ajustes", "agregarprenda", "editarprenda", "pedido",
+  "index", "admin", "ajustes", "agregarprenda", "editarprenda", "pedido", "promociones",
   "privacidad", "restablecer", "plataforma", "sitemap", "robots", "img", "favicon", "inicio",
   ...PAGINAS_SEO
 ]);

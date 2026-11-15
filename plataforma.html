@@ -124,6 +124,37 @@
       </div>
       <label class="pl-campo"><span>Pagada hasta</span><input type="date" id="edVence"></label>
       <p class="pl-ayuda">Cambia la fecha solo para corregir un error. Para cobrar usa <b>Registrar pago</b>, así queda en el historial.</p>
+
+      <!-- Funciones extra (013): solo esta tienda, entre las fechas que pongas -->
+      <fieldset class="pl-extras" id="edExtras" hidden>
+        <legend>Funciones extra</legend>
+        <p class="pl-ayuda">Solo las tiene esta tienda y solo entre estas fechas. Al pasar «Hasta» se apagan solas.</p>
+        <div class="pl-extra" data-funcion="promos">
+          <label class="pl-extra-on"><input type="checkbox"> <span><b>🎁 Ventana de promociones</b><small>Imágenes y videos al entrar a la tienda</small></span></label>
+          <div class="pl-extra-fechas">
+            <label class="pl-campo"><span>Desde</span><input type="date" data-desde></label>
+            <label class="pl-campo"><span>Hasta</span><input type="date" data-hasta></label>
+            <div class="pl-extra-rapidos"><button type="button" class="pl-btn" data-dias="15">15 días</button><button type="button" class="pl-btn" data-dias="30">30 días</button></div>
+          </div>
+        </div>
+        <div class="pl-extra" data-funcion="cupones">
+          <label class="pl-extra-on"><input type="checkbox"> <span><b>🎟️ Cupones de descuento</b><small>Códigos que el cliente escribe en el carrito</small></span></label>
+          <div class="pl-extra-fechas">
+            <label class="pl-campo"><span>Desde</span><input type="date" data-desde></label>
+            <label class="pl-campo"><span>Hasta</span><input type="date" data-hasta></label>
+            <div class="pl-extra-rapidos"><button type="button" class="pl-btn" data-dias="15">15 días</button><button type="button" class="pl-btn" data-dias="30">30 días</button></div>
+          </div>
+        </div>
+        <div class="pl-extra" data-funcion="cuenta">
+          <label class="pl-extra-on"><input type="checkbox"> <span><b>⏳ Cuenta regresiva en ofertas</b><small>«Termina en…» en las tarjetas y la ficha</small></span></label>
+          <div class="pl-extra-fechas">
+            <label class="pl-campo"><span>Desde</span><input type="date" data-desde></label>
+            <label class="pl-campo"><span>Hasta</span><input type="date" data-hasta></label>
+            <div class="pl-extra-rapidos"><button type="button" class="pl-btn" data-dias="15">15 días</button><button type="button" class="pl-btn" data-dias="30">30 días</button></div>
+          </div>
+        </div>
+      </fieldset>
+      <p class="pl-ayuda" id="edExtrasFalta" hidden>Para activar promociones y cupones, corre <b>sql/013_promociones.sql</b> en Supabase.</p>
       <p class="pl-error" id="edError" role="alert"></p>
       <div class="pl-dlg-acciones">
         <button type="button" class="pl-btn" data-cerrar>Cancelar</button>

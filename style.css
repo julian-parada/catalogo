@@ -1752,3 +1752,39 @@ html.con-portada[data-velo] .hero-overlay p{text-shadow:0 1px 10px rgba(var(--bg
   .ficha-rel{padding-bottom:calc(22px + env(safe-area-inset-bottom))}
   .rel-item{width:118px}
 }
+
+/* =========================================================
+   CUPÓN EN EL CARRITO (paquete "cupones", sql/013)
+   ========================================================= */
+.cupon-box{margin-top:14px; padding:12px; border-radius:14px; border:1px dashed var(--line-light); background:var(--black-2)}
+.cupon-abrir{width:100%; min-height:44px; border:0; background:none; color:var(--acento-texto, var(--pink)); font:700 .95rem var(--font-texto, inherit); cursor:pointer; text-align:left}
+.cupon-form{display:flex; gap:8px}
+.cupon-form input{flex:1; min-width:0; min-height:46px; padding:0 14px; border-radius:12px; border:1px solid var(--line-light); background:var(--card); color:var(--white); font:800 1rem var(--font-texto, inherit); letter-spacing:.08em; text-transform:uppercase}
+.cupon-form input::placeholder{letter-spacing:0; text-transform:none; font-weight:500}
+.cupon-form button,.cupon-ok button{min-height:46px; padding:0 16px; border-radius:12px; border:0; background:var(--pink); color:var(--texto-acento, #fff); font-weight:800; cursor:pointer}
+.cupon-form button:disabled{opacity:.6; cursor:wait}
+.cupon-ok{display:flex; align-items:center; justify-content:space-between; gap:10px; font-size:.95rem}
+.cupon-ok b{letter-spacing:.06em}
+.cupon-ok button{min-height:38px; background:transparent; color:var(--muted); border:1px solid var(--line-light); font-weight:700}
+.cupon-msg{margin:6px 0 0; font-size:.85rem; color:var(--muted)}
+.cupon-msg:empty{display:none}
+.cupon-msg.error{color:var(--danger)}
+.cart-linea{display:flex; justify-content:space-between; padding:10px 0 0; font-size:.95rem; color:var(--muted)}
+.cart-desc span:last-child{color:var(--green, #25D366); font-weight:800}
+
+/* =========================================================
+   CUENTA REGRESIVA EN OFERTAS (paquete "cuenta", sql/013)
+   ========================================================= */
+.cuenta-oferta{margin:4px 0 6px; font-size:.78rem; font-weight:700; color:var(--secundario-texto, var(--gold))}
+.cuenta-oferta b{font-variant-numeric:tabular-nums}
+.cuenta-oferta.urgente{color:var(--danger)}
+.cuenta-oferta.terminada{color:var(--muted)}
+.ficha-cuenta{display:flex; flex-direction:column; gap:8px; margin:12px 0 4px; padding:12px 14px; border-radius:14px; background:rgba(var(--yellow-rgb),.1); border:1px solid rgba(var(--yellow-rgb),.35)}
+.ficha-cuenta.urgente{background:rgba(var(--danger-rgb),.1); border-color:rgba(var(--danger-rgb),.4)}
+.ficha-cuenta.terminada{background:none; border-color:var(--line)}
+.fc-txt{font-size:.85rem; font-weight:800; color:var(--secundario-texto, var(--gold))}
+.ficha-cuenta.urgente .fc-txt{color:var(--danger)}
+.fc-cajas{display:grid; grid-template-columns:repeat(4, minmax(0, 1fr)); gap:8px; max-width:320px}
+.fc-caja{display:flex; flex-direction:column; align-items:center; padding:6px 0; border-radius:10px; background:var(--card)}
+.fc-caja b{font-size:1.35rem; line-height:1.1; font-variant-numeric:tabular-nums; color:var(--white)}
+.fc-caja small{font-size:.68rem; color:var(--muted)}

@@ -324,7 +324,63 @@ function abrirEditar(t){
   $("edTelefono").value = t.telefono || "";
   $("edVence").value = String(t.vence || "").slice(0, 10);
   $("edError").textContent = "";
+  cargarExtras(t);
   $("dlgEditar").showModal();
+}
+
+/* ---------- Funciones extra por tienda (sql/013) ---------- */
+let extrasAntes = {};
+const filasExtra = () => [...document.querySelectorAll("#edExtras .pl-extra")];
+function pintarExtra(fila){
+  const on = fila.querySelector(".pl-extra-on input").checked;
+  fila.classList.toggle("apagada", !on);
+}
+async function cargarExtras(t){
+  extrasAntes = {};
+  $("edExtras").hidden = true; $("edExtrasFalta").hidden = true;
+  const { data, error } = await supabaseClient.rpc("plataforma_funciones", { p_tienda: t.id });
+  if(tEditar !== t) return;                       // cambió de tienda mientras cargaba
+  if(error){ $("edExtrasFalta").hidden = !/function .* does not exist|could not find/i.test(error.message); return; }
+  (data || []).forEach(f => { extrasAntes[f.funcion] = f; });
+  const hoy = hoyISO();
+  filasExtra().forEach(fila => {
+    const f = extrasAntes[fila.dataset.funcion];
+    fila.querySelector(".pl-extra-on input").checked = Boolean(f && String(f.hasta) >= hoy);
+    fila.querySelector("[data-desde]").value = f ? String(f.desde).slice(0, 10) : hoy;
+    fila.querySelector("[data-hasta]").value = f ? String(f.hasta).slice(0, 10) : sumarDias(hoy, 15);
+    pintarExtra(fila);
+  });
+  $("edExtras").hidden = false;
+}
+$("edExtras").addEventListener("change", e => { const fila = e.target.closest(".pl-extra"); if(fila) pintarExtra(fila); });
+$("edExtras").addEventListener("click", e => {
+  const b = e.target.closest("[data-dias]"); if(!b) return;
+  const fila = b.closest(".pl-extra");
+  const desde = fila.querySelector("[data-desde]");
+  if(!desde.value) desde.value = hoyISO();
+  fila.querySelector("[data-hasta]").value = sumarDias(desde.value, Number(b.dataset.dias));
+  fila.querySelector(".pl-extra-on input").checked = true;
+  pintarExtra(fila);
+});
+// Guarda solo lo que cambió. Devuelve un mensaje de error o "".
+async function guardarExtras(tienda){
+  if($("edExtras").hidden) return "";
+  for(const fila of filasExtra()){
+    const funcion = fila.dataset.funcion, antes = extrasAntes[funcion];
+    const on = fila.querySelector(".pl-extra-on input").checked;
+    const desde = fila.querySelector("[data-desde]").value, hasta = fila.querySelector("[data-hasta]").value;
+    if(on){
+      if(!desde || !hasta) return "Pon las dos fechas de cada función activada.";
+      if(hasta < desde) return "En las funciones extra, «Hasta» debe ser igual o después de «Desde».";
+      if(antes && String(antes.desde).slice(0, 10) === desde && String(antes.hasta).slice(0, 10) === hasta) continue;
+      const { error } = await supabaseClient.rpc("plataforma_funcion_guardar", { p_tienda: tienda, p_funcion: funcion, p_desde: desde, p_hasta: hasta });
+      if(error) return "No se pudo guardar una función extra: " + error.message;
+    } else if(antes){
+      const { error } = await supabaseClient.rpc("plataforma_funcion_guardar", { p_tienda: tienda, p_funcion: funcion, p_desde: null, p_hasta: null });
+      if(error) return "No se pudo quitar una función extra: " + error.message;
+    }
+  }
+  return "";
 }
 $("formEditar").addEventListener("submit", async e => {
   e.preventDefault();
@@ -335,6 +391,10 @@ $("formEditar").addEventListener("submit", async e => {
   const { error } = await supabaseClient.rpc("plataforma_editar", datos);
   $("edGuardar").disabled = false;
   if(error){ if(revisarAutorizacion(error)) $("dlgEditar").close(); else $("edError").textContent = "No se pudo guardar: " + error.message; return; }
+  $("edGuardar").disabled = true;
+  const errExtras = await guardarExtras(tEditar.id);
+  $("edGuardar").disabled = false;
+  if(errExtras){ $("edError").textContent = errExtras; return; }
   $("dlgEditar").close();
   toast("Cambios guardados");
   cargar();
