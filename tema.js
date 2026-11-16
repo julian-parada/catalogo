@@ -330,6 +330,15 @@ const PALETAS = {
     borde: "#3a332c"
   },
   // Avora + Dúo Perfume (ropa premium y perfumería): blanco y dorado
+  mia_coquetee: {
+    acento:       "#d6618b", // Rosa moño (botones)
+    acentoClaro:  "#f4a7c0",
+    acentoOscuro: "#a8325f", // Rosa profundo (texto sobre claro)
+    secundario:   "#e07a52", // Durazno/coral del "Coquetee"
+    bg: "#fff5f8", bg2: "#ffffff", card: "#ffffff", // Blanco rosado
+    texto: "#3b2a30", textoSuave: "#8a6b75", textoAcento: "#ffffff",
+    borde: "#f6d5e1"
+  },
   avora_oro: {
     acento:       "#c5a253", // Dorado champaña (botones)
     acentoClaro:  "#e3cd96",

@@ -80,6 +80,7 @@ const NOMBRES_PALETA = {
   perla_oro: "Perla y oro", arena_terracota: "Arena y terracota", cielo_limpio: "Cielo limpio",
   salvia_natural: "Salvia natural", lavanda_suave: "Lavanda suave", durazno_fresco: "Durazno fresco",
   innovate_lila: "Innóvate · lila", innovate_cacao: "Innóvate · cacao", innovate_noche: "Innóvate · noche",
+  mia_coquetee: "Mía Coquetee · rosa y durazno",
   avora_oro: "Avora · blanco y oro", avora_marfil: "Avora · marfil y negro",
   duo_noche: "Dúo · noche dorada"
 };
