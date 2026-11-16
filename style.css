@@ -1446,6 +1446,8 @@ body.con-barra .footer{padding-bottom:90px}
 
   /* Portada: más alta y con un velo más suave, para que se vea más la foto */
   .hero{min-height:400px}
+  /* Con foto: más alta todavía, así el texto queda abajo y la foto se ve arriba sin taparse */
+  html.con-portada .hero{min-height:clamp(500px, 72svh, 600px)}
   html.con-portada .hero::after{
     background:linear-gradient(0deg, rgba(var(--bg-rgb), .9) 0%, rgba(var(--bg-rgb), .62) 34%, rgba(var(--bg-rgb), .18) 62%, transparent 82%);
   }
