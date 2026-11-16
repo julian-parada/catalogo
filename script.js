@@ -743,16 +743,6 @@ async function sendWhatsapp(){
 
   const saludo = (window.CFG && window.CFG.mensaje_saludo) || "Hola, quiero hacer este pedido:";
 
-  // Tienda de ejemplo de LinkTalogo (demo.js): no se guarda ni se envía, solo se muestra cómo llega
-  if(window.ExhibeDemo && window.ExhibeDemo.activo){
-    const clienteDemo = leerDatosCliente();
-    if(!validarDatosCliente(clienteDemo)) return;
-    const { total: totalDemo, descuento: descDemo } = totalesCarrito();
-    const detalle = cart.map(x => `${x.qty} x ${x.name}${esOpcionUnica(x.talla) ? "" : ` (${x.talla})`} - ${money(x.price * x.qty)}${x.pers ? `\n   _Lo quiere así:_ ${x.pers}` : x.encargo ? "\n   _(bajo pedido)_" : ""}`);
-    window.ExhibeDemo.mostrarPedido(mensajePedido(saludo, { ...clienteDemo, cupon: descDemo ? cupon.codigo : "", descuento: descDemo }, totalDemo, null, detalle), clienteDemo.nombre);
-    return;
-  }
-
   const numero = numeroWhatsapp(window.CFG);   // tienda.js: "" si no hay número real
   if(!numero){ alert("Esta tienda todavía no tiene WhatsApp para recibir pedidos. Intenta más tarde."); return; }
 

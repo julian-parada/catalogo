@@ -2,7 +2,7 @@
 // Sirve para mostrársela a futuros clientes:
 //   · franja arriba que dice que es una tienda de ejemplo, con botón "Quiero la mía"
 //   · sección final para vender LinkTalogo
-//   · el pedido de prueba NO se guarda ni se envía: se muestra cómo le llegaría a la tienda
+//   · los pedidos llegan al WhatsApp de la tienda igual que en cualquier tienda real
 //   · el botón flotante de WhatsApp escribe a LinkTalogo
 // Las demás tiendas no cambian en nada.
 (function(){
@@ -10,7 +10,7 @@
   const TIENDAS_DEMO = ["lookshop"];
   const activo = typeof SLUG_ACTUAL !== "undefined" && TIENDAS_DEMO.includes(SLUG_ACTUAL)
     && typeof ES_PAGINA_ADMIN !== "undefined" && !ES_PAGINA_ADMIN;
-  window.ExhibeDemo = { activo, mostrarPedido(){} };
+  window.ExhibeDemo = { activo };
   if(!activo) return;
 
   const WA = (typeof EXHIBE_PRO !== "undefined" && EXHIBE_PRO.whatsapp) || "573247348475";
@@ -56,51 +56,6 @@
         </div>`;
       pie.before(sec);
     }
-
-    // 3) Ventana que muestra cómo llega el pedido
-    const modal = document.createElement("div");
-    modal.className = "demo-modal";
-    modal.id = "demoModal";
-    modal.hidden = true;
-    modal.innerHTML = `
-      <div class="demo-modal-card" role="dialog" aria-modal="true" aria-labelledby="demoModalT" tabindex="-1">
-        <button type="button" class="demo-cerrar" data-demo-cerrar aria-label="Cerrar">&times;</button>
-        <h2 id="demoModalT">Así le llega este pedido a la tienda</h2>
-        <p class="demo-modal-sub">En tu tienda, este mensaje te llega directo a tu WhatsApp, listo para confirmar y despachar.</p>
-        <div class="demo-chat">
-          <div class="demo-chat-cab"><span class="demo-chat-av" id="demoAv">C</span><span><b id="demoCliente">Cliente</b><small>WhatsApp</small></span></div>
-          <div class="demo-burbuja" id="demoMensaje"></div>
-        </div>
-        <div class="demo-acciones">
-          <a class="demo-btn demo-btn-wa" href="${linkQuiero()}" target="_blank" rel="noopener">${ICONO_WA}Quiero mi tienda · 15 días gratis</a>
-          <button type="button" class="demo-btn demo-btn-linea" data-demo-cerrar>Seguir probando</button>
-        </div>
-        <p class="demo-nota">Es una tienda de ejemplo: este pedido no se guardó ni se envió.</p>
-      </div>`;
-    document.body.appendChild(modal);
-    let antes = null;
-    const cerrar = () => { modal.hidden = true; document.body.classList.remove("demo-modal-abierto"); if(antes && antes.focus) antes.focus(); };
-    modal.addEventListener("click", e => { if(e.target === modal || e.target.closest("[data-demo-cerrar]")) cerrar(); });
-    document.addEventListener("keydown", e => { if(e.key === "Escape" && !modal.hidden){ e.stopPropagation(); cerrar(); } }, true);
-
-    // *negrita* de WhatsApp → <b>, con el texto escapado
-    const formato = t => String(t).replace(/[&<>"']/g, c => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[c]))
-      .replace(/\*([^*\n]+)\*/g, "<b>$1</b>");
-
-    window.ExhibeDemo.mostrarPedido = (texto, nombreCliente) => {
-      antes = document.activeElement;
-      document.getElementById("demoMensaje").innerHTML = formato(texto) +
-        `<span class="demo-hora">${new Date().toLocaleTimeString("es-CO", { hour: "numeric", minute: "2-digit" })}</span>`;
-      const nombre = (nombreCliente || "Cliente").trim();
-      document.getElementById("demoCliente").textContent = nombre;
-      document.getElementById("demoAv").textContent = nombre.split(/\s+/).map(p => p[0]).join("").slice(0, 2).toUpperCase();
-      // Cierra el carrito y abre la vista del mensaje
-      const carrito = document.getElementById("cartModal");
-      if(carrito) carrito.classList.remove("show");
-      modal.hidden = false;
-      document.body.classList.add("demo-modal-abierto");
-      modal.querySelector(".demo-modal-card").focus();
-    };
   });
 
   // 4) El botón flotante de WhatsApp le escribe a LinkTalogo
