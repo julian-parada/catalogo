@@ -1446,8 +1446,6 @@ body.con-barra .footer{padding-bottom:90px}
 
   /* Portada: más alta y con un velo más suave, para que se vea más la foto */
   .hero{min-height:400px}
-  /* Con foto: más alta todavía, así el texto queda abajo y la foto se ve arriba sin taparse */
-  html.con-portada .hero{min-height:clamp(500px, 72svh, 600px)}
   html.con-portada .hero::after{
     background:linear-gradient(0deg, rgba(var(--bg-rgb), .9) 0%, rgba(var(--bg-rgb), .62) 34%, rgba(var(--bg-rgb), .18) 62%, transparent 82%);
   }
@@ -1794,3 +1792,22 @@ html.con-portada[data-velo] .hero-overlay p{text-shadow:0 1px 10px rgba(var(--bg
 /* Encuadre de la foto de portada (sql/015): qué parte de la foto se ve */
 html.con-portada[data-encuadre="arriba"] .hero::before{background-position-y:4%}
 html.con-portada[data-encuadre="abajo"] .hero::before{background-position-y:85%}
+
+/* Celular con foto de portada: la foto arriba (más completa, menos recortada) y el texto
+   debajo sobre el color de fondo, entrando apenas sobre el final de la foto */
+@media (max-width:750px){
+  html.con-portada .hero{
+    --foto-h:min(102vw, 460px);
+    min-height:0; padding-top:calc(var(--foto-h) - 64px);
+  }
+  html.con-portada .hero::before{inset:0 0 auto 0; height:var(--foto-h)}
+  html.con-portada .hero::after,
+  html.con-portada[data-velo] .hero::after{
+    background:linear-gradient(180deg, transparent 0, transparent calc(var(--foto-h) - 170px),
+      rgba(var(--bg-rgb), .7) calc(var(--foto-h) - 70px), rgb(var(--bg-rgb)) calc(var(--foto-h) - 6px));
+  }
+  html.con-portada .hero-overlay .tag,
+  html.con-portada[data-velo] .hero-overlay .tag{filter:none}
+  html.con-portada .hero-overlay p,
+  html.con-portada[data-velo] .hero-overlay p{text-shadow:none}
+}
