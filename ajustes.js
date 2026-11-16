@@ -350,6 +350,11 @@ function llenarFormulario(){
   if(!hayVelo) $("veloAyuda").textContent = "Disponible muy pronto.";
   const v = document.querySelector(`input[name="portada_velo"][value="${cfg.portada_velo || "normal"}"]`);
   if(v) v.checked = true;
+  const hayEncuadre = "portada_encuadre" in cfg;
+  $("campoEncuadre").classList.toggle("sin-columna", !hayEncuadre);
+  if(!hayEncuadre) $("encuadreAyuda").textContent = "Disponible muy pronto.";
+  const en = document.querySelector(`input[name="portada_encuadre"][value="${cfg.portada_encuadre || "centro"}"]`);
+  if(en) en.checked = true;
 }
 
 function renderMedia(tipo, url){
@@ -496,6 +501,7 @@ $("tiendaForm").addEventListener("submit", async e => {
     datos.fuente = fuenteElegida;
     datos.mostrar_nombre = $("mostrar_nombre").checked;
     if("pago_addi" in cfg){ datos.pago_addi = $("pago_addi").checked; datos.pago_sistecredito = $("pago_sistecredito").checked; }
+    if("portada_encuadre" in cfg) datos.portada_encuadre = document.querySelector('input[name="portada_encuadre"]:checked')?.value || "centro";
     if("portada_velo" in cfg) datos.portada_velo = document.querySelector('input[name="portada_velo"]:checked')?.value || "normal";
 
     // Logo y banner: archivo nuevo > quitar > dejar como estaba

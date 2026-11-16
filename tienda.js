@@ -182,6 +182,9 @@ function aplicarConfiguracion(cfg){
   // Intensidad de la sombra sobre la foto (normal / suave / minimo)
   if(["suave", "minimo"].includes(cfg.portada_velo)) document.documentElement.dataset.velo = cfg.portada_velo;
   else delete document.documentElement.dataset.velo;
+  // Qué parte de la foto se ve (arriba / centro / abajo)
+  if(["arriba", "abajo"].includes(cfg.portada_encuadre)) document.documentElement.dataset.encuadre = cfg.portada_encuadre;
+  else delete document.documentElement.dataset.encuadre;
 
   pintarFooter(cfg);
   pintarWhatsappFlotante(cfg);
