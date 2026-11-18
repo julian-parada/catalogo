@@ -27,7 +27,7 @@ jobs:
               -H "apikey: $KEY" -H "Authorization: Bearer $KEY" -H "Content-Type: application/json" -d '{}')
             echo "Intento $intento: HTTP $CODIGO"
             if [ "$CODIGO" = "200" ]; then
-              echo "Tiendas activas: $(grep -o '"id"' respuesta.json | wc -l)"
+              echo "Tiendas activas: $(grep -o '{' respuesta.json | wc -l)"
               exit 0
             fi
             sleep 20
