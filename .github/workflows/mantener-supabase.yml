@@ -1,0 +1,36 @@
+# Mantiene despierta la base de datos de Supabase.
+# El plan gratis pausa el proyecto si pasa 7 días sin ninguna consulta;
+# esto hace una consulta de solo lectura cada 5 días (y se puede correr a mano).
+name: Mantener Supabase activo
+
+on:
+  schedule:
+    - cron: "17 13 */5 * *"   # cada 5 días, 8:17 a. m. hora Colombia
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  consulta:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Consulta de lectura a Supabase
+        run: |
+          URL=$(grep -oP 'SUPABASE_URL\s*=\s*"\K[^"]+' supabaseConfig.js)
+          KEY=$(grep -oP 'SUPABASE_KEY\s*=\s*"\K[^"]+' supabaseConfig.js)
+          for intento in 1 2 3; do
+            CODIGO=$(curl -s -o respuesta.json -w "%{http_code}" -X POST \
+              "$URL/rest/v1/rpc/tiendas_publicas" \
+              -H "apikey: $KEY" -H "Authorization: Bearer $KEY" -H "Content-Type: application/json" -d '{}')
+            echo "Intento $intento: HTTP $CODIGO"
+            if [ "$CODIGO" = "200" ]; then
+              echo "Tiendas activas: $(grep -o '"id"' respuesta.json | wc -l)"
+              exit 0
+            fi
+            sleep 20
+          done
+          echo "::error::Supabase no respondió bien (HTTP $CODIGO). Revisa el proyecto en supabase.com"
+          exit 1
