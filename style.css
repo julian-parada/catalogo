@@ -204,13 +204,13 @@ h2{
 }
 
 .brand-unificado .brand-logo{
-  height:42px;
+  height:56px;
   width:auto;
-  max-width:130px;
+  max-width:170px;
   object-fit:contain;
-  border-radius:8px;
+  border-radius:10px;
   background:var(--card);
-  padding:4px;
+  padding:3px;
   display:block;
   flex-shrink: 0;
 }
@@ -530,7 +530,7 @@ h2{
 
 @media (min-width: 1440px){
   .topbar-inner{padding:8px 40px;}
-  .brand-unificado .brand-logo{height:52px; max-width:150px;}
+  .brand-unificado .brand-logo{height:64px; max-width:190px;}
   .brand-unificado .brand-nombre{font-size:1.9rem;}
   .cat-link{font-size:.98rem; padding:14px 18px;}
   #searchInput{width:180px; height:38px; font-size:.95rem;}
@@ -895,7 +895,7 @@ h2{
     min-width:0;
     margin-right:0;
   }
-  .brand-unificado .brand-logo{height:34px; max-width:80px;}
+  .brand-unificado .brand-logo{height:48px; max-width:112px; padding:2px;}
   .brand-unificado .brand-nombre{font-size:1.1rem;}
 
   .cart-button{
@@ -981,7 +981,7 @@ h2{
 
 @media (max-width: 380px){
   .brand-unificado .brand-nombre{font-size:.98rem}
-  .brand-unificado .brand-logo{height:30px; max-width:70px}
+  .brand-unificado .brand-logo{height:42px; max-width:96px; padding:2px}
   .cat-link{padding:8px 8px; font-size:.7rem}
   .products{gap:8px}
   .product-body{padding:8px}
