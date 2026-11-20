@@ -330,6 +330,24 @@ const PALETAS = {
     borde: "#3a332c"
   },
   // Avora + Dúo Perfume (ropa premium y perfumería): blanco y dorado
+  class_blanco: {
+    acento:       "#111111", // Negro (botones), como el logo
+    acentoClaro:  "#3a3a3a",
+    acentoOscuro: "#000000",
+    secundario:   "#a8916f", // Arena / madera de la tienda
+    bg: "#f6f5f2", bg2: "#ecebe7", card: "#ffffff", // Blanco hueso
+    texto: "#141414", textoSuave: "#6b6b6b", textoAcento: "#ffffff",
+    borde: "#dddad3"
+  },
+  class_negro: {
+    acento:       "#e9e6df", // Blanco hueso (botones)
+    acentoClaro:  "#ffffff",
+    acentoOscuro: "#cfc9bd",
+    secundario:   "#a8916f", // Arena
+    bg: "#121212", bg2: "#1a1a1a", card: "#1e1e1e", // Grafito
+    texto: "#f2f2f2", textoSuave: "#9a9a9a", textoAcento: "#111111",
+    borde: "#2c2c2c"
+  },
   mia_coquetee: {
     acento:       "#d6618b", // Rosa moño (botones)
     acentoClaro:  "#f4a7c0",
