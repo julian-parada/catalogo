@@ -822,6 +822,7 @@ function mensajePedido(saludo, cliente, total, urlPedido, detalle){
   }
   lineas.push(`*Pago:* ${NOMBRES_PAGO[cliente.pago]}`);
   if(cliente.pago === "addi" || cliente.pago === "sistecredito") lineas.push("_Por favor envíame el link para pagar a crédito._");
+  if(cliente.pago === "datafono" && cliente.entrega === "domicilio") lineas.push("_Pago con tarjeta: por favor traer el datáfono._");
   if(cliente.nota) lineas.push(`*Nota:* ${cliente.nota}`);
   const encargos = cart.filter(x => x.encargo);
   if(!detalle && encargos.length){
@@ -841,7 +842,7 @@ function mensajePedido(saludo, cliente, total, urlPedido, detalle){
    El servidor vuelve a validar todo en crear_pedido.
    --------------------------------------------------------- */
 const DATOS_KEY = claveLocal("datosCliente");
-const NOMBRES_PAGO = { efectivo: "Efectivo", nequi: "Nequi", transferencia: "Transferencia", addi: "Addi (crédito)", sistecredito: "Sistecrédito (crédito)" };
+const NOMBRES_PAGO = { efectivo: "Efectivo", nequi: "Nequi", transferencia: "Transferencia", datafono: "Datáfono (tarjeta)", addi: "Addi (crédito)", sistecredito: "Sistecrédito (crédito)" };
 const $dc = id => document.getElementById(id);
 const radioMarcado = nombre => (document.querySelector(`input[name="${nombre}"]:checked`) || {}).value || "";
 
@@ -901,7 +902,7 @@ function actualizarEntrega(){
 
 // Addi / Sistecrédito: solo aparecen si la tienda los activó en Mi tienda
 function mostrarPagosCredito(cfg){
-  const activos = { addi: Boolean(cfg && cfg.pago_addi), sistecredito: Boolean(cfg && cfg.pago_sistecredito) };
+  const activos = { datafono: Boolean(cfg && cfg.pago_datafono), addi: Boolean(cfg && cfg.pago_addi), sistecredito: Boolean(cfg && cfg.pago_sistecredito) };
   document.querySelectorAll("[data-credito]").forEach(op => {
     const si = activos[op.dataset.credito];
     op.hidden = !si;
@@ -913,6 +914,8 @@ function mostrarPagosCredito(cfg){
 function actualizarInfoCredito(){
   const info = $dc("dcCreditoInfo"); if(!info) return;
   info.hidden = !["addi", "sistecredito"].includes(radioMarcado("dcPago"));
+  const infoDatafono = $dc("dcDatafonoInfo");
+  if(infoDatafono) infoDatafono.hidden = radioMarcado("dcPago") !== "datafono";
 }
 
 function guardarDatosCliente(d){

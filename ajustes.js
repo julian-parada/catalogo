@@ -342,6 +342,9 @@ function llenarFormulario(){
   renderMedia("banner", cfg.banner_url);
   // Sombra de la portada (columna nueva: si aún no existe en la base, se deja inactiva)
   // Pagos a crédito (columnas nuevas: si aún no existen, quedan inactivos)
+  const hayDatafono = "pago_datafono" in cfg;
+  $("pago_datafono").checked = Boolean(cfg.pago_datafono); $("pago_datafono").disabled = !hayDatafono;
+  if(!hayDatafono) $("datafonoAyuda").textContent = "Disponible muy pronto.";
   const hayCredito = "pago_addi" in cfg;
   ["pago_addi", "pago_sistecredito"].forEach(c => { $(c).checked = Boolean(cfg[c]); $(c).disabled = !hayCredito; });
   $("campoCredito").classList.toggle("sin-columna", !hayCredito);
@@ -501,6 +504,7 @@ $("tiendaForm").addEventListener("submit", async e => {
     datos.paleta = paletaElegida;
     datos.fuente = fuenteElegida;
     datos.mostrar_nombre = $("mostrar_nombre").checked;
+    if("pago_datafono" in cfg) datos.pago_datafono = $("pago_datafono").checked;
     if("pago_addi" in cfg){ datos.pago_addi = $("pago_addi").checked; datos.pago_sistecredito = $("pago_sistecredito").checked; }
     if("portada_encuadre" in cfg) datos.portada_encuadre = document.querySelector('input[name="portada_encuadre"]:checked')?.value || "centro";
     if("portada_velo" in cfg) datos.portada_velo = document.querySelector('input[name="portada_velo"]:checked')?.value || "normal";
