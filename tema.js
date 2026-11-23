@@ -531,81 +531,202 @@ function aplicarPaleta(clave){
    La tienda usa:  var(--font-titulo)  var(--font-texto)  var(--font-titulo-peso)
    ========================================================= */
 const FUENTES = {
-  moderno: {
+  moderno: { grupo: "urbana",
     nombre: "Moderna", descripcion: "Fuerte y llamativa",
     titulo: "'Bebas Neue', Impact, sans-serif", texto: "'Inter', system-ui, sans-serif", peso: 400,
     google: "family=Bebas+Neue&family=Inter:wght@400;500;600;700;800;900"
   },
-  elegante: {
+  elegante: { grupo: "elegante",
     nombre: "Elegante", descripcion: "Fina, para marcas premium",
     titulo: "'Playfair Display', Georgia, serif", texto: "'Lato', system-ui, sans-serif", peso: 700,
     google: "family=Playfair+Display:wght@600;700;800&family=Lato:wght@400;700;900"
   },
-  minimal: {
+  minimal: { grupo: "moderna",
     nombre: "Minimalista", descripcion: "Limpia y actual",
     titulo: "'Montserrat', system-ui, sans-serif", texto: "'Montserrat', system-ui, sans-serif", peso: 800,
     google: "family=Montserrat:wght@400;500;600;700;800;900"
   },
-  urbano: {
+  urbano: { grupo: "urbana",
     nombre: "Urbana", descripcion: "Streetwear, deportiva",
     titulo: "'Anton', Impact, sans-serif", texto: "'Roboto', system-ui, sans-serif", peso: 400,
     google: "family=Anton&family=Roboto:wght@400;500;700;900"
   },
-  clasico: {
+  clasico: { grupo: "elegante",
     nombre: "Clásica", descripcion: "Tradicional y confiable",
     titulo: "'Cormorant Garamond', Georgia, serif", texto: "'Nunito Sans', system-ui, sans-serif", peso: 700,
     google: "family=Cormorant+Garamond:wght@600;700&family=Nunito+Sans:wght@400;600;700;800;900"
   },
-  divertido: {
+  divertido: { grupo: "divertida",
     nombre: "Divertida", descripcion: "Redondeada, para niños o regalos",
     titulo: "'Fredoka', system-ui, sans-serif", texto: "'Nunito', system-ui, sans-serif", peso: 600,
     google: "family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800;900"
   },
-  delicado: {
+  delicado: { grupo: "femenina",
     nombre: "Delicada", descripcion: "Suave, para belleza o accesorios",
     titulo: "'Josefin Sans', system-ui, sans-serif", texto: "'Raleway', system-ui, sans-serif", peso: 700,
     google: "family=Josefin+Sans:wght@500;600;700&family=Raleway:wght@400;500;600;700;800;900"
   },
-  lujo: {
+  lujo: { grupo: "elegante",
     nombre: "Lujo", descripcion: "Joyería, relojes, perfumes",
     titulo: "'Cinzel', Georgia, serif", texto: "'Lato', system-ui, sans-serif", peso: 700,
     google: "family=Cinzel:wght@600;700&family=Lato:wght@400;700;900"
   },
-  editorial: {
+  editorial: { grupo: "elegante",
     nombre: "Editorial", descripcion: "Como revista de moda",
     titulo: "'DM Serif Display', Georgia, serif", texto: "'DM Sans', system-ui, sans-serif", peso: 400, mayusculas: false,
     google: "family=DM+Serif+Display&family=DM+Sans:wght@400;500;700;800;900"
   },
-  tecnologica: {
+  tecnologica: { grupo: "moderna",
     nombre: "Tecnológica", descripcion: "Celulares, gadgets, gamer",
     titulo: "'Space Grotesk', system-ui, sans-serif", texto: "'Inter', system-ui, sans-serif", peso: 700,
     google: "family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700;800;900"
   },
-  geometrica: {
+  geometrica: { grupo: "moderna",
     nombre: "Geométrica", descripcion: "Redonda y moderna",
     titulo: "'Poppins', system-ui, sans-serif", texto: "'Poppins', system-ui, sans-serif", peso: 800,
     google: "family=Poppins:wght@400;500;600;700;800;900"
   },
-  condensada: {
+  condensada: { grupo: "urbana",
     nombre: "Condensada", descripcion: "Deportes, tenis, gorras",
     titulo: "'Oswald', Impact, sans-serif", texto: "'Source Sans 3', system-ui, sans-serif", peso: 600,
     google: "family=Oswald:wght@500;600;700&family=Source+Sans+3:wght@400;600;700;800;900"
   },
-  impacto: {
+  impacto: { grupo: "urbana",
     nombre: "Impacto", descripcion: "Gruesa, se ve desde lejos",
     titulo: "'Archivo Black', Impact, sans-serif", texto: "'Archivo', system-ui, sans-serif", peso: 400,
     google: "family=Archivo+Black&family=Archivo:wght@400;500;600;700;800;900"
   },
-  artesanal: {
+  artesanal: { grupo: "femenina",
     nombre: "Artesanal", descripcion: "Hecho a mano, postres, detalles",
     titulo: "'Pacifico', cursive", texto: "'Poppins', system-ui, sans-serif", peso: 400, mayusculas: false, deMano: true,
     google: "family=Pacifico&family=Poppins:wght@400;500;600;700;800;900"
   },
-  suave: {
+  suave: { grupo: "divertida",
     nombre: "Suave", descripcion: "Amable, bebés, mascotas",
     titulo: "'Quicksand', system-ui, sans-serif", texto: "'Quicksand', system-ui, sans-serif", peso: 700,
     google: "family=Quicksand:wght@500;600;700"
+  },
+  /* ---- Elegantes ---- */
+  boutique: { grupo: "elegante",
+    nombre: "Boutique", descripcion: "Fina y alargada, muy fashion",
+    titulo: "'Italiana', Georgia, serif", texto: "'Jost', system-ui, sans-serif", peso: 400,
+    google: "family=Italiana&family=Jost:wght@400;500;600;700;800;900"
+  },
+  vogue: { grupo: "elegante",
+    nombre: "Vogue", descripcion: "Contraste alto, de revista",
+    titulo: "'Bodoni Moda', Georgia, serif", texto: "'Jost', system-ui, sans-serif", peso: 700, mayusculas: false,
+    google: "family=Bodoni+Moda:wght@600;700;800&family=Jost:wght@400;500;600;700;800;900"
+  },
+  sofisticada: { grupo: "elegante",
+    nombre: "Sofisticada", descripcion: "Clásica y moderna a la vez",
+    titulo: "'Marcellus', Georgia, serif", texto: "'Montserrat', system-ui, sans-serif", peso: 400,
+    google: "family=Marcellus&family=Montserrat:wght@400;500;600;700;800;900"
+  },
+  chic: { grupo: "elegante",
+    nombre: "Chic", descripcion: "Delicada con estilo francés",
+    titulo: "'Gilda Display', Georgia, serif", texto: "'Lato', system-ui, sans-serif", peso: 400,
+    google: "family=Gilda+Display&family=Lato:wght@400;700;900"
+  },
+  fashion: { grupo: "elegante",
+    nombre: "Fashion", descripcion: "Gruesa con serifa, impactante",
+    titulo: "'Abril Fatface', Georgia, serif", texto: "'Lato', system-ui, sans-serif", peso: 400, mayusculas: false,
+    google: "family=Abril+Fatface&family=Lato:wght@400;700;900"
+  },
+  /* ---- Urbanas ---- */
+  callejera: { grupo: "urbana",
+    nombre: "Callejera", descripcion: "Bloque grueso, estilo street",
+    titulo: "'Bungee', Impact, sans-serif", texto: "'Roboto', system-ui, sans-serif", peso: 400,
+    google: "family=Bungee&family=Roboto:wght@400;500;700;900"
+  },
+  grafiti: { grupo: "urbana",
+    nombre: "Grafiti", descripcion: "Como escrita con marcador",
+    titulo: "'Permanent Marker', cursive", texto: "'Roboto', system-ui, sans-serif", peso: 400, deMano: true,
+    google: "family=Permanent+Marker&family=Roboto:wght@400;500;700;900"
+  },
+  deportiva: { grupo: "urbana",
+    nombre: "Deportiva", descripcion: "Veloz, para tenis y deportes",
+    titulo: "'Russo One', Impact, sans-serif", texto: "'Roboto', system-ui, sans-serif", peso: 400,
+    google: "family=Russo+One&family=Roboto:wght@400;500;700;900"
+  },
+  atletica: { grupo: "urbana",
+    nombre: "Atlética", descripcion: "Alta y angosta, tipo camiseta",
+    titulo: "'Teko', Impact, sans-serif", texto: "'Barlow', system-ui, sans-serif", peso: 600,
+    google: "family=Teko:wght@500;600;700&family=Barlow:wght@400;500;600;700;800;900"
+  },
+  militar: { grupo: "urbana",
+    nombre: "Militar", descripcion: "Estilo estampado, ropa urbana",
+    titulo: "'Black Ops One', Impact, sans-serif", texto: "'Roboto', system-ui, sans-serif", peso: 400,
+    google: "family=Black+Ops+One&family=Roboto:wght@400;500;700;900"
+  },
+  sport: { grupo: "urbana",
+    nombre: "Sport", descripcion: "Condensada y gruesa",
+    titulo: "'Barlow Condensed', Impact, sans-serif", texto: "'Barlow', system-ui, sans-serif", peso: 800,
+    google: "family=Barlow+Condensed:wght@600;700;800;900&family=Barlow:wght@400;500;600;700;800;900"
+  },
+  /* ---- Modernas ---- */
+  creativa: { grupo: "moderna",
+    nombre: "Creativa", descripcion: "Ancha y con personalidad",
+    titulo: "'Syne', system-ui, sans-serif", texto: "'Inter', system-ui, sans-serif", peso: 800,
+    google: "family=Syne:wght@600;700;800&family=Inter:wght@400;500;600;700;800;900"
+  },
+  futurista: { grupo: "moderna",
+    nombre: "Futurista", descripcion: "Redonda y ancha, muy actual",
+    titulo: "'Unbounded', system-ui, sans-serif", texto: "'Inter', system-ui, sans-serif", peso: 700,
+    google: "family=Unbounded:wght@500;600;700;800&family=Inter:wght@400;500;600;700;800;900"
+  },
+  fresca: { grupo: "moderna",
+    nombre: "Fresca", descripcion: "Moderna y fácil de leer",
+    titulo: "'Outfit', system-ui, sans-serif", texto: "'Outfit', system-ui, sans-serif", peso: 800,
+    google: "family=Outfit:wght@400;500;600;700;800;900"
+  },
+  clara: { grupo: "moderna",
+    nombre: "Clara", descripcion: "Súper legible, para todo",
+    titulo: "'Lexend', system-ui, sans-serif", texto: "'Lexend', system-ui, sans-serif", peso: 800,
+    google: "family=Lexend:wght@400;500;600;700;800;900"
+  },
+  /* ---- Femeninas y de mano ---- */
+  caligrafia: { grupo: "femenina",
+    nombre: "Caligrafía", descripcion: "Cursiva elegante, bodas y belleza",
+    titulo: "'Great Vibes', cursive", texto: "'Lato', system-ui, sans-serif", peso: 400, mayusculas: false, deMano: true,
+    google: "family=Great+Vibes&family=Lato:wght@400;700;900"
+  },
+  romantica: { grupo: "femenina",
+    nombre: "Romántica", descripcion: "Cursiva alegre y femenina",
+    titulo: "'Dancing Script', cursive", texto: "'Poppins', system-ui, sans-serif", peso: 700, mayusculas: false, deMano: true,
+    google: "family=Dancing+Script:wght@600;700&family=Poppins:wght@400;500;600;700;800;900"
+  },
+  coqueta: { grupo: "femenina",
+    nombre: "Coqueta", descripcion: "Cursiva suave, estilo coquette",
+    titulo: "'Satisfy', cursive", texto: "'Quicksand', system-ui, sans-serif", peso: 400, mayusculas: false, deMano: true,
+    google: "family=Satisfy&family=Quicksand:wght@500;600;700"
+  },
+  /* ---- Divertidas ---- */
+  retro: { grupo: "divertida",
+    nombre: "Retro", descripcion: "Cursiva gruesa de los 50",
+    titulo: "'Lobster', cursive", texto: "'Poppins', system-ui, sans-serif", peso: 400, mayusculas: false, deMano: true,
+    google: "family=Lobster&family=Poppins:wght@400;500;600;700;800;900"
+  },
+  vintage: { grupo: "divertida",
+    nombre: "Vintage", descripcion: "Redonda estilo años 70",
+    titulo: "'Righteous', system-ui, sans-serif", texto: "'Poppins', system-ui, sans-serif", peso: 400,
+    google: "family=Righteous&family=Poppins:wght@400;500;600;700;800;900"
+  },
+  juguetona: { grupo: "divertida",
+    nombre: "Juguetona", descripcion: "Gordita y alegre",
+    titulo: "'Baloo 2', system-ui, sans-serif", texto: "'Nunito', system-ui, sans-serif", peso: 800,
+    google: "family=Baloo+2:wght@600;700;800&family=Nunito:wght@400;600;700;800;900"
+  },
+  tierna: { grupo: "divertida",
+    nombre: "Tierna", descripcion: "Redondita, dulces y detalles",
+    titulo: "'Comfortaa', system-ui, sans-serif", texto: "'Nunito', system-ui, sans-serif", peso: 700,
+    google: "family=Comfortaa:wght@500;600;700&family=Nunito:wght@400;600;700;800;900"
   }
+};
+
+// Grupos para mostrar los estilos ordenados en "Mi tienda"
+const GRUPOS_FUENTE = {
+  elegante: "Elegantes", urbana: "Urbanas y deportivas", moderna: "Modernas y limpias",
+  femenina: "Femeninas y de mano", divertida: "Divertidas y suaves"
 };
 
 // Carga la letra desde Google Fonts (una sola vez por estilo) y la aplica a la página

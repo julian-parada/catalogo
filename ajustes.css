@@ -214,6 +214,8 @@
 
 /* ---------- Selector de letra ---------- */
 .aj-fuentes{display:grid; grid-template-columns:repeat(auto-fill, minmax(190px, 1fr)); gap:10px}
+.fuente-grupo{grid-column:1 / -1; margin:14px 0 2px; font-size:12px; font-weight:800; letter-spacing:.12em; text-transform:uppercase; color:var(--muted)}
+.fuente-grupo:first-child{margin-top:0}
 .fuente{
   display:flex; flex-direction:column; gap:4px; padding:14px 14px 12px; text-align:left;
   width:100%; min-width:0;

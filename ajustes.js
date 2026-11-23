@@ -231,18 +231,31 @@ function construirFuentes(){
   if(!cont || typeof FUENTES === "undefined") return;
   cont.textContent = "";
 
-  // Carga todas las letras de una vez para que las muestras se vean bien
-  const familias = Object.values(FUENTES).map(f => f.google).join("&");
-  if(!document.getElementById("fuentes-muestra")){
-    const link = document.createElement("link");
-    link.id = "fuentes-muestra";
-    link.rel = "stylesheet";
-    link.href = `https://fonts.googleapis.com/css2?${familias}&display=swap`;
-    document.head.appendChild(link);
+  // Carga las letras para que las muestras se vean bien (de a pocas, así una que falle no daña las demás)
+  if(!document.getElementById("fuentes-muestra-0")){
+    const specs = [...new Set(Object.values(FUENTES).flatMap(f => f.google.split("&")))];
+    for(let i = 0; i < specs.length; i += 6){
+      const link = document.createElement("link");
+      link.id = "fuentes-muestra-" + i;
+      link.rel = "stylesheet";
+      link.href = `https://fonts.googleapis.com/css2?${specs.slice(i, i + 6).join("&")}&display=swap`;
+      document.head.appendChild(link);
+    }
   }
 
   const nombreTienda = (cfg && cfg.nombre_tienda) || "Mi tienda";
-  Object.entries(FUENTES).forEach(([clave, f]) => {
+  const grupos = typeof GRUPOS_FUENTE !== "undefined" ? GRUPOS_FUENTE : { otras: "Estilos" };
+  const orden = Object.entries(FUENTES).sort((a, b) =>
+    Object.keys(grupos).indexOf(a[1].grupo) - Object.keys(grupos).indexOf(b[1].grupo));
+  let grupoActual = null;
+  orden.forEach(([clave, f]) => {
+    if(f.grupo !== grupoActual && grupos[f.grupo]){
+      grupoActual = f.grupo;
+      const h = document.createElement("h4");
+      h.className = "fuente-grupo";
+      h.textContent = grupos[f.grupo];
+      cont.appendChild(h);
+    }
     const btn = document.createElement("button");
     btn.type = "button";
     btn.className = "fuente";
